@@ -138,12 +138,16 @@ namespace Math {
             }
 
             Vector3D normalize() const {
-                double length = sqrt(x() * x() + y() * y() + z() * z());
+                double length = sqrt(this->lengthSquared());
                 return Vector3D(x() / length, y() / length, z() / length);
             }
 
             double lengthSquared() const {
                 return X * X + Y * Y + Z * Z;
+            }
+
+            double magnitude() const {
+                return sqrt(lengthSquared());
             }
 
         protected:

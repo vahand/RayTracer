@@ -68,6 +68,10 @@ namespace Math {
                 return Point3D(X + vec.x(), Y + vec.y(), Z + vec.z());
             }
 
+            bool operator==(const Point3D &point) const {
+                return X == point.X && Y == point.Y && Z == point.Z;
+            }
+
             double X;
             double Y;
             double Z;
@@ -79,12 +83,7 @@ namespace Math {
         protected:
         private:
     };
-}
 
-namespace Math {
-    Vector3D operator-(const Point3D& lhs, const Point3D& rhs) {
-        return Vector3D(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
-    }
 }
 
 #endif /* !POINT3D_HPP_ */
