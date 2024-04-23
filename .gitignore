@@ -2,3 +2,4 @@
 raytracer
 *.so
 tmp
+*.ppm

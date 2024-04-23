@@ -14,7 +14,14 @@
 namespace RayTracer {
     class Sphere : public IShape {
         public:
+            Sphere() = default;
             Sphere(const Math::Point3D& center, double radius, const RayTracer::Color& color) {
+                _origin = center;
+                _radius = radius;
+                _color = color;
+            }
+
+            void setup(const Math::Point3D& center, double radius, const RayTracer::Color& color) {
                 _origin = center;
                 _radius = radius;
                 _color = color;

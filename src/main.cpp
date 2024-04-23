@@ -22,7 +22,10 @@ int main()
     RayTracer::Color sphereColor(255, 0, 0);
     RayTracer::Sphere sphere(sphereCenter, sphereRadius, sphereColor);
 
+    core.loadLibrairies();
+
     core.addShape(sphere);
+    core.addShape(core.getNewShape(RayTracer::Core::LIBRARY_TYPE::SPHERE));
     core.addLight(light);
 
     core.run();

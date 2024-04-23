@@ -10,6 +10,8 @@ CXX = g++
 TARGET = raytracer
 
 SRC = 	src/main.cpp	\
+		src/Core.cpp	\
+		src/Loader.cpp	\
 
 OBJ = $(SRC:.cpp=.o)
 
@@ -17,14 +19,14 @@ CXXFLAGS = -fPIC
 
 all:
 	make core
-	make shapes
+	make shape
 
 core: $(TARGET)
 
 $(TARGET): $(OBJ)
 	$(CXX) -o $@ $^
 
-graphicals:
+shape:
 	cd shapes && make
 
 clean:

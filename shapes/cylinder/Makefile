@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-SRC	=	src/cylinder.cpp	\
+SRC	=	src/Cylinder.cpp	\
 
 NAME	=	raytracer_cylinder
 

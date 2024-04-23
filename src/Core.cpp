@@ -61,7 +61,7 @@ void RayTracer::Core::run()
                         double distanceToLight = rayToLight.direction().magnitude();
 
                         for (auto &innerObj : this->_shapes) {
-                            std::cerr << "Shape: " << shape.get().getColor()._r << " " << shape.get().getColor()._g << " " << shape.get().getColor()._b << std::endl;
+                            // std::cerr << "Shape: " << shape.get().getColor()._r << " " << shape.get().getColor()._g << " " << shape.get().getColor()._b << std::endl;
                             if (innerObj.get() == shape.get()) {
                                 RayTracer::Color pixelColor = shape.get().getColor();
                                 // pixelColor.applyIntensity(light.get().intensity());
@@ -114,6 +114,50 @@ void RayTracer::Core::run()
             }
         }
     }
+}
+
+void RayTracer::Core::loadLibrary(std::string path)
+{
+    Loader loader(path);
+    if (loader._handle == nullptr)
+        throw RayException("Failed to load library " + path);
+    LIBRARY_TYPE type = loader.call<LIBRARY_TYPE>("getType");
+    _handles[type] = loader._handle;
+    std::cerr << "Library " << path << " loaded successfully" << std::endl;
+}
+
+void RayTracer::Core::loadLibrairies()
+{
+    DIR *dir;
+    struct dirent *ent;
+    if ((dir = opendir("./lib")) != NULL) {
+        while ((ent = readdir(dir)) != NULL) {
+            std::string filename = ent->d_name;
+            if (filename.find(".so") != std::string::npos) {
+                loadLibrary("./lib/" + filename);
+            }
+        }
+        closedir(dir);
+    } else {
+        throw RayException("Failed to open directory");
+    }
+}
+
+
+RayTracer::IShape& RayTracer::Core::getNewShape(LIBRARY_TYPE type)
+{
+    std::shared_ptr<void> handle = _handles[type];
+
+    if (!isShapeType(type))
+        throw RayTracer::Core::RayException("getNewShape: Must have a shape type");
+    if (handle == nullptr)
+        throw RayTracer::Core::RayException("No library loaded for type " + type);
+    void *func_ptr = dlsym(handle.get(), "initShape");
+    if (func_ptr == nullptr)
+        throw RayTracer::Core::RayException(dlerror());
+    RayTracer::IShape *(*func_ptr_casted)() = reinterpret_cast<RayTracer::IShape *(*)()>(func_ptr);
+    std::cerr << "Shape of type " << type << " created successfully" << std::endl;
+    return *func_ptr_casted();
 }
 
 RayTracer::Color RayTracer::Core::castLight(const RayTracer::Ray &ray) const
