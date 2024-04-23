@@ -7,6 +7,7 @@
 
 #include "../includes/Core.hpp"
 #include "../shapes/sphere/src/Sphere.hpp"
+#include "../shapes/plane/src/Plane.hpp"
 
 int main()
 {
@@ -24,8 +25,13 @@ int main()
 
     core.loadLibrairies();
 
+    RayTracer::Plane plane;
+    RayTracer::Color planeColor(0, 255, 0);
+    Math::Point3D planeOrigin(0, 15, 0);
+    plane.setup(planeColor, planeOrigin, RayTracer::Plane::AXIS::Y);
+
     core.addShape(sphere);
-    core.addShape(core.getNewShape(RayTracer::Core::LIBRARY_TYPE::SPHERE));
+    core.addShape(plane);
     core.addLight(light);
 
     core.run();
