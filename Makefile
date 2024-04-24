@@ -12,6 +12,7 @@ TARGET = raytracer
 SRC = 	src/main.cpp	\
 		src/Core.cpp	\
 		src/Loader.cpp	\
+		src/Parser.cpp	\
 
 OBJ = $(SRC:.cpp=.o)
 
@@ -24,7 +25,7 @@ all:
 core: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CXX) -o $@ $^
+	$(CXX) -o $@ $^ -lconfig -lconfig++
 
 shape:
 	cd shapes && make

@@ -3,3 +3,4 @@ raytracer
 *.so
 tmp
 *.ppm
+.vscode*

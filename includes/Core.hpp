@@ -8,7 +8,7 @@
 #ifndef CORE_HPP_
     #define CORE_HPP_
 
-    #include "IShape.hpp"
+    #include "../shapes/sphere/src/Sphere.hpp"
     #include "Ray.hpp"
     #include "Color.hpp"
     #include "Camera.hpp"
