@@ -59,6 +59,23 @@ namespace RayTracer {
             void parsePlanes();
             RayTracer::Plane::AXIS getPlaneAxis(const std::string&);
             Math::Point3D getPlaneOrigin(double, RayTracer::Plane::AXIS);
+
+            // LIGHTS
+            libconfig::Setting *_lightsSection;
+            std::vector<std::reference_wrapper<std::string>> _parsedLights;
+
+            bool _mainAmbientFactorIsDefined;
+            bool _mainDiffuseFactorIsDefined;
+            double _mainAmbientFactor;
+            double _mainDiffuseFactor;
+
+            std::string getLightName(libconfig::Setting &);
+            double getAmbientFactor(libconfig::Setting &);
+            double getDiffuseFactor(libconfig::Setting &);
+            void parseLights();
+            void parseMainAmbientFactor();
+            void parseMainDiffuseFactor();
+            void parsePointLight();
     };
 }
 

@@ -29,6 +29,10 @@ void RayTracer::Parser::printConfig()
     std::cerr << refCore._shapes.size() << " shapes loaded" << std::endl;
     refCore.printShape();
     std::cerr << std::endl;
+    std::cerr << "Lights:" << std::endl;
+    std::cerr << refCore._lights.size() << " lights loaded" << std::endl;
+    refCore.printLight();
+    std::cerr << std::endl;
     std::cerr << " ---- END CONFIG ---- " << std::endl;
 }
 
@@ -61,6 +65,20 @@ std::string RayTracer::Parser::getPrimitiveName(libconfig::Setting &primitiveSet
         }
     }
     _parsedPrimitives.push_back(name);
+    return name;
+}
+std::string RayTracer::Parser::getLightName(libconfig::Setting &lightSetting)
+{
+    std::string name = lightSetting.getName();
+    if (name.empty())
+        throw RayTracer::Parser::ParserException("Lights: Invalid name parameter");
+    if (_parsedLights.size() > 0) {
+        for (auto &parsedLight : _parsedLights) {
+            if (parsedLight.get() == name)
+                throw RayTracer::Parser::ParserException("Lights: Duplicate name parameter");
+        }
+    }
+    _parsedLights.push_back(name);
     return name;
 }
 
@@ -144,6 +162,80 @@ void RayTracer::Parser::parsePrimitives()
     parsePlanes();
 }
 
+void RayTracer::Parser::parseMainAmbientFactor()
+{
+    try {
+        _mainAmbientFactor = _lightsSection->lookup("ambient");
+        std::cerr << "-->> Ambient light factor found in config file!"<< std::endl;
+        _mainAmbientFactorIsDefined = true;
+    }  catch (const libconfig::SettingNotFoundException &e){
+        std::cerr << "-->> Ambient light factor is not defined in config file" << std::endl;
+    }
+}
+void RayTracer::Parser::parseMainDiffuseFactor()
+{
+    try {
+        _mainDiffuseFactor = _lightsSection->lookup("diffuse");
+        std::cerr << "-->> Diffuse light factor found in config file!"<< std::endl;
+        _mainDiffuseFactorIsDefined = true;
+    }  catch (const libconfig::SettingNotFoundException &e){
+        std::cerr << "-->> Diffuse light factor is not defined in config file" << std::endl;
+    }
+}
+
+double RayTracer::Parser::getAmbientFactor(libconfig::Setting &pointLight)
+{
+    try {
+        return pointLight.lookup("ambient");
+    } catch (const libconfig::SettingNotFoundException &e) {
+        if (_mainAmbientFactorIsDefined)
+            return _mainAmbientFactor;
+        else
+            throw RayTracer::Parser::ParserException("Ambient factor is not defined for light in config file \"" + _path + "\"");
+    }
+}
+double RayTracer::Parser::getDiffuseFactor(libconfig::Setting &pointLight)
+{
+    try {
+        return pointLight.lookup("diffuse");
+    } catch (const libconfig::SettingNotFoundException &e) {
+        if (_mainAmbientFactorIsDefined)
+            return _mainAmbientFactor;
+        else
+            throw RayTracer::Parser::ParserException("Ambient factor is not defined for light in config file \"" + _path + "\"");
+    }
+}
+
+void RayTracer::Parser::parsePointLight()
+{
+    try {
+        libconfig::Setting *pointLights = &_lightsSection->lookup("point");
+        std::cerr << "-->> Point lights found in config file!" << std::endl;
+        for (int i = 0; i < pointLights->getLength(); i++) {
+            libconfig::Setting &subPointLight = pointLights->operator[](i);
+            libconfig::Setting &pointLight = subPointLight.operator[](0);
+            const std::string &name = getLightName(pointLight);
+            Math::Point3D position(pointLight[0], pointLight[1], pointLight[2]);
+            double ambient = getAmbientFactor(pointLight);
+            double diffuse = getDiffuseFactor(pointLight);
+            std::unique_ptr<RayTracer::Light> newLight = std::make_unique<RayTracer::Light>(position, ambient, diffuse, RayTracer::Light::LightType::POINT);
+            newLight->setName(name);
+            refCore.addLight(*newLight);
+        }
+    } catch (const libconfig::SettingNotFoundException &e) {
+        std::cerr << "-->> No point lights found in config file!" << std::endl;
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for point lights in config file \"" + _path + "\"");
+    }
+}
+
+void RayTracer::Parser::parseLights()
+{
+    parseMainAmbientFactor();
+    parseMainDiffuseFactor();
+    parsePointLight();
+}
+
 void RayTracer::Parser::parseConfig()
 {
     try {
@@ -163,6 +255,14 @@ void RayTracer::Parser::parseConfig()
             parsePrimitives();
         } else {
             throw RayTracer::Parser::ParserException("Failed to find primitives settings in config file \"" + _path + "\"");
+        }
+
+        _lightsSection = &_cfg.lookup("lights");
+        if (_lightsSection != nullptr) {
+            std::cerr << ">> Lights found in config file!" << std::endl;
+            parseLights();
+        } else {
+            std::cerr << ">> No lights found in config file!" << std::endl;
         }
     } catch (const libconfig::FileIOException &e) {
         throw RayTracer::Parser::ParserException("Failed to read config file \"" + _path + "\"");

@@ -48,7 +48,7 @@ lights:
     # List of point lights
     point = (
         {
-            point1: { x = 400; y = 100; z = 500; }
+            vahanLight: { x = 400.0; y = 100.0; z = 500.0; }
         }
     ) ;
 

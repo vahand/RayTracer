@@ -63,6 +63,11 @@ namespace RayTracer {
                     std::cerr << shape.get().getName() << std::endl;
                 }
             }
+            void printLight() {
+                for (auto &light : _lights) {
+                    std::cerr << light.get().getName() << std::endl;
+                }
+            }
 
             RayTracer::Camera _camera;
 
