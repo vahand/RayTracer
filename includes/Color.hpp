@@ -80,7 +80,7 @@ namespace RayTracer {
                 return _r == color._r && _g == color._g && _b == color._b;
             }
 
-            Math::Vector3D getRangedColor() {
+            Math::Vector3D getRangedColor() const {
                 return Math::Vector3D(_r / 255, _g / 255, _b / 255);
             }
 
@@ -112,6 +112,30 @@ namespace RayTracer {
                 if (_g < 0) _g = 0;
                 if (_b < 0) _b = 0;
             }
+
+            void copyColor(const Color &color) {
+                _r = color._r;
+                _g = color._g;
+                _b = color._b;
+                if (_r < 0) _r = 0;
+                if (_g < 0) _g = 0;
+                if (_b < 0) _b = 0;
+                if (_r > 255) _r = 255;
+                if (_g > 255) _g = 255;
+                if (_b > 255) _b = 255;
+            }
+
+            bool compareColor(const Color &color) {
+                return _r == color._r && _g == color._g && _b == color._b;
+            }
+
+            RayTracer::Color invert() {
+                return RayTracer::Color(255 - _r, 255 - _g, 255 - _b);
+            }
+
+            double r() const { return _r; }
+            double g() const { return _g; }
+            double b() const { return _b; }
 
     };
 }

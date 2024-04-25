@@ -11,12 +11,12 @@
     #include "Vector3D.hpp"
 
 namespace Math {
-    class Point3D {
+    class Point3D : Vector3D {
         public:
-            Point3D() : X(0), Y(0), Z(0) {};
-            Point3D(double x, double y, double z) : X(x), Y(y), Z(z) {};
-            Point3D(const Point3D &point) : X(point.X), Y(point.Y), Z(point.Z) {};
-            Point3D(Point3D &&point) noexcept : X(point.X), Y(point.Y), Z(point.Z) {
+            Point3D() : Vector3D(), X(0), Y(0), Z(0) {};
+            Point3D(double x, double y, double z) : Vector3D(), X(x), Y(y), Z(z) {};
+            Point3D(const Point3D &point) : Vector3D(), X(point.X), Y(point.Y), Z(point.Z) {};
+            Point3D(Point3D &&point) noexcept : Vector3D(), X(point.X), Y(point.Y), Z(point.Z) {
                 point.X = 0;
                 point.Y = 0;
                 point.Z = 0;
@@ -48,16 +48,8 @@ namespace Math {
                 return Point3D(X + point.X, Y + point.Y, Z + point.Z);
             }
 
-            Vector3D operator-(const Point3D &point) {
-                return Vector3D(X - point.X, Y - point.Y, Z - point.Z);
-            }
-
             Point3D operator*(const Point3D &point) {
                 return Point3D(X * point.X, Y * point.Y, Z * point.Z);
-            }
-
-            Point3D operator/(const Point3D &point) {
-                return Point3D(X / point.X, Y / point.Y, Z / point.Z);
             }
 
             Point3D operator+(const Math::Vector3D &vec) {
@@ -70,6 +62,25 @@ namespace Math {
 
             bool operator==(const Point3D &point) const {
                 return X == point.X && Y == point.Y && Z == point.Z;
+            }
+
+            Point3D operator/= (const double &val) {
+                X /= val;
+                Y /= val;
+                Z /= val;
+                return *this;
+            }
+
+            Math::Vector3D operator-(const Point3D &point) {
+                return Math::Vector3D(this->x() - point.x(), this->y() - point.y(), this->z() - point.z());
+            }
+
+            Math::Point3D operator-(const Math::Vector3D &vec) {
+                return Math::Point3D(X - vec.x(), Y - vec.y(), Z - vec.z());
+            }
+
+            Math::Vector3D operator/(const Point3D &point) {
+                return Math::Vector3D(this->x() / point.x(), this->y() / point.y(), this->z() / point.z());
             }
 
             double X;

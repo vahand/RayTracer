@@ -13,6 +13,7 @@
     #include <string>
     #include <vector>
     #include <cmath>
+    #include "Utils.hpp"
 
 namespace Math {
     class Vector3D {
@@ -26,6 +27,8 @@ namespace Math {
                 vec.Z = 0;
             }
             ~Vector3D() = default;
+
+            Vector3D operator-() const { return Vector3D(-X, -Y, -Z); }
 
             Vector3D& operator=(const Vector3D &vec) {
                 if (this != &vec) {
@@ -56,10 +59,6 @@ namespace Math {
                 return Vector3D(X * val, Y * val, Z * val);
             }
 
-            Vector3D operator/(const double &val) {
-                return Vector3D(X / val, Y / val, Z / val);
-            }
-
             Vector3D& operator*=(const double &val) {
                 X *= val;
                 Y *= val;
@@ -82,13 +81,18 @@ namespace Math {
                 return Vector3D(X - vec.X, Y - vec.Y, Z - vec.Z);
             }
 
+            Vector3D operator/(const Vector3D &vec) {
+                return Vector3D(X / vec.X, Y / vec.Y, Z / vec.Z);
+            }
+
+            Math::Vector3D operator/(const double &val) {
+                return Vector3D(this->x() / val, this->y() / val, this->z() / val);
+            }
+
             Vector3D operator*(const Vector3D &vec) {
                 return Vector3D(X * vec.X, Y * vec.Y, Z * vec.Z);
             }
 
-            Vector3D operator/(const Vector3D &vec) {
-                return Vector3D(X / vec.X, Y / vec.Y, Z / vec.Z);
-            }
 
             Vector3D& operator+=(const Vector3D &vec) {
                 X += vec.X;
@@ -122,9 +126,9 @@ namespace Math {
             double Y;
             double Z;
 
-            double x() const { return X; }
-            double y() const { return Y; }
-            double z() const { return Z; }
+            inline double x() const { return X; }
+            inline double y() const { return Y; }
+            inline double z() const { return Z; }
 
             double DotProduct(const Vector3D &vec) {
                 return X * vec.X + Y * vec.Y + Z * vec.Z;
@@ -148,6 +152,27 @@ namespace Math {
 
             double magnitude() const {
                 return sqrt(lengthSquared());
+            }
+
+            static Vector3D random(double scale = 0.005) {
+                return Vector3D(Utils::randomRangedDouble(scale), Utils::randomRangedDouble(scale), Utils::randomRangedDouble(scale));
+            }
+
+            static Vector3D randomUnitSphereVector(double scale = 0.005) {
+                while (true) {
+                    Vector3D randomVector = Vector3D::random(scale);
+                    if (randomVector.lengthSquared() < 1)
+                        return randomVector;
+                }
+            }
+
+            static Vector3D randomUnitVector(double scale = 0.005) {
+                return randomUnitSphereVector(scale).normalize();
+            }
+
+            static Vector3D randomHemisphere(const Vector3D& normal) {
+                Vector3D onSphere = randomUnitVector();
+                return onSphere.DotProduct(normal) > 0.0 ? onSphere : -onSphere;
             }
 
         protected:

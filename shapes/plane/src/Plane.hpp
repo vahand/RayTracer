@@ -9,6 +9,7 @@
 #define PLANE_HPP_
 
 #include "../../../includes/IShape.hpp"
+#include "../../../includes/Point3D.hpp"
 
 namespace RayTracer {
     class Plane : public IShape {
@@ -21,21 +22,20 @@ namespace RayTracer {
             Plane() {};
             ~Plane() {};
 
-            HitResult hits(const RayTracer::Ray &ray) override {
+            bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
+            {
                 Math::Vector3D oc = ray.origin() - _origin;
 
-                double t = (getNormalVector().DotProduct(_origin - ray.origin())) / getNormalVector().DotProduct(ray.direction());
+                double t = (getNormalVector().DotProduct(ray.origin() - _origin)) / getNormalVector().DotProduct(ray.direction());
                 if (t <= 0.0) { // intersection behind the ray
-                    return { Math::Point3D(), false };
+                    return false;
                 }
-                return { ray.origin() + ray.direction() * t, true };
-            };
+
+                return true;
+            }
+
             RayTracer::Color getColor() const override {
                 return _color;
-            };
-
-            RayTracer::Ray objectRay(const Math::Point3D& objectPosition) const override {
-                return RayTracer::Ray();
             };
 
             void setup(RayTracer::Color& planeColor, Math::Point3D& origin, RayTracer::Plane::AXIS axis)

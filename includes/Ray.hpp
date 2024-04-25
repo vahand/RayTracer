@@ -9,6 +9,7 @@
     #define RAY_HPP_
 
     #include "Point3D.hpp"
+    #include "Color.hpp"
 
 namespace RayTracer
 {
@@ -42,6 +43,10 @@ namespace RayTracer
                     ray._direction = Math::Vector3D();
                 }
                 return *this;
+            }
+
+            Math::Point3D at(double t) const {
+                return _origin + _direction * t;
             }
 
             Math::Point3D origin() const { return _origin; }

@@ -13,18 +13,20 @@
 namespace RayTracer {
     class Cylinder : public IShape {
         public:
-            Cylinder();
-            ~Cylinder();
+            Cylinder() = default;
+            ~Cylinder() = default;
 
-            HitResult hits(const RayTracer::Ray &ray) override {
-                return HitResult();
+            bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
+            {
+                (void)ray;
+                (void)ray_range;
+                (void)data;
+                return false;
             };
-            RayTracer::Color getColor() const override {
+
+            RayTracer::Color getColor() const override
+            {
                 return RayTracer::Color();
-            };
-
-            RayTracer::Ray objectRay(const Math::Point3D& objectPosition) const override {
-                return RayTracer::Ray();
             };
 
         protected:

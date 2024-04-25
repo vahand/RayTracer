@@ -1,11 +1,12 @@
 /*
 ** EPITECH PROJECT, 2024
-** BS_RAYTRACER
+** RAYTRACER
 ** File description:
 ** Core
 */
 
 #include "../includes/Core.hpp"
+#include "../includes/Loader.hpp"
 
 RayTracer::Core::Core(int screenWidth, int screenHeight)
 {
@@ -15,105 +16,71 @@ RayTracer::Core::Core(int screenWidth, int screenHeight)
     Math::Point3D cameraPosition(0, 0, 0);
     Math::Vector3D camera_direction(0, 0, 1);
     Math::Vector3D camera_up(0, 1, 0);
-    double aspect_ratio = static_cast<double>(screenWidth / screenHeight);
-    double fov = 30;
 
-    this->_camera = RayTracer::Camera(cameraPosition, camera_direction, camera_up, aspect_ratio, fov);
-
+    this->_camera = RayTracer::Camera(cameraPosition, camera_direction, camera_up);
+    this->_camera._aspect_ratio = static_cast<double>(screenWidth / screenHeight);
+    this->_camera._fov_degrees = 30;
+    this->_camera._samples = 100;
+    this->_camera._image_width = screenWidth;
+    this->_camera._image_height = screenHeight;
+    this->_camera.initialize();
 }
 
 void RayTracer::Core::writeColor(RayTracer::Color &color)
 {
-    int r = color._r;
-    int g = color._g;
-    int b = color._b;
+    static const RayTracer::Range colorRange(0.0, 255.0);
+    int r = colorRange.bound(color._r);
+    int g = colorRange.bound(color._g);
+    int b = colorRange.bound(color._b);
 
     std::cout << r << ' ' << g << ' ' << b << '\n';
+}
+
+RayTracer::Color getRayColor(const RayTracer::Ray& r, const RayTracer::Core& core, int limit = 10) {
+    if (limit <= 0)
+        return RayTracer::Color(0, 0, 0);
+
+    HitData data;
+    double infinity = std::numeric_limits<double>::infinity();
+    if (core.hit(r, RayTracer::Range(0.001, infinity), data)) {
+        Math::Vector3D direction = data.normal + Math::Vector3D::randomUnitVector();
+        return getRayColor(RayTracer::Ray(data.point, direction), core, limit - 1) * 0.5;
+    }
+
+    Math::Vector3D unit_dir = r.direction().normalize();
+    auto a = 0.5 * (unit_dir.y() + 1.0);
+    Math::Vector3D vec = RayTracer::Color(255, 255, 255).getRangedColor() * (1.0 - a) + RayTracer::Color(0.5*255.0, 0.7*255.0, 1.0*255.0).getRangedColor() * a;
+    return RayTracer::Color(vec.x() * 255.999, vec.y() * 255.999, vec.z() * 255.999);
 }
 
 void RayTracer::Core::run()
 {
     std::cout << "P3\n" << this->_screenWidth << ' ' << this->_screenHeight << "\n255\n";
+    auto startTime = std::chrono::high_resolution_clock::now();
 
-    for (int y = this->_screenHeight; y > 0; y--) {
+    auto iterationTime = std::chrono::high_resolution_clock::now();
+    for (int y = 0; y < this->_screenHeight; y++) {
+        displayProgress(y, this->_screenHeight, iterationTime, startTime);
+        iterationTime = std::chrono::high_resolution_clock::now();
         for (int x = 0; x < this->_screenWidth; x++) {
             double u = static_cast<double>(x) / this->_screenWidth;
             double v = static_cast<double>(y) / this->_screenHeight;
 
-            Ray ray = this->_camera.ray(u, v);
-            // std::cerr << "Ray: " << u << " " << v << std::endl;
-
-            std::unique_ptr<RayTracer::Color> finalColor = nullptr;
-
-            for (auto &shape : this->_shapes) {
-                // std::cerr << "Shape: " << shape.get().getColor()._r << " " << shape.get().getColor()._g << " " << shape.get().getColor()._b << std::endl;
-                RayTracer::HitResult hitResult = shape.get().hits(ray);
-
-                if (hitResult.hit) {
-                    // std::cerr << "Hit at: " << hitResult.intersectionPoint.x() << " " << hitResult.intersectionPoint.y() << " " << hitResult.intersectionPoint.z() << std::endl;
-                    Math::Point3D intersectionPoint = hitResult.intersectionPoint;
-
-                    // loop over light and loop over objects
-                    for (auto &light : this->_lights) {
-                        // std::cerr << "Light: " << light.get().position().x() << " " << light.get().position().y() << " " << light.get().position().z() << std::endl;
-
-                        Ray rayToLight = Ray(intersectionPoint, light.get().position() - intersectionPoint);
-                        double distanceToLight = rayToLight.direction().magnitude();
-
-                        for (auto &innerObj : this->_shapes) {
-                            // std::cerr << "Shape: " << shape.get().getColor()._r << " " << shape.get().getColor()._g << " " << shape.get().getColor()._b << std::endl;
-                            if (innerObj.get() == shape.get()) {
-                                RayTracer::Color pixelColor = shape.get().getColor();
-                                // pixelColor.applyIntensity(light.get().intensity());
-                                pixelColor.setBrightnessFromDistanceToLight(distanceToLight, light.get().intensity());
-                                if (finalColor == nullptr) {
-                                    finalColor = std::make_unique<RayTracer::Color>(pixelColor);
-                                } else {
-                                    finalColor->colorAverage(pixelColor);
-                                }
-                                continue;
-                            }
-
-                            RayTracer::HitResult hitResult = innerObj.get().hits(rayToLight);
-                            RayTracer::Color pixelColor = shape.get().getColor();
-
-                            if (hitResult.hit) {
-                                std::cerr << "Hit" << std::endl;
-                                pixelColor = RayTracer::Color(0, 0, 0);
-                                pixelColor.colorAverage(innerObj.get().getColor());
-                                pixelColor.setBrightnessFromDistanceToLight(distanceToLight, light.get().intensity());
-                                // pixelColor.applyIntensity(light.get().intensity());
-                                if (finalColor == nullptr) {
-                                    finalColor = std::make_unique<RayTracer::Color>(pixelColor);
-                                } else {
-                                    finalColor->colorAverage(pixelColor);
-                                }
-                                break;
-                            } else {
-                                std::cerr << "No hit" << std::endl;
-                                pixelColor = shape.get().getColor();
-                                pixelColor.setBrightnessFromDistanceToLight(distanceToLight, light.get().intensity());
-                                // pixelColor.applyIntensity(light.get().intensity());
-                                if (finalColor == nullptr) {
-                                    finalColor = std::make_unique<RayTracer::Color>(pixelColor);
-                                } else {
-                                    finalColor->colorAverage(pixelColor);
-                                }
-                            }
-                        }
-                    }
-                }
-
+            RayTracer::Color finalColor(0, 0, 0);
+            for (int sample = 0; sample < this->_camera._samples; sample++) {
+                RayTracer::Ray ray = this->_camera.rayAround(u, v);
+                finalColor += getRayColor(ray, *this);
             }
+            finalColor *= this->_camera._samples_scale;
+            writeColor(finalColor);
 
-            if (finalColor != nullptr) {
-                writeColor(*finalColor);
-            } else {
-                RayTracer::Color color = RayTracer::Color(0, 0, 0);
-                writeColor(color);
-            }
         }
     }
+    auto endTime = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = endTime - startTime;
+
+    displayProgress(this->_screenHeight, this->_screenHeight, iterationTime, startTime);
+    std::cerr << "\nDone! - Total Lines: " << this->_screenHeight << std::endl;
 }
 
 void RayTracer::Core::loadLibrary(std::string path)
@@ -143,7 +110,6 @@ void RayTracer::Core::loadLibrairies()
     }
 }
 
-
 RayTracer::IShape& RayTracer::Core::getNewShape(LIBRARY_TYPE type)
 {
     std::shared_ptr<void> handle = _handles[type];
@@ -158,10 +124,4 @@ RayTracer::IShape& RayTracer::Core::getNewShape(LIBRARY_TYPE type)
     RayTracer::IShape *(*func_ptr_casted)() = reinterpret_cast<RayTracer::IShape *(*)()>(func_ptr);
     std::cerr << "Shape of type " << type << " created successfully" << std::endl;
     return *func_ptr_casted();
-}
-
-RayTracer::Color RayTracer::Core::castLight(const RayTracer::Ray &ray) const
-{
-    (void)ray;
-    return RayTracer::Color();
 }
