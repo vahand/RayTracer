@@ -25,7 +25,10 @@ void RayTracer::Parser::printConfig()
     std::cerr << "Rotation: [" << camera_settings.rotation[0] << ", " << camera_settings.rotation[1] << ", " << camera_settings.rotation[2] << "]" << std::endl;
     std::cerr << "FOV: " << camera_settings.fov << " degrees" << std::endl;
     std::cerr << std::endl;
+    std::cerr << "Primitives:" << std::endl;
     std::cerr << refCore._shapes.size() << " shapes loaded" << std::endl;
+    refCore.printShape();
+    std::cerr << std::endl;
     std::cerr << " ---- END CONFIG ---- " << std::endl;
 }
 
@@ -52,13 +55,15 @@ void RayTracer::Parser::parseSpheres()
         libconfig::Setting *spheres = &_primitivesSection->lookup("spheres");
         std::cerr << "-->> Spheres found in config file!" << std::endl;
         for (int i = 0; i < spheres->getLength(); i++) {
-            libconfig::Setting &sphere = spheres->operator[](i).lookup("sphere" + std::to_string(i + 1));
+            libconfig::Setting &subSphere = spheres->operator[](i);
+            libconfig::Setting &sphere = subSphere.operator[](0);
             Math::Point3D center(sphere[0], sphere[1], sphere[2]);
             double radius = sphere[3];
             libconfig::Setting &color = sphere.lookup("color");
             RayTracer::Color sphereColor(color[0], color[1], color[2]);
             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::SPHERE);
             static_cast<RayTracer::Sphere&>(newShape).setup(center, radius, sphereColor);
+            newShape.setName(sphere.getName());
             refCore.addShape(newShape);
         }
     } catch (const libconfig::SettingNotFoundException &e) {
@@ -98,13 +103,15 @@ void RayTracer::Parser::parsePlanes()
         libconfig::Setting *planes = &_primitivesSection->lookup("planes");
         std::cerr << "-->> Planes found in config file!" << std::endl;
         for (int i = 0; i < planes->getLength(); i++) {
-            libconfig::Setting &plane = planes->operator[](i).lookup("plane" + std::to_string(i + 1));
+            libconfig::Setting &subPlane = planes->operator[](i);
+            libconfig::Setting &plane = subPlane.operator[](0);
             RayTracer:Plane::AXIS axis = getPlaneAxis(plane[0]);
             Math::Point3D origin = getPlaneOrigin(plane[1], axis);
             libconfig::Setting &color = plane.lookup("color");
             RayTracer::Color planeColor(color[0], color[1], color[2]);
             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::PLANE);
             static_cast<RayTracer::Plane&>(newShape).setup(planeColor, origin, axis);
+            newShape.setName(plane.getName());
             refCore.addShape(newShape);
         }
     } catch (const libconfig::SettingNotFoundException &e) {

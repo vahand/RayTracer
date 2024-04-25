@@ -58,6 +58,12 @@ namespace RayTracer {
             void addShape(IShape &shape) { _shapes.push_back(shape); }
             void addLight(Light &light) { _lights.push_back(light); }
 
+            void printShape() {
+                for (auto &shape : _shapes) {
+                    std::cerr << shape.get().getName() << std::endl;
+                }
+            }
+
             RayTracer::Camera _camera;
 
         private:

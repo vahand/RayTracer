@@ -28,13 +28,13 @@ primitives:
     # List of spheres
     spheres = (
         {
-            sphere1: { x = 5.0; y = 5.0; z = 30.0; r = 2.0; color: { r = 255.0; g = 64.0; b = 64.0;} }
+            vahanSphere: { x = 5.0; y = 5.0; z = 30.0; r = 2.0; color: { r = 255.0; g = 64.0; b = 64.0;} }
         }
     );
 
     planes = (
         {
-            plane1: { axis = "Y" ; position = 15.0; color: { r = 64.0; g = 255.0; b = 64.0; } }
+            vahanPlane: { axis = "Y" ; position = 15.0; color: { r = 64.0; g = 255.0; b = 64.0; } }
         }
     );
 }

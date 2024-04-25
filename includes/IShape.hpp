@@ -32,6 +32,13 @@ namespace RayTracer {
 
             virtual RayTracer::Ray objectRay(const Math::Point3D& objectPosition) const = 0;
 
+            const std::string& getName() const {
+                return _name;
+            }
+            void setName(const std::string& name) {
+                _name = name;
+            }
+
             bool operator==(const IShape &shape) const {
                 return _origin == shape._origin && _color == shape._color && _type == shape._type;
             }
@@ -40,6 +47,7 @@ namespace RayTracer {
             Math::Point3D _origin;
             RayTracer::Color _color;
             RayTracer::ShapeType _type;
+            std::string _name;
     };
 }
 

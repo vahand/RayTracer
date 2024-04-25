@@ -18,12 +18,12 @@ int main()
     RayTracer::Parser parser(core, "./configs/subject_config");
     parser.printConfig();
 
-    Math::Point3D lightPosition(0, 10, 0);
-    double lightIntensity = 1.0;
-    Math::Vector3D lightColor(1, 1, 1);
-    RayTracer::Light light(lightPosition, lightIntensity, lightColor);
+    // Math::Point3D lightPosition(0, 10, 0);
+    // double lightIntensity = 1.0;
+    // Math::Vector3D lightColor(1, 1, 1);
+    // RayTracer::Light light(lightPosition, lightIntensity, lightColor);
 
-    core.addLight(light);
+    // core.addLight(light);
 
-    core.run();
+    // core.run();
 }
