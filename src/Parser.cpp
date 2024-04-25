@@ -49,6 +49,21 @@ void RayTracer::Parser::parseCameraSettings()
     }
 }
 
+std::string RayTracer::Parser::getPrimitiveName(libconfig::Setting &primitiveSetting)
+{
+    std::string name = primitiveSetting.getName();
+    if (name.empty())
+        throw RayTracer::Parser::ParserException("Primitives: Invalid name parameter");
+    if (_parsedPrimitives.size() > 0) {
+        for (auto &parsedPrimitive : _parsedPrimitives) {
+            if (parsedPrimitive.get() == name)
+                throw RayTracer::Parser::ParserException("Primitives: Duplicate name parameter");
+        }
+    }
+    _parsedPrimitives.push_back(name);
+    return name;
+}
+
 void RayTracer::Parser::parseSpheres()
 {
     try {
@@ -57,13 +72,14 @@ void RayTracer::Parser::parseSpheres()
         for (int i = 0; i < spheres->getLength(); i++) {
             libconfig::Setting &subSphere = spheres->operator[](i);
             libconfig::Setting &sphere = subSphere.operator[](0);
+            const std::string &name = getPrimitiveName(sphere);
             Math::Point3D center(sphere[0], sphere[1], sphere[2]);
             double radius = sphere[3];
             libconfig::Setting &color = sphere.lookup("color");
             RayTracer::Color sphereColor(color[0], color[1], color[2]);
             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::SPHERE);
             static_cast<RayTracer::Sphere&>(newShape).setup(center, radius, sphereColor);
-            newShape.setName(sphere.getName());
+            newShape.setName(name);
             refCore.addShape(newShape);
         }
     } catch (const libconfig::SettingNotFoundException &e) {
@@ -105,13 +121,14 @@ void RayTracer::Parser::parsePlanes()
         for (int i = 0; i < planes->getLength(); i++) {
             libconfig::Setting &subPlane = planes->operator[](i);
             libconfig::Setting &plane = subPlane.operator[](0);
+            const std::string &name = getPrimitiveName(plane);
             RayTracer:Plane::AXIS axis = getPlaneAxis(plane[0]);
             Math::Point3D origin = getPlaneOrigin(plane[1], axis);
             libconfig::Setting &color = plane.lookup("color");
             RayTracer::Color planeColor(color[0], color[1], color[2]);
             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::PLANE);
             static_cast<RayTracer::Plane&>(newShape).setup(planeColor, origin, axis);
-            newShape.setName(plane.getName());
+            newShape.setName(name);
             refCore.addShape(newShape);
         }
     } catch (const libconfig::SettingNotFoundException &e) {

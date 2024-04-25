@@ -51,8 +51,10 @@ namespace RayTracer {
 
             // PRIMITIVES
             libconfig::Setting *_primitivesSection;
+            std::vector<std::reference_wrapper<std::string>> _parsedPrimitives;
 
             void parsePrimitives();
+            std::string getPrimitiveName(libconfig::Setting &);
             void parseSpheres();
             void parsePlanes();
             RayTracer::Plane::AXIS getPlaneAxis(const std::string&);
