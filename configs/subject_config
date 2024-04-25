@@ -37,7 +37,10 @@ primitives:
 
     planes = (
         {
-            plane1: { axis = "Z" ; position = -20; color: { r = 64; g = 64; b = 255; } }
+            plane1: { axis = "Z" ; position = -20.0; color: { r = 64.0; g = 64.0; b = 255.0; } }
+        },
+        {
+            plane2: { axis = "X" ; position = -40.0; color: { r = 64.0; g = 255.0; b = 255.0; } }
         }
     );
 }

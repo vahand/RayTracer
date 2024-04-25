@@ -18,8 +18,6 @@ int main()
     RayTracer::Parser parser(core, "./configs/subject_config");
     parser.printConfig();
 
-    std::cerr << core._shapes.size() << " shapes loaded" << std::endl;
-
     // Math::Point3D lightPosition(0, 10, 0);
     // double lightIntensity = 1.0;
     // Math::Vector3D lightColor(1, 1, 1);

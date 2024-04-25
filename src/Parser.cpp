@@ -25,6 +25,7 @@ void RayTracer::Parser::printConfig()
     std::cerr << "Rotation: [" << camera_settings.rotation[0] << ", " << camera_settings.rotation[1] << ", " << camera_settings.rotation[2] << "]" << std::endl;
     std::cerr << "FOV: " << camera_settings.fov << " degrees" << std::endl;
     std::cerr << std::endl;
+    std::cerr << refCore._shapes.size() << " shapes loaded" << std::endl;
     std::cerr << " ---- END CONFIG ---- " << std::endl;
 }
 
@@ -45,7 +46,7 @@ void RayTracer::Parser::parseCameraSettings()
     }
 }
 
-void RayTracer::Parser::parsePrimitives()
+void RayTracer::Parser::parseSpheres()
 {
     try {
         libconfig::Setting *spheres = &_primitivesSection->lookup("spheres");
@@ -62,7 +63,61 @@ void RayTracer::Parser::parsePrimitives()
         }
     } catch (const libconfig::SettingNotFoundException &e) {
         std::cerr << "-->> No spheres found in config file!" << std::endl;
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for spheres in config file \"" + _path + "\"");
     }
+}
+
+RayTracer::Plane::AXIS RayTracer::Parser::getPlaneAxis(const std::string& parsedAxis)
+{
+    if (parsedAxis == "X")
+        return RayTracer::Plane::AXIS::X;
+    else if (parsedAxis == "Y")
+        return RayTracer::Plane::AXIS::Y;
+    else if (parsedAxis == "Z")
+        return RayTracer::Plane::AXIS::Z;
+    else
+        throw RayTracer::Parser::ParserException("Planes: Invalid axis parameter");
+}
+
+Math::Point3D RayTracer::Parser::getPlaneOrigin(double position, RayTracer::Plane::AXIS axis)
+{
+    if (axis == RayTracer::Plane::AXIS::X)
+        return Math::Point3D(position, 0, 0);
+    else if (axis == RayTracer::Plane::AXIS::Y)
+        return Math::Point3D(0, position, 0);
+    else if (axis == RayTracer::Plane::AXIS::Z)
+        return Math::Point3D(0, 0, position);
+    else
+        return Math::Point3D(0, 0, 0);
+}
+
+void RayTracer::Parser::parsePlanes()
+{
+    try {
+        libconfig::Setting *planes = &_primitivesSection->lookup("planes");
+        std::cerr << "-->> Planes found in config file!" << std::endl;
+        for (int i = 0; i < planes->getLength(); i++) {
+            libconfig::Setting &plane = planes->operator[](i).lookup("plane" + std::to_string(i + 1));
+            RayTracer:Plane::AXIS axis = getPlaneAxis(plane[0]);
+            Math::Point3D origin = getPlaneOrigin(plane[1], axis);
+            libconfig::Setting &color = plane.lookup("color");
+            RayTracer::Color planeColor(color[0], color[1], color[2]);
+            IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::PLANE);
+            static_cast<RayTracer::Plane&>(newShape).setup(planeColor, origin, axis);
+            refCore.addShape(newShape);
+        }
+    } catch (const libconfig::SettingNotFoundException &e) {
+        std::cerr << "-->> No planes found in config file!" << std::endl;
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for planes in config file \"" + _path + "\"");
+    }
+}
+
+void RayTracer::Parser::parsePrimitives()
+{
+    parseSpheres();
+    parsePlanes();
 }
 
 void RayTracer::Parser::parseConfig()

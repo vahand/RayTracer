@@ -42,15 +42,21 @@ namespace RayTracer {
         protected:
         private:
             std::string _path;
-
             libconfig::Config _cfg;
 
             // CAMERA SETTINGS
             libconfig::Setting *_cameraSection;
-            libconfig::Setting *_primitivesSection;
 
             void parseCameraSettings();
+
+            // PRIMITIVES
+            libconfig::Setting *_primitivesSection;
+
             void parsePrimitives();
+            void parseSpheres();
+            void parsePlanes();
+            RayTracer::Plane::AXIS getPlaneAxis(const std::string&);
+            Math::Point3D getPlaneOrigin(double, RayTracer::Plane::AXIS);
     };
 }
 
