@@ -1,0 +1,66 @@
+# Configuration of the camera
+camera:
+{
+    resolution:
+    {
+        width = 1920;
+        height = 1080;
+    }
+    position:
+    {
+        x = 0.0;
+        y = -100.0;
+        z = 20.0;
+    }
+    rotation:
+    {
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
+    }
+    fieldOfView = 72.0; # In degree
+}
+
+# Primitives in the scene
+primitives:
+{
+
+    # List of spheres
+    spheres = (
+        {
+            vahanSphere: { x = 5.0; y = 5.0; z = 30.0; r = 2.0; color: { r = 255.0; g = 64.0; b = 64.0;} }
+        }
+    );
+
+    planes = (
+        {
+            vahanPlane: { axis = "Y" ; position = 15.0; color: { r = 64.0; g = 255.0; b = 64.0; } }
+        }
+    );
+}
+
+# Light configuration
+lights:
+{
+    ambient = 0.4;
+    diffuse = 0.6;
+
+    # List of point lights
+    point = (
+        {
+            vahanLight: { x = 400.0; y = 100.0; z = 500.0; }
+        },
+        {
+            oop: { x = 400.0; y = 100.0; z = 500.0; }
+        }
+    ) ;
+
+    # List of directional lights
+    directional = () ;
+}
+
+transformations:
+{
+    sphere1: { type = "translation" ; vector: { x = 12 ; y = 67 ; z = 34 } } # a translation transfo. applied to sphere1
+    sphere2: { type = "rotation" ; vector: { x = 12 ; y = 67 ; z = 34 } } # a rotation transfo. applied to sphere2
+}

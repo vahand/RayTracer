@@ -6,22 +6,22 @@
 ##
 
 all:
-	cd sphere && make
-	cd cone && make
-	cd cylinder && make
-	cd plane && make
+	make -C sphere
+	make -C cone
+	make -C cylinder
+	make -C plane
 
 clean:
-	cd sphere && make clean
-	cd cone && make clean
-	cd cylinder && make clean
-	cd plane && make clean
+	make clean -C sphere
+	make clean -C cone
+	make clean -C cylinder
+	make clean -C plane
 
 fclean: clean
-	cd sphere && make fclean
-	cd cone && make fclean
-	cd cylinder && make fclean
-	cd plane && make fclean
+	make fclean -C sphere
+	make fclean -C cone
+	make fclean -C cylinder
+	make fclean -C plane
 
 re:	fclean all
 

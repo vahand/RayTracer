@@ -1,0 +1,17 @@
+main:
+{
+    // Paramètres généraux
+    parametre1 = "valeur1";
+    parametre2 = 42;
+    parametre3 = true;
+
+    // Sous-section
+    sous_section:
+    {
+        sous_parametre1 = "valeur_sous_parametre";
+        sous_parametre2 = 3.14;
+    }
+
+    // Liste de valeurs
+    liste_de_valeurs = (1, 2, 3, 4, 5);
+}

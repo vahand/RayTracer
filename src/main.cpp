@@ -8,11 +8,16 @@
 #include "../includes/Core.hpp"
 #include "../shapes/sphere/src/Sphere.hpp"
 #include "../shapes/plane/src/Plane.hpp"
+#include "../includes/Parser.hpp"
 #include "../includes/Light.hpp"
 
 int main()
 {
     RayTracer::Core core(400, 400);
+    core.loadLibrairies();
+
+    RayTracer::Parser parser(core, "./configs/subject_config");
+    parser.printConfig();
 
     double sphereRadius = 2.0;
 
@@ -31,7 +36,6 @@ int main()
     core.addShape(sphere);
     core.addShape(sphere2);
     core.addShape(sphere3);
-    core.loadLibrairies();
 
     // RayTracer::Plane plane;
     // RayTracer::Color planeColor(0, 255, 0);
@@ -39,5 +43,5 @@ int main()
     // plane.setup(planeColor, planeOrigin, RayTracer::Plane::AXIS::Y);
     // core.addShape(plane);
 
-    core.run();
+    // core.run();
 }
