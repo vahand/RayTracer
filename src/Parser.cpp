@@ -60,7 +60,7 @@ std::string RayTracer::Parser::getPrimitiveName(libconfig::Setting &primitiveSet
         throw RayTracer::Parser::ParserException("Primitives: Invalid name parameter");
     if (_parsedPrimitives.size() > 0) {
         for (auto &parsedPrimitive : _parsedPrimitives) {
-            if (parsedPrimitive.get() == name)
+            if (parsedPrimitive == name)
                 throw RayTracer::Parser::ParserException("Primitives: Duplicate name parameter");
         }
     }
@@ -74,7 +74,7 @@ std::string RayTracer::Parser::getLightName(libconfig::Setting &lightSetting)
         throw RayTracer::Parser::ParserException("Lights: Invalid name parameter");
     if (_parsedLights.size() > 0) {
         for (auto &parsedLight : _parsedLights) {
-            if (parsedLight.get() == name)
+            if (parsedLight == name)
                 throw RayTracer::Parser::ParserException("Lights: Duplicate name parameter");
         }
     }
@@ -199,10 +199,10 @@ double RayTracer::Parser::getDiffuseFactor(libconfig::Setting &pointLight)
     try {
         return pointLight.lookup("diffuse");
     } catch (const libconfig::SettingNotFoundException &e) {
-        if (_mainAmbientFactorIsDefined)
-            return _mainAmbientFactor;
+        if (_mainDiffuseFactorIsDefined)
+            return _mainDiffuseFactor;
         else
-            throw RayTracer::Parser::ParserException("Ambient factor is not defined for light in config file \"" + _path + "\"");
+            throw RayTracer::Parser::ParserException("Diffuse factor is not defined for light in config file \"" + _path + "\"");
     }
 }
 

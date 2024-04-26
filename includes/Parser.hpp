@@ -51,7 +51,7 @@ namespace RayTracer {
 
             // PRIMITIVES
             libconfig::Setting *_primitivesSection;
-            std::vector<std::reference_wrapper<std::string>> _parsedPrimitives;
+            std::vector<std::string> _parsedPrimitives;
 
             void parsePrimitives();
             std::string getPrimitiveName(libconfig::Setting &);
@@ -62,7 +62,7 @@ namespace RayTracer {
 
             // LIGHTS
             libconfig::Setting *_lightsSection;
-            std::vector<std::reference_wrapper<std::string>> _parsedLights;
+            std::vector<std::string> _parsedLights;
 
             bool _mainAmbientFactorIsDefined;
             bool _mainDiffuseFactorIsDefined;
