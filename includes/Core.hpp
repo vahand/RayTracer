@@ -21,6 +21,8 @@
     #include <unordered_map>
     #include <fcntl.h>
     #include <dirent.h>
+    #include <iostream>
+    #include <filesystem>
 
 namespace RayTracer {
     class Core {

@@ -128,18 +128,15 @@ void RayTracer::Core::loadLibrary(std::string path)
 
 void RayTracer::Core::loadLibrairies()
 {
-    DIR *dir;
-    struct dirent *ent;
-    if ((dir = opendir("./lib")) != NULL) {
-        while ((ent = readdir(dir)) != NULL) {
-            std::string filename = ent->d_name;
+    try {
+        for (const auto &entry : std::filesystem::directory_iterator("./lib")) {
+            std::string filename = entry.path().filename().string();
             if (filename.find(".so") != std::string::npos) {
                 loadLibrary("./lib/" + filename);
             }
         }
-        closedir(dir);
-    } else {
-        throw RayException("Failed to open directory");
+    } catch (std::filesystem::filesystem_error &e) {
+        throw RayException(e.what());
     }
 }
 
