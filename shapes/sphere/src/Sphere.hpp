@@ -25,6 +25,12 @@ namespace RayTracer {
                 _color = color;
             }
 
+            void setup(const Math::Point3D& center, double radius, const RayTracer::Color& color) {
+                _origin = center;
+                _radius = radius;
+                _color = color;
+            }
+
             Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const
             {
                 return Math::Vector3D(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
