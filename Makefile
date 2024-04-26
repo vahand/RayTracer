@@ -28,15 +28,15 @@ $(TARGET): $(OBJ)
 	$(CXX) -o $@ $^ -lconfig -lconfig++
 
 shape:
-	cd shapes && make
+	make -C shapes
 
 clean:
 	rm -f $(OBJ)
-	cd shapes && make clean
+	make fclean -C shapes
 
 fclean: clean
 	rm -f $(TARGET)
-	cd shapes && make fclean
+	make fclean -C shapes
 
 re:	fclean all
 
