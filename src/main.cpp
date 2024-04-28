@@ -10,27 +10,37 @@
 #include "../shapes/plane/src/Plane.hpp"
 #include "../includes/Light.hpp"
 
+#include "../includes/Workers.hpp"
+
 int main()
 {
     RayTracer::Core core(400, 400);
+    Workers workers(14, 400, 400);
 
     double sphereRadius = 2.0;
 
-    RayTracer::Color sphereColor(255, 0, 0);
-    Math::Point3D sphereCenter(5, 5, 30);
-    RayTracer::Sphere sphere(sphereCenter, sphereRadius, sphereColor);
+    auto material_ground = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(210, 210, 20));
+    auto material_center = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(20, 200, 200));
+    auto material_left   = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(48, 48, 48), 0.0);
+    auto material_right  = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(128, 128, 50), 0.8);
 
-    RayTracer::Color sphereColor2(0, 255, 0);
-    Math::Point3D sphereCenter2(5, 5, 20);
-    RayTracer::Sphere sphere2(sphereCenter2, sphereRadius, sphereColor2);
+    Math::Point3D sphere_left_pos(2.5, 8, 20);
+    RayTracer::Sphere sphere_left(sphere_left_pos, sphereRadius, material_left);
 
-    RayTracer::Color sphereColor3(0, 0, 255);
-    Math::Point3D sphereCenter3(30, 100, 50);
-    RayTracer::Sphere sphere3(sphereCenter3, 100, sphereColor3);
+    Math::Point3D sphere_center_pos(7.5, 8, 20);
+    RayTracer::Sphere sphere_center(sphere_center_pos, sphereRadius, material_center);
 
-    core.addShape(sphere);
-    core.addShape(sphere2);
-    core.addShape(sphere3);
+    Math::Point3D sphere_right_pos(12.5, 8, 20);
+    RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_right);
+
+    Math::Point3D sphere_ground_pos(7.5, 108, 0);
+    RayTracer::Sphere sphere_ground(sphere_ground_pos, 100, material_ground);
+
+    core.addShape(sphere_ground);
+    core.addShape(sphere_center);
+    core.addShape(sphere_left);
+    core.addShape(sphere_right);
+
     core.loadLibrairies();
 
     // RayTracer::Plane plane;
@@ -39,5 +49,35 @@ int main()
     // plane.setup(planeColor, planeOrigin, RayTracer::Plane::AXIS::Y);
     // core.addShape(plane);
 
-    core.run();
+    std::cerr << "Rendering settings: " << std::endl;
+    std::cerr << " - Width: " << core._camera._image_width << std::endl;
+    std::cerr << " - Height: " << core._camera._image_height << std::endl;
+    std::cerr << " - Quality (samples): " << core._camera._samples << std::endl;
+    std::cerr << " - Max depth: " << core._maxDepth << std::endl;
+    std::cerr << " - Threads: " << workers.getThreadsCount() << std::endl;
+
+    workers.initialize(core);
+    workers.render(core);
 }
+
+
+
+    // auto material_ground = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0.8, 0.8, 0.0));
+    // auto material_center = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0.1, 0.2, 0.5));
+    // auto material_left   = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(0.8, 0.8, 0.8));
+    // auto material_right  = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(0.8, 0.6, 0.2));
+
+
+    // Math::Point3D sphereCenter(5, 5, 30);
+    // RayTracer::Sphere sphere(sphereCenter, sphereRadius, sphereColor);
+
+    // Math::Point3D sphereCenter2(5, 5, 20);
+    // RayTracer::Sphere sphere2(sphereCenter2, sphereRadius, sphereColor2);
+
+    // Math::Point3D sphereCenter3(30, 100, 50);
+    // RayTracer::Sphere sphere3(sphereCenter3, 100, sphereColor3);
+
+    // core.addShape(sphere);
+    // core.addShape(sphere2);
+    // core.addShape(sphere3);
+    // core.loadLibrairies();
