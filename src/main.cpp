@@ -19,8 +19,8 @@ int main()
     Workers workers(14, 400, 400);
     core.loadLibrairies();
 
-    RayTracer::Parser parser(core, "./configs/subject_config");
-    parser.printConfig();
+    // RayTracer::Parser parser(core, "./configs/subject_config");
+    // parser.printConfig();
 
     double sphereRadius = 2.0;
 
@@ -46,8 +46,6 @@ int main()
     core.addShape(sphere_left);
     core.addShape(sphere_right);
 
-    core.loadLibrairies();
-
     // RayTracer::Plane plane;
     // RayTracer::Color planeColor(0, 255, 0);
     // Math::Point3D planeOrigin(0, 15, 0);
@@ -64,25 +62,3 @@ int main()
     workers.initialize(core);
     workers.render(core);
 }
-
-
-
-    // auto material_ground = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0.8, 0.8, 0.0));
-    // auto material_center = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0.1, 0.2, 0.5));
-    // auto material_left   = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(0.8, 0.8, 0.8));
-    // auto material_right  = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(0.8, 0.6, 0.2));
-
-
-    // Math::Point3D sphereCenter(5, 5, 30);
-    // RayTracer::Sphere sphere(sphereCenter, sphereRadius, sphereColor);
-
-    // Math::Point3D sphereCenter2(5, 5, 20);
-    // RayTracer::Sphere sphere2(sphereCenter2, sphereRadius, sphereColor2);
-
-    // Math::Point3D sphereCenter3(30, 100, 50);
-    // RayTracer::Sphere sphere3(sphereCenter3, 100, sphereColor3);
-
-    // core.addShape(sphere);
-    // core.addShape(sphere2);
-    // core.addShape(sphere3);
-    // core.loadLibrairies();
