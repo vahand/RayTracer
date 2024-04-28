@@ -11,6 +11,13 @@
     #include "Vector3D.hpp"
     #include "Point3D.hpp"
     #include "Ray.hpp"
+    #include <memory>
+
+namespace RayTracer {
+    namespace Material {
+        class AMaterial;
+    }
+}
 
 class HitData {
     public:
@@ -29,6 +36,10 @@ class HitData {
             else
                 normal = -united_normal;
         }
+
+        std::shared_ptr<RayTracer::Material::AMaterial> material;
 };
+
+#include "Material.hpp"
 
 #endif /* !HITDATA_HPP_ */

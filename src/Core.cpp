@@ -19,68 +19,14 @@ RayTracer::Core::Core(int screenWidth, int screenHeight)
 
     this->_camera = RayTracer::Camera(cameraPosition, camera_direction, camera_up);
     this->_camera._aspect_ratio = static_cast<double>(screenWidth / screenHeight);
-    this->_camera._fov_degrees = 30;
-    this->_camera._samples = 100;
+    this->_camera._fov_degrees = 45;
+    this->_camera._samples = 50;
     this->_camera._image_width = screenWidth;
     this->_camera._image_height = screenHeight;
     this->_camera.initialize();
-}
 
-void RayTracer::Core::writeColor(RayTracer::Color &color)
-{
-    static const RayTracer::Range colorRange(0.0, 255.0);
-    int r = colorRange.bound(color._r);
-    int g = colorRange.bound(color._g);
-    int b = colorRange.bound(color._b);
-
-    std::cout << r << ' ' << g << ' ' << b << '\n';
-}
-
-RayTracer::Color getRayColor(const RayTracer::Ray& r, const RayTracer::Core& core, int limit = 10) {
-    if (limit <= 0)
-        return RayTracer::Color(0, 0, 0);
-
-    HitData data;
-    double infinity = std::numeric_limits<double>::infinity();
-    if (core.hit(r, RayTracer::Range(0.001, infinity), data)) {
-        Math::Vector3D direction = data.normal + Math::Vector3D::randomUnitVector();
-        return getRayColor(RayTracer::Ray(data.point, direction), core, limit - 1) * 0.5;
-    }
-
-    Math::Vector3D unit_dir = r.direction().normalize();
-    auto a = 0.5 * (unit_dir.y() + 1.0);
-    Math::Vector3D vec = RayTracer::Color(255, 255, 255).getRangedColor() * (1.0 - a) + RayTracer::Color(0.5*255.0, 0.7*255.0, 1.0*255.0).getRangedColor() * a;
-    return RayTracer::Color(vec.x() * 255.999, vec.y() * 255.999, vec.z() * 255.999);
-}
-
-void RayTracer::Core::run()
-{
-    std::cout << "P3\n" << this->_screenWidth << ' ' << this->_screenHeight << "\n255\n";
-    auto startTime = std::chrono::high_resolution_clock::now();
-
-    auto iterationTime = std::chrono::high_resolution_clock::now();
-    for (int y = 0; y < this->_screenHeight; y++) {
-        displayProgress(y, this->_screenHeight, iterationTime, startTime);
-        iterationTime = std::chrono::high_resolution_clock::now();
-        for (int x = 0; x < this->_screenWidth; x++) {
-            double u = static_cast<double>(x) / this->_screenWidth;
-            double v = static_cast<double>(y) / this->_screenHeight;
-
-            RayTracer::Color finalColor(0, 0, 0);
-            for (int sample = 0; sample < this->_camera._samples; sample++) {
-                RayTracer::Ray ray = this->_camera.rayAround(u, v);
-                finalColor += getRayColor(ray, *this);
-            }
-            finalColor *= this->_camera._samples_scale;
-            writeColor(finalColor);
-
-        }
-    }
-    auto endTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = endTime - startTime;
-
-    displayProgress(this->_screenHeight, this->_screenHeight, iterationTime, startTime);
-    std::cerr << "\nDone! - Total Lines: " << this->_screenHeight << std::endl;
+    this->_maxDepth = 50;
+    this->sceneBackground = RayTracer::Color(0, 0, 0);
 }
 
 void RayTracer::Core::loadLibrary(std::string path)

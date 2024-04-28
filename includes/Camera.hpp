@@ -80,14 +80,6 @@ namespace RayTracer
                 _pixelDelta_y = _left_side * (1.0 / _image_height);
 
                 std::cerr << "Camera initialized" << std::endl;
-                printPoint(_origin, "Origin");
-                printVector(_direction, "Direction");
-                printVector(_up, "Up");
-                printPoint(_screen_center, "Screen Center");
-                printVector(_bottom_side, "Bottom Side");
-                printVector(_left_side, "Left Side");
-                printVector(_pixelDelta_x, "Pixel Delta X");
-                printVector(_pixelDelta_y, "Pixel Delta Y");
             }
 
 

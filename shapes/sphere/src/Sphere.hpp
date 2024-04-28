@@ -12,18 +12,16 @@
     #include "../../../includes/HitData.hpp"
     #include "../../../includes/Range.hpp"
     #include "../../../includes/Ray.hpp"
+    #include "../../../includes/Material.hpp"
+    #include "../../../includes/Color.hpp"
     #include <cmath>
 
 namespace RayTracer {
     class Sphere : public IShape {
         public:
             Sphere() = default;
-            Sphere(const Math::Point3D& center, double radius, const RayTracer::Color& color)
-            {
-                _origin = center;
-                _radius = radius;
-                _color = color;
-            }
+            Sphere(const Math::Point3D& center, double radius, std::shared_ptr<RayTracer::Material::AMaterial> material)
+                : _material(material), _origin(center), _radius(radius) {}
 
             void setup(const Math::Point3D& center, double radius, const RayTracer::Color& color) {
                 _origin = center;
@@ -58,9 +56,10 @@ namespace RayTracer {
                 data.tValue = root;
                 data.point = ray.at(data.tValue);
                 data.normal = (data.point - _origin) / _radius;
+                data.determineFace(ray, data.normal);
+                data.material = _material;
                 return true;
             }
-
 
             Math::Vector3D normal(const Math::Point3D& point) const
             {
@@ -76,6 +75,7 @@ namespace RayTracer {
             Math::Point3D _origin;
             double _radius;
             RayTracer::Color _color;
+            std::shared_ptr<RayTracer::Material::AMaterial> _material;
     };
 }
 

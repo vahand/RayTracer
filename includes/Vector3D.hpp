@@ -175,6 +175,12 @@ namespace Math {
                 return onSphere.DotProduct(normal) > 0.0 ? onSphere : -onSphere;
             }
 
+            static Vector3D reflect(const Vector3D& v, const Vector3D& n) {
+                Vector3D tmp_v = v;
+                Vector3D tmp_n = n;
+                return tmp_v - (tmp_n * (tmp_v.DotProduct(tmp_n) * 2));
+            }
+
         protected:
         private:
     };
