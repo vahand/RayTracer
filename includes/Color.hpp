@@ -14,7 +14,14 @@ namespace RayTracer {
     class Color {
         public:
             Color() = default;
-            Color(double r, double g, double b) : _r(r), _g(g), _b(b) {}
+            Color(double r, double g, double b) : _r(r), _g(g), _b(b) {
+                if (_r < 0) _r = 0;
+                if (_g < 0) _g = 0;
+                if (_b < 0) _b = 0;
+                if (_r > 255) _r = 255;
+                if (_g > 255) _g = 255;
+                if (_b > 255) _b = 255;
+            }
             ~Color() = default;
 
             double _r;
@@ -30,11 +37,26 @@ namespace RayTracer {
             }
 
             Color operator*(const Color &color) const {
-                return Color(_r * color._r, _g * color._g, _b * color._b);
+                double r = _r * color._r;
+                double g = _g * color._g;
+                double b = _b * color._b;
+                if (r > 255) r = 255;
+                if (g > 255) g = 255;
+                if (b > 255) b = 255;
+                return Color(r, g, b);
             }
 
             Color operator*(double scalar) const {
-                return Color(_r * scalar, _g * scalar, _b * scalar);
+                double r = _r * scalar;
+                double g = _g * scalar;
+                double b = _b * scalar;
+                if (r > 255) r = 255;
+                if (g > 255) g = 255;
+                if (b > 255) b = 255;
+                if (r < 0) r = 0;
+                if (g < 0) g = 0;
+                if (b < 0) b = 0;
+                return Color(r, g, b);
             }
 
             Color operator/(double scalar) const {
