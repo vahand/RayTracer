@@ -34,6 +34,7 @@ namespace RayTracer {
                 private:
                     std::string _message;
             };
+
             enum LIBRARY_TYPE {
                 SPHERE,
                 PLANE,
@@ -45,17 +46,17 @@ namespace RayTracer {
             Core(int screenWidth, int screenHeight);
             ~Core() = default;
 
-            void run();
-            void writeColor(RayTracer::Color &color);
-
             std::vector<std::reference_wrapper<IShape>> _shapes;
             std::vector<std::reference_wrapper<Light>> _lights;
             std::unordered_map<LIBRARY_TYPE, std::shared_ptr<void>> _handles;
+            RayTracer::Color sceneBackground;
+            int _screenWidth;
+            int _screenHeight;
+            int _maxDepth = 10;
+            RayTracer::Camera _camera;
 
             void addShape(IShape &shape) { _shapes.push_back(shape); }
             void addLight(Light &light) { _lights.push_back(light); }
-
-            RayTracer::Camera _camera;
 
             bool hit(const RayTracer::Ray &r, RayTracer::Range ray_range, HitData &data) const
             {
@@ -74,10 +75,44 @@ namespace RayTracer {
                 return hasHitted;
             }
 
+            static RayTracer::Color getGammaColor(RayTracer::Color color)
+            {
+                double r = color._r / 255.0;
+                double g = color._g / 255.0;
+                double b = color._b / 255.0;
+
+                r = std::sqrt(r);
+                g = std::sqrt(g);
+                b = std::sqrt(b);
+
+                return RayTracer::Color(r * 255, g * 255, b * 255);
+            }
+
+            static RayTracer::Color getRayColor(const RayTracer::Ray& r, const RayTracer::Core& core, int limit = 10) {
+                if (limit <= 0)
+                    return RayTracer::Color(0, 0, 0);
+
+                HitData data;
+                double infinity = std::numeric_limits<double>::infinity();
+                if (!core.hit(r, RayTracer::Range(0.001, infinity), data))
+                    return core.sceneBackground;
+
+                RayTracer::Ray diffusedRay;
+                RayTracer::Color dissipation;
+                RayTracer::Color emitted = data.material->emit();
+
+                if (!data.material->diffuse(r, data, dissipation, diffusedRay))
+                    return emitted;
+
+                RayTracer::Color diffusedColor = dissipation * getRayColor(diffusedRay, core, limit - 1);
+                return emitted + diffusedColor;
+            }
+
             static void displayProgress(
                 int current, int total,
                 std::chrono::time_point<std::chrono::high_resolution_clock> iterationTime = std::chrono::high_resolution_clock::now(),
-                std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now())
+                std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now(),
+                int threadIndex = 0)
             {
                 int progress = static_cast<int>((static_cast<double>(current) / total) * 100);
                 int barWidth = 70;
@@ -104,17 +139,15 @@ namespace RayTracer {
                 }
                 std::clog << "] " << progress << "% (" << current << "/" << total << ")";
                 std::clog << " - Elapsed: " << static_cast<int>(totalElapsed / 1000.0) << "s - ETA: " << static_cast<int>(timeEstimate / 1000) << "s (1/" << static_cast<int>(elapsed.count() * 1000) << "ms)";
+                std::clog << " - Thread: " << threadIndex;
+                std::clog << "       ";
                 std::clog.flush();
             }
 
             void loadLibrairies();
             RayTracer::IShape& getNewShape(LIBRARY_TYPE type);
 
-
         private:
-            int _screenWidth;
-            int _screenHeight;
-
             void loadLibrary(std::string path);
 
             bool isShapeType(LIBRARY_TYPE type) {
