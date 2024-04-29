@@ -6,8 +6,8 @@
 */
 
 #include "../includes/Core.hpp"
-#include "../shapes/sphere/src/Sphere.hpp"
-#include "../shapes/plane/src/Plane.hpp"
+#include "../primitives/sphere/src/Sphere.hpp"
+#include "../primitives/plane/src/Plane.hpp"
 #include "../includes/Parser.hpp"
 #include "../includes/Light.hpp"
 

@@ -8,8 +8,8 @@
 #ifndef CORE_HPP_
 #define CORE_HPP_
 
-    #include "../shapes/sphere/src/Sphere.hpp"
-    #include "../shapes/plane/src/Plane.hpp"
+    #include "../primitives/sphere/src/Sphere.hpp"
+    #include "../primitives/plane/src/Plane.hpp"
     #include "Ray.hpp"
     #include "Color.hpp"
     #include "Camera.hpp"
