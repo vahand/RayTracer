@@ -21,12 +21,18 @@ camera:
     fieldOfView = 72.0; # In degree
 }
 
+materials:
+{
+    redMat: { type = "lambertian"; color = { r = 0.5; g = 0.5; b = 0.5; } }
+    metal: { type = "metal"; fuzziness = 0.1; color = { r = 0.5; g = 0.5; b = 0.5; }} # fuzziness is only for metals (optional otherwise 0)
+}
+
 # Primitives in the scene
 primitives:
 {
     planes = (
         {
-            vahanPlane: { axis = "Y" ; position = 15.0; color: { r = 64.0; g = 255.0; b = 64.0; } }
+            vahanPlane: { axis = "Y" ; position = 15.0; material = "redMat"; }
         }
     );
 }
