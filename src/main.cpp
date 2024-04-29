@@ -22,10 +22,12 @@ bool hasOption(int ac, char **av, const std::string &option)
     return false;
 }
 
-void *getOptionValue(int ac, char **av, const std::string &option)
+void *getOptionValue(int ac, char **av, const std::string &option, const std::string &shortOption = "")
 {
     for (int i = 0; i < ac; i++) {
         if (std::string(av[i]) == option)
+            return av[i + 1];
+        if (shortOption != "" && std::string(av[i]) == shortOption)
             return av[i + 1];
     }
     return nullptr;
@@ -43,7 +45,7 @@ int main(int ac, char **av)
     bool threadsOption = hasOption(ac, av, "-t") || hasOption(ac, av, "--threads");
     int threadsCount = 1;
     if (threadsOption) {
-        threadsCount = std::stoi(static_cast<const char *>(getOptionValue(ac, av, "-t")));
+        threadsCount = std::stoi(static_cast<const char *>(getOptionValue(ac, av, "--threads", "-t")));
     }
 
     RayTracer::Core core(400, 400);
