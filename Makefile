@@ -20,23 +20,23 @@ CXXFLAGS = -fPIC
 
 all:
 	make core
-	make shape
+	make primitive
 
 core: $(TARGET)
 
 $(TARGET): $(OBJ)
 	$(CXX) -o $@ $^ -lconfig -lconfig++
 
-shape:
-	make -C shapes
+primitive:
+	make -C primitives
 
 clean:
 	rm -f $(OBJ)
-	make fclean -C shapes
+	make fclean -C primitives
 
 fclean: clean
 	rm -f $(TARGET)
-	make fclean -C shapes
+	make fclean -C primitives
 
 re:	fclean all
 
