@@ -9,8 +9,8 @@ camera:
     position:
     {
         x = 0.0;
-        y = -15.0;
-        z = 20.0;
+        y = -40.0;
+        z = 0.0;
     }
     rotation:
     {
@@ -24,14 +24,6 @@ camera:
 # Primitives in the scene
 primitives:
 {
-
-    # List of spheres
-    spheres = (
-        {
-            vahanSphere: { x = 5.0; y = 10.0; z = 30.0; r = 2.0; color: { r = 255.0; g = 64.0; b = 64.0;} }
-        }
-    );
-
     planes = (
         {
             vahanPlane: { axis = "Y" ; position = 15.0; color: { r = 64.0; g = 255.0; b = 64.0; } }

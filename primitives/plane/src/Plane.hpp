@@ -30,22 +30,45 @@ namespace RayTracer {
                 return Math::Vector3D(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
             }
 
+            double getDConstante() const
+            {
+                Math::Vector3D n = getNormalVector();
+                Math::Point3D o = _origin;
+                double d = n.X * o.X + n.Y * o.Y + n.Z * o.Z;
+
+                return d;
+            }
+
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
             {
-                if (isVectorParallel(ray.direction()))
+                if (isVectorParallel(ray.direction())) {
+                    std::cerr << "Ray is parallel to plane" << std::endl;
                     return false;
-                Math::Point3D a = ray.origin();
-                Math::Vector3D ab = ray.direction();
+                }
+                Math::Point3D A = ray.origin();
+                Math::Vector3D AB = ray.direction();
+                // std::cerr << "AB: (" << ab.X << " ; " << ab.Y << " ; " << ab.Z << ")" << std::endl;
                 Math::Vector3D n = getNormalVector();
-                double numerator = (-1) * (n.X * a.X) - (n.Y * a.Y) - (n.Z * a.Z);
-                double denominator = (n.X * ab.X) + (n.Y * ab.Y) + (n.Z * ab.Z);
-                double t = numerator / denominator;
-                if (!ray_range.around(t))
+                double d = getDConstante();
+                // std::cerr << "D = " << d << std::endl;
+                if (d < 0) {
                     return false;
+                }
+                double numerator = -d - (n.X * A.X) - (n.Y * A.Y) - (n.Z * A.Z);
+                double denominator = (n.X * AB.X) + (n.Y * AB.Y) + (n.Z * AB.Z);
+                double t = numerator / denominator;
+                // if (!ray_range.around(t)) {
+                //     std::cerr << "T solution is not in the range" << std::endl;
+                //     return false;
+                // }
+                double x = A.X + AB.X * t;
+                double y = A.Y + AB.Y * t;
+                double z = A.Z + AB.Z * t;
+                // std::cerr << "hit with (AB): (" << x << " ; " << y << " ; " << z << ")" << std::endl;
                 data.tValue = t;
                 data.normal = getNormalVector();
                 data.point = ray.at(t);
-                std::cerr << "Hit on plane!" << std::endl;
+                // std::cerr << "Hit on plane!" << std::endl;
                 return true;
              }
 
