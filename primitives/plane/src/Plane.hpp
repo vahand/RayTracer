@@ -63,36 +63,17 @@ namespace RayTracer {
 
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
             {
-                if (isVectorParallel(ray.direction())) {
-                    std::cerr << "Ray is parallel to plane" << std::endl;
-                    return false;
-                }
-                Math::Point3D A = ray.origin();
-                Math::Vector3D AB = ray.direction();
-                // std::cerr << "AB: (" << ab.X << " ; " << ab.Y << " ; " << ab.Z << ")" << std::endl;
-                Math::Vector3D n = getNormalVector();
                 double d = getDConstante();
-                // std::cerr << "D = " << d << std::endl;
-                if (d < 0) {
+                double t = (d - ray.origin().DotProduct(getNormalVector())) / getNormalVector().DotProduct(ray.direction());
+                if (t < ray_range.min || t > ray_range.max)
                     return false;
-                }
-                double numerator = -d - (n.X * A.X) - (n.Y * A.Y) - (n.Z * A.Z);
-                double denominator = (n.X * AB.X) + (n.Y * AB.Y) + (n.Z * AB.Z);
-                double t = numerator / denominator;
-                // if (!ray_range.around(t)) {
-                //     std::cerr << "T solution is not in the range" << std::endl;
-                //     return false;
-                // }
-                double x = A.X + AB.X * t;
-                double y = A.Y + AB.Y * t;
-                double z = A.Z + AB.Z * t;
-                // std::cerr << "hit with (AB): (" << x << " ; " << y << " ; " << z << ")" << std::endl;
                 data.tValue = t;
+                data.point = ray.at(data.tValue);
                 data.normal = getNormalVector();
-                data.point = ray.at(t);
-                // std::cerr << "Hit on plane!" << std::endl;
+                data.determineFace(ray, data.normal);
+                data.material = _material;
                 return true;
-             }
+            }
 
             Math::Vector3D getNormalVector() const {
                 return _normal;

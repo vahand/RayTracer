@@ -83,6 +83,10 @@ namespace Math {
                 return Math::Vector3D(this->x() / point.x(), this->y() / point.y(), this->z() / point.z());
             }
 
+            double DotProduct(const Math::Vector3D &vec) {
+                return X * vec.X + Y * vec.Y + Z * vec.Z;
+            }
+
             double X;
             double Y;
             double Z;

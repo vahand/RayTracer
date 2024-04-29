@@ -38,6 +38,9 @@ int main()
     Math::Point3D sphere_ground_pos(7.5, 108, 0);
     RayTracer::Sphere sphere_ground(sphere_ground_pos, 100, material_ground);
 
+    Math::Point3D plane_position(0, 9, 0);
+    RayTracer::Plane plane(plane_position, RayTracer::Plane::AXIS::Y, material_ground);
+
     Math::Point3D sphere_light1_pos(12.5, 8, 10);
     Math::Point3D sphere_light2_pos(12.5, 8, 20);
     Math::Point3D sphere_light3_pos(7.5, 0, 20);
@@ -49,8 +52,9 @@ int main()
     core.addShape(sphere_light1);
     core.addShape(sphere_light2);
     core.addShape(sphere_light3);
+    core.addShape(plane);
 
-    core.addShape(sphere_ground);
+    // core.addShape(sphere_ground);
     core.addShape(sphere_center);
     core.addShape(sphere_left);
 
