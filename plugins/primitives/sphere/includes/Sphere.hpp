@@ -8,13 +8,13 @@
 #ifndef SPHERE_HPP_
     #define SPHERE_HPP_
 
-    #include "../../../includes/AShape.hpp"
-    #include "../../../includes/HitData.hpp"
-    #include "../../../includes/Range.hpp"
-    #include "../../../includes/Ray.hpp"
-    #include "../../../includes/Material.hpp"
-    #include "../../../includes/Color.hpp"
-    #include "../../../includes/ShapeConfig.hpp"
+    #include "../../../../includes/AShape.hpp"
+    #include "../../../../includes/HitData.hpp"
+    #include "../../../../includes/Range.hpp"
+    #include "../../../../includes/Ray.hpp"
+    #include "../../../../includes/Material.hpp"
+    #include "../../../../includes/Color.hpp"
+    #include "../../../../includes/ShapeConfig.hpp"
     #include <cmath>
 
 namespace RayTracer {

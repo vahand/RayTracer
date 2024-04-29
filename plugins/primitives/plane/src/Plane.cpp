@@ -5,7 +5,7 @@
 ** Plane
 */
 
-#include "Plane.hpp"
+#include "../includes/Plane.hpp"
 
 extern "C" RayTracer::IShape * initShape()
 {

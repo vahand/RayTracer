@@ -8,10 +8,10 @@
 #ifndef PLANE_HPP_
 #define PLANE_HPP_
 
-#include "../../../includes/AShape.hpp"
-#include "../../../includes/HitData.hpp"
-#include "../../../includes/Range.hpp"
-#include "../../../includes/Ray.hpp"
+#include "../../../../includes/AShape.hpp"
+#include "../../../../includes/HitData.hpp"
+#include "../../../../includes/Range.hpp"
+#include "../../../../includes/Ray.hpp"
 #include <cmath>
 
 namespace RayTracer {

@@ -8,8 +8,8 @@
 #ifndef CORE_HPP_
 #define CORE_HPP_
 
-    #include "../primitives/sphere/src/Sphere.hpp"
-    #include "../primitives/plane/src/Plane.hpp"
+    #include "../plugins/primitives/sphere/includes/Sphere.hpp"
+    #include "../plugins/primitives/plane/includes/Plane.hpp"
     #include "Ray.hpp"
     #include "Color.hpp"
     #include "Camera.hpp"
@@ -25,6 +25,20 @@
     #include <dirent.h>
     #include <iostream>
     #include <filesystem>
+
+    #define CYAN "\033[0;36m"
+    #define RED "\033[0;31m"
+    #define GREEN "\033[0;32m"
+    #define YELLOW "\033[0;33m"
+    #define GRAY "\033[0;90m"
+    #define BLUE "\033[0;34m"
+    #define MAGENTA "\033[0;35m"
+    #define WHITE "\033[0;37m"
+    #define BOLD "\033[1m"
+    #define UNDERLINE "\033[4m"
+    #define ITALIC "\033[3m"
+    #define BLINK "\033[5m"
+    #define RESET "\033[0m"
 
 namespace RayTracer {
     class Core {
@@ -124,7 +138,6 @@ namespace RayTracer {
 
             static void displayProgress(
                 int current, int total,
-                std::chrono::time_point<std::chrono::high_resolution_clock> iterationTime = std::chrono::high_resolution_clock::now(),
                 std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now(),
                 int threadIndex = 0)
             {
@@ -133,7 +146,6 @@ namespace RayTracer {
                 int filledWidth = static_cast<int>(barWidth * (static_cast<double>(progress) / 100));
 
                 auto now = std::chrono::high_resolution_clock::now();
-                std::chrono::duration<double> elapsed = now - iterationTime;
                 auto totalElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime).count();
 
                 double timeEstimate = 0.0;
@@ -141,20 +153,26 @@ namespace RayTracer {
                     timeEstimate = (totalElapsed / current) * (total - current);
                 }
 
-                std::clog << "\r[";
+                std::clog << "\r" << ITALIC << "[";
                 for (int i = 0; i < barWidth; ++i) {
                     if (i < filledWidth) {
-                        std::clog << "=";
+                        if (progress < 35) {
+                            std::clog << RED << "=";
+                        } else if (progress < 70) {
+                            std::clog << YELLOW << "=";
+                        } else {
+                            std::clog << GREEN << "=";
+                        }
                     } else if (i == filledWidth) {
                         std::clog << ">";
                     } else {
                         std::clog << " ";
                     }
                 }
-                std::clog << "] " << progress << "% (" << current << "/" << total << ")";
-                std::clog << " - Elapsed: " << static_cast<int>(totalElapsed / 1000.0) << "s - ETA: " << static_cast<int>(timeEstimate / 1000) << "s (1/" << static_cast<int>(elapsed.count() * 1000) << "ms)";
-                std::clog << " - Thread: " << threadIndex;
-                std::clog << "       ";
+                std::clog << RESET << ITALIC << "] " << CYAN << progress << "%" << GRAY << " (" << current << "/" << total << ")";
+                std::clog << "\t<-> Elapsed: " << CYAN << static_cast<int>(totalElapsed / 1000.0) << "s" << GRAY << " /~ " << MAGENTA << static_cast<int>(timeEstimate / 1000) << RESET << " (s) Left";
+                std::clog << GRAY << " - T: " << threadIndex;
+                std::clog << " \t" << RESET;
                 std::clog.flush();
             }
 

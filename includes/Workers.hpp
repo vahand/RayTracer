@@ -58,7 +58,6 @@ class Workers {
             std::cerr << "[INFO] Initialized " << _mutexes.size() << " mutexes and " << _threads.size() << " threads." << std::endl;
         }
 
-
         int getFreeThreadIndex()
         {
             for (int i = 0; i < _mutexes.size(); i++) {
@@ -97,7 +96,6 @@ class Workers {
         {
             auto startTime = std::chrono::high_resolution_clock::now();
 
-            auto iterationTime = std::chrono::high_resolution_clock::now();
             for (int y = 0; y < core._screenHeight; y++) {
                 int threadIndex = getFreeThreadIndex();
                 if (threadIndex == -1) {
@@ -105,8 +103,7 @@ class Workers {
                     usleep(250);
                     continue;
                 }
-                iterationTime = std::chrono::high_resolution_clock::now();
-                core.displayProgress(y, core._screenHeight, iterationTime, startTime, threadIndex);
+                core.displayProgress(y, core._screenHeight, startTime, threadIndex);
 
                 _mutexes.at(threadIndex)->lock();
                 _threads.at(threadIndex) = std::thread(&Workers::renderLine, this, y, std::ref(core), std::ref(*_mutexes.at(threadIndex)));
@@ -115,7 +112,7 @@ class Workers {
 
             auto endTime = std::chrono::high_resolution_clock::now();
             std::chrono::duration<double> elapsed = endTime - startTime;
-            core.displayProgress(core._screenHeight, core._screenHeight, iterationTime, startTime);
+            core.displayProgress(core._screenHeight, core._screenHeight, startTime);
             std::cerr << "\nDone! - Total Lines: " << core._screenHeight << std::endl;
 
             for (int i = 0; i < _mutexes.size(); i++) {

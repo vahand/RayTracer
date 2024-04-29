@@ -6,14 +6,14 @@
 */
 
 #include "../includes/Core.hpp"
-#include "../primitives/sphere/src/Sphere.hpp"
-#include "../primitives/plane/src/Plane.hpp"
+#include "../plugins/primitives/sphere/includes/Sphere.hpp"
+#include "../plugins/primitives/plane/includes/Plane.hpp"
 #include "../includes/Parser.hpp"
 #include "../includes/Light.hpp"
 
 #include "../includes/Workers.hpp"
 
-bool hasOption(int ac, char **av, const std::string &option)
+static bool hasOption(int ac, char **av, const std::string &option)
 {
     for (int i = 0; i < ac; i++) {
         if (std::string(av[i]) == option)
@@ -22,7 +22,7 @@ bool hasOption(int ac, char **av, const std::string &option)
     return false;
 }
 
-void *getOptionValue(int ac, char **av, const std::string &option, const std::string &shortOption = "")
+static void *getOptionValue(int ac, char **av, const std::string &option, const std::string &shortOption = "")
 {
     for (int i = 0; i < ac; i++) {
         if (std::string(av[i]) == option)
@@ -90,12 +90,6 @@ int main(int ac, char **av)
     // core.addShape(sphere_ground);
     core.addShape(sphere_center);
     core.addShape(sphere_left);
-
-    // RayTracer::Plane plane;
-    // RayTracer::Color planeColor(0, 255, 0);
-    // Math::Point3D planeOrigin(0, 15, 0);
-    // plane.setup(planeColor, planeOrigin, RayTracer::Plane::AXIS::Y);
-    // core.addShape(plane);
 
     std::cerr << "Rendering settings: " << std::endl;
     std::cerr << " - Width: " << core._camera._image_width << std::endl;

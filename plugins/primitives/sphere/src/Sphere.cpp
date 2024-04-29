@@ -5,7 +5,7 @@
 ** Sphere
 */
 
-#include "Sphere.hpp"
+#include "../includes/Sphere.hpp"
 
 extern "C" RayTracer::IShape * initShape()
 {

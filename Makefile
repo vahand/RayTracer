@@ -20,7 +20,7 @@ CXXFLAGS = -fPIC
 
 all:
 	make core
-	make primitive
+	make plugins
 
 core: $(TARGET)
 
@@ -28,15 +28,15 @@ $(TARGET): $(OBJ)
 	$(CXX) -o $@ $^ -lconfig -lconfig++
 
 primitive:
-	make -C primitives
+	make -C plugins
 
 clean:
 	rm -f $(OBJ)
-	make fclean -C primitives
+	make fclean -C plugins
 
 fclean: clean
 	rm -f $(TARGET)
-	make fclean -C primitives
+	make fclean -C plugins
 
 re:	fclean all
 
