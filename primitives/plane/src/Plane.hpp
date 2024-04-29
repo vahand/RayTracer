@@ -8,22 +8,44 @@
 #ifndef PLANE_HPP_
 #define PLANE_HPP_
 
-#include "../../../includes/IShape.hpp"
+#include "../../../includes/AShape.hpp"
 #include "../../../includes/HitData.hpp"
 #include "../../../includes/Range.hpp"
 #include "../../../includes/Ray.hpp"
 #include <cmath>
 
 namespace RayTracer {
-    class Plane : public IShape {
+    class Plane : public AShape {
         public:
             enum AXIS {
                 X,
                 Y,
                 Z
             };
-            Plane() {};
-            ~Plane() {};
+
+            Plane() = default;
+            Plane(Math::Point3D origin, RayTracer::Plane::AXIS axis, std::shared_ptr<RayTracer::Material::AMaterial> material)
+            {
+                _origin = origin;
+                _axis = axis;
+                _material = material;
+                if (_axis == RayTracer::Plane::AXIS::X) {
+                    _normal = Math::Vector3D(1, 0, 0);
+                } else if (_axis == RayTracer::Plane::AXIS::Y) {
+                    _normal = Math::Vector3D(0, 1, 0);
+                } else {
+                    _normal = Math::Vector3D(0, 0, 1);
+                }
+            }
+            ~Plane() = default;
+
+            void setup(const RayTracer::ShapeConfig& config)
+            {
+                _origin = config._origin;
+                // _axis = config._axis;
+                _normal = config._direction;
+                _material = config._material;
+            }
 
             Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const
             {
@@ -72,24 +94,6 @@ namespace RayTracer {
                 return true;
              }
 
-            RayTracer::Color getColor() const override {
-                return _color;
-            };
-
-            void setup(RayTracer::Color& planeColor, Math::Point3D& origin, RayTracer::Plane::AXIS axis)
-            {
-                _color = planeColor;
-                _origin = origin;
-                _axis = axis;
-                if (_axis == RayTracer::Plane::AXIS::X) {
-                    _normal = Math::Vector3D(1, 0, 0);
-                } else if (_axis == RayTracer::Plane::AXIS::Y) {
-                    _normal = Math::Vector3D(0, 1, 0);
-                } else {
-                    _normal = Math::Vector3D(0, 0, 1);
-                }
-            }
-
             Math::Vector3D getNormalVector() const {
                 return _normal;
             }
@@ -100,10 +104,10 @@ namespace RayTracer {
 
         protected:
         private:
-            RayTracer::Color _color;
             Math::Point3D _origin;
             RayTracer::Plane::AXIS _axis;
             Math::Vector3D _normal;
+            std::shared_ptr<RayTracer::Material::AMaterial> _material;
     };
 }
 

@@ -8,38 +8,31 @@
 #ifndef ISHAPE_HPP_
     #define ISHAPE_HPP_
 
+namespace RayTracer {
+    enum ShapeType {
+        SPHERE,
+        PLANE
+    };
+}
+
     #include "Ray.hpp"
     #include "Color.hpp"
     #include "HitData.hpp"
     #include "Range.hpp"
+    #include "ShapeConfig.hpp"
 
 namespace RayTracer {
-    enum class ShapeType {
-        SPHERE,
-        PLANE
-    };
-
     class IShape {
         public:
             IShape() = default;
             virtual ~IShape() = default;
 
             virtual bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const = 0;
-            virtual RayTracer::Color getColor() const = 0;
+            virtual void setup(const RayTracer::ShapeConfig& config) = 0;
 
-            const std::string& getName() const { return _name; }
-            void setName(const std::string& name) { _name = name; }
+            virtual const std::string& getName() const = 0;
+            virtual void setName(const std::string& name) = 0;
 
-            bool operator==(const IShape &shape) const {
-                return _origin == shape._origin && _color == shape._color && _type == shape._type;
-            }
-
-
-        private:
-            Math::Point3D _origin;
-            RayTracer::Color _color;
-            RayTracer::ShapeType _type;
-            std::string _name;
     };
 }
 

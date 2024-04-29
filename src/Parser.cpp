@@ -88,6 +88,8 @@ void RayTracer::Parser::parseSpheres()
         libconfig::Setting *spheres = &_primitivesSection->lookup("spheres");
         std::cerr << "-->> Spheres found in config file!" << std::endl;
         for (int i = 0; i < spheres->getLength(); i++) {
+            RayTracer::ShapeConfig config;
+
             libconfig::Setting &subSphere = spheres->operator[](i);
             libconfig::Setting &sphere = subSphere.operator[](0);
             const std::string &name = getPrimitiveName(sphere);
@@ -96,7 +98,7 @@ void RayTracer::Parser::parseSpheres()
             libconfig::Setting &color = sphere.lookup("color");
             RayTracer::Color sphereColor(color[0], color[1], color[2]);
             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::SPHERE);
-            static_cast<RayTracer::Sphere&>(newShape).setup(center, radius, sphereColor);
+            static_cast<RayTracer::Sphere&>(newShape).setup(config);
             newShape.setName(name);
             refCore.addShape(newShape);
         }
@@ -137,6 +139,8 @@ void RayTracer::Parser::parsePlanes()
         libconfig::Setting *planes = &_primitivesSection->lookup("planes");
         std::cerr << "-->> Planes found in config file!" << std::endl;
         for (int i = 0; i < planes->getLength(); i++) {
+            RayTracer::ShapeConfig config;
+
             libconfig::Setting &subPlane = planes->operator[](i);
             libconfig::Setting &plane = subPlane.operator[](0);
             const std::string &name = getPrimitiveName(plane);
@@ -145,7 +149,7 @@ void RayTracer::Parser::parsePlanes()
             libconfig::Setting &color = plane.lookup("color");
             RayTracer::Color planeColor(color[0], color[1], color[2]);
             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::PLANE);
-            static_cast<RayTracer::Plane&>(newShape).setup(planeColor, origin, axis);
+            static_cast<RayTracer::Plane&>(newShape).setup(config);
             newShape.setName(name);
             refCore.addShape(newShape);
         }

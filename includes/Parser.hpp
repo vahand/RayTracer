@@ -12,6 +12,7 @@
     #include <libconfig.h>
 
     #include "Core.hpp"
+    #include "ShapeConfig.hpp"
 
 namespace RayTracer {
     struct config_camere_s {

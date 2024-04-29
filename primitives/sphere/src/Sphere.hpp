@@ -8,25 +8,27 @@
 #ifndef SPHERE_HPP_
     #define SPHERE_HPP_
 
-    #include "../../../includes/IShape.hpp"
+    #include "../../../includes/AShape.hpp"
     #include "../../../includes/HitData.hpp"
     #include "../../../includes/Range.hpp"
     #include "../../../includes/Ray.hpp"
     #include "../../../includes/Material.hpp"
     #include "../../../includes/Color.hpp"
+    #include "../../../includes/ShapeConfig.hpp"
     #include <cmath>
 
 namespace RayTracer {
-    class Sphere : public IShape {
+    class Sphere : public AShape {
         public:
             Sphere() = default;
             Sphere(const Math::Point3D& center, double radius, std::shared_ptr<RayTracer::Material::AMaterial> material)
                 : _material(material), _origin(center), _radius(radius) {}
 
-            void setup(const Math::Point3D& center, double radius, const RayTracer::Color& color) {
-                _origin = center;
-                _radius = radius;
-                _color = color;
+            void setup(const RayTracer::ShapeConfig& config)
+            {
+                _origin = config._origin;
+                _radius = config._radius;
+                _material = config._material;
             }
 
             Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const
@@ -69,12 +71,10 @@ namespace RayTracer {
 
             Math::Point3D center() const { return _origin; }
             double radius() const { return _radius; }
-            RayTracer::Color getColor() const override { return _color; }
 
         private:
             Math::Point3D _origin;
             double _radius;
-            RayTracer::Color _color;
             std::shared_ptr<RayTracer::Material::AMaterial> _material;
     };
 }
