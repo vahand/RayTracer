@@ -13,10 +13,41 @@
 
 #include "../includes/Workers.hpp"
 
-int main()
+bool hasOption(int ac, char **av, const std::string &option)
 {
+    for (int i = 0; i < ac; i++) {
+        if (std::string(av[i]) == option)
+            return true;
+    }
+    return false;
+}
+
+void *getOptionValue(int ac, char **av, const std::string &option)
+{
+    for (int i = 0; i < ac; i++) {
+        if (std::string(av[i]) == option)
+            return av[i + 1];
+    }
+    return nullptr;
+}
+
+int main(int ac, char **av)
+{
+    if (hasOption(ac, av, "-h") || hasOption(ac, av, "--help")) {
+        std::cerr << "Usage: ./raytracer [options] > [image_path]" << std::endl;
+        std::cerr << "\nOptions:" << std::endl;
+        std::cerr << "\t-h, --help:\t Display this help message" << std::endl;
+        std::cerr << "\t-t, --threads:\t Set the numbers of threads used for rendering" << std::endl;
+        return 0;
+    }
+    bool threadsOption = hasOption(ac, av, "-t") || hasOption(ac, av, "--threads");
+    int threadsCount = 1;
+    if (threadsOption) {
+        threadsCount = std::stoi(static_cast<const char *>(getOptionValue(ac, av, "-t")));
+    }
+
     RayTracer::Core core(400, 400);
-    Workers workers(16, 400, 400);
+    Workers workers(threadsCount, 400, 400);
     core.loadLibrairies();
 
     // RayTracer::Parser parser(core, "./configs/subject_config");
@@ -38,7 +69,7 @@ int main()
     Math::Point3D sphere_ground_pos(7.5, 108, 0);
     RayTracer::Sphere sphere_ground(sphere_ground_pos, 100, material_ground);
 
-    Math::Point3D plane_position(0, 9, 0);
+    Math::Point3D plane_position(0, 10, 0);
     RayTracer::Plane plane(plane_position, RayTracer::Plane::AXIS::Y, material_ground);
 
     Math::Point3D sphere_light1_pos(12.5, 8, 10);
