@@ -9,7 +9,10 @@
 #define PLANE_HPP_
 
 #include "../../../includes/IShape.hpp"
-#include "../../../includes/Point3D.hpp"
+#include "../../../includes/HitData.hpp"
+#include "../../../includes/Range.hpp"
+#include "../../../includes/Ray.hpp"
+#include <cmath>
 
 namespace RayTracer {
     class Plane : public IShape {
@@ -22,17 +25,29 @@ namespace RayTracer {
             Plane() {};
             ~Plane() {};
 
+            Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const
+            {
+                return Math::Vector3D(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
+            }
+
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
             {
-                Math::Vector3D oc = ray.origin() - _origin;
-
-                double t = (getNormalVector().DotProduct(ray.origin() - _origin)) / getNormalVector().DotProduct(ray.direction());
-                if (t <= 0.0) { // intersection behind the ray
+                if (isVectorParallel(ray.direction()))
                     return false;
-                }
-
+                Math::Point3D a = ray.origin();
+                Math::Vector3D ab = ray.direction();
+                Math::Vector3D n = getNormalVector();
+                double numerator = (-1) * (n.X * a.X) - (n.Y * a.Y) - (n.Z * a.Z);
+                double denominator = (n.X * ab.X) + (n.Y * ab.Y) + (n.Z * ab.Z);
+                double t = numerator / denominator;
+                if (!ray_range.around(t))
+                    return false;
+                data.tValue = t;
+                data.normal = getNormalVector();
+                data.point = ray.at(t);
+                std::cerr << "Hit on plane!" << std::endl;
                 return true;
-            }
+             }
 
             RayTracer::Color getColor() const override {
                 return _color;
