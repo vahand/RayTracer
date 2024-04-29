@@ -28,7 +28,7 @@ namespace RayTracer {
 
         class Solid : public ATexture {
             public:
-                Solid(const RayTracer::Color& reflectance) : _reflectance(reflectance) {}
+                Solid(const RayTracer::Color reflectance) : _reflectance(reflectance) {}
                 Solid(double red, double green, double blue) : Solid(RayTracer::Color(red, green, blue)) {}
                 ~Solid() = default;
 

@@ -20,12 +20,12 @@ RayTracer::Core::Core(int screenWidth, int screenHeight)
     this->_camera = RayTracer::Camera(cameraPosition, camera_direction, camera_up);
     this->_camera._aspect_ratio = static_cast<double>(screenWidth / screenHeight);
     this->_camera._fov_degrees = 45;
-    this->_camera._samples = 50;
+    this->_camera._samples = 5000;
     this->_camera._image_width = screenWidth;
     this->_camera._image_height = screenHeight;
     this->_camera.initialize();
 
-    this->_maxDepth = 50;
+    this->_maxDepth = 1000;
     this->sceneBackground = RayTracer::Color(0, 0, 0);
 }
 

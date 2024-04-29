@@ -38,7 +38,7 @@ namespace RayTracer {
 
         class Lambertian : public AMaterial {
             public:
-                Lambertian(const RayTracer::Color& reflectance)
+                Lambertian(const RayTracer::Color reflectance)
                     : _texture(std::make_shared<RayTracer::Texture::Solid>(reflectance)) {}
 
                 bool diffuse (
@@ -65,7 +65,7 @@ namespace RayTracer {
 
         class Metal : public AMaterial {
             public:
-                Metal(const RayTracer::Color& reflectance, double fuzziness)
+                Metal(const RayTracer::Color reflectance, double fuzziness)
                     : _reflectance(reflectance), _fuzziness(fuzziness < 1 ? fuzziness : 1)
                 {}
 
@@ -91,7 +91,7 @@ namespace RayTracer {
             public:
                 LightDiffuse(std::shared_ptr<RayTracer::Texture::ATexture> texture)
                     : _texture(texture) {}
-                LightDiffuse(const RayTracer::Color& emitColor)
+                LightDiffuse(const RayTracer::Color emitColor)
                     : _texture(std::make_shared<RayTracer::Texture::Solid>(emitColor)) {}
 
                 RayTracer::Color emit() const override {
