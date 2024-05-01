@@ -13,6 +13,7 @@
 
     #include "Core.hpp"
     #include "ShapeConfig.hpp"
+    #include "MaterialConfig.hpp"
 
 namespace RayTracer {
     struct config_camere_s {
@@ -50,6 +51,13 @@ namespace RayTracer {
 
             void parseCameraSettings();
 
+            // MATERIALS
+            libconfig::Setting *_materialsSection;
+            std::vector<std::string> _parsedMaterials;
+
+            void parseMaterialsSection();
+            std::string getMaterialName(libconfig::Setting &);
+
             // PRIMITIVES
             libconfig::Setting *_primitivesSection;
             std::vector<std::string> _parsedPrimitives;
@@ -58,8 +66,8 @@ namespace RayTracer {
             std::string getPrimitiveName(libconfig::Setting &);
             void parseSpheres();
             void parsePlanes();
-            RayTracer::Plane::AXIS getPlaneAxis(const std::string&);
-            Math::Point3D getPlaneOrigin(double, RayTracer::Plane::AXIS);
+            RayTracer::ShapeConfig::AXIS getPlaneAxis(const std::string&);
+            Math::Point3D getPlaneOrigin(double, RayTracer::ShapeConfig::AXIS);
 
             // LIGHTS
             libconfig::Setting *_lightsSection;

@@ -10,6 +10,9 @@
 
     #include "../primitives/sphere/src/Sphere.hpp"
     #include "../primitives/plane/src/Plane.hpp"
+    #include "../materials/lambertian/src/Lambertian.hpp"
+    #include "../materials/metal/src/Metal.hpp"
+    #include "../materials/lightDiffuse/src/LightDiffuse.hpp"
     #include "Ray.hpp"
     #include "Color.hpp"
     #include "Camera.hpp"
@@ -39,11 +42,14 @@ namespace RayTracer {
             };
 
             enum LIBRARY_TYPE {
-                SPHERE,
-                PLANE,
-                CONE,
-                CYLINDER,
-                AMBIANT_LIGHT,
+                SPHERE = 0,
+                PLANE = 1,
+                CONE = 2,
+                CYLINDER = 3,
+                AMBIANT_LIGHT = 100,
+                LAMBERTIAN = 1000,
+                METAL = 1001,
+                LIGHT_DIFFUSE = 1002
             };
 
             Core(int screenWidth, int screenHeight);
@@ -52,6 +58,7 @@ namespace RayTracer {
             std::vector<std::reference_wrapper<IShape>> _shapes;
             std::vector<std::reference_wrapper<Light>> _lights;
             std::unordered_map<LIBRARY_TYPE, std::shared_ptr<void>> _handles;
+            std::unordered_map<std::string, std::shared_ptr<RayTracer::Material::AMaterial>> _loadedMaterials;
             RayTracer::Color sceneBackground;
             int _screenWidth;
             int _screenHeight;
@@ -60,6 +67,7 @@ namespace RayTracer {
 
             void addShape(IShape &shape) { _shapes.push_back(shape); }
             void addLight(Light &light) { _lights.push_back(light); }
+            void addMaterial(const std::string &name, std::shared_ptr<RayTracer::Material::AMaterial> material) { _loadedMaterials[name] = material; }
 
             void printShape() {
                 for (auto &shape : _shapes) {
@@ -69,6 +77,11 @@ namespace RayTracer {
             void printLight() {
                 for (auto &light : _lights) {
                     std::cerr << light.get().getName() << std::endl;
+                }
+            }
+            void printMaterials() {
+                for (const auto& pair : _loadedMaterials) {
+                    std::cerr << pair.first << std::endl;
                 }
             }
 
@@ -160,18 +173,26 @@ namespace RayTracer {
 
             void loadLibrairies();
             RayTracer::IShape& getNewShape(LIBRARY_TYPE type);
+            std::shared_ptr<RayTracer::Material::AMaterial> getNewMaterial(LIBRARY_TYPE type);
+            void loadNewMaterial(LIBRARY_TYPE type, MaterialConfig& config, const std::string& name);
 
         private:
             void loadLibrary(std::string path);
 
             bool isShapeType(LIBRARY_TYPE type) {
-                if (type != 4)
+                if (type < 100)
                     return true;
                 else
                     return false;
             }
             bool isLightType(LIBRARY_TYPE type) {
-                if (type == 4)
+                if (type >= 100 && type <= 1000)
+                    return true;
+                else
+                    return false;
+            }
+            bool isMaterialType(LIBRARY_TYPE type) {
+                if (type >= 1000)
                     return true;
                 else
                     return false;

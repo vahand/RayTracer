@@ -14,6 +14,11 @@
 namespace RayTracer {
     class ShapeConfig {
         public:
+            enum AXIS {
+                X,
+                Y,
+                Z
+            };
             ShapeConfig() = default;
             ~ShapeConfig() = default;
 
@@ -22,6 +27,7 @@ namespace RayTracer {
             Math::Vector3D _direction;
             int _type;
             std::shared_ptr<RayTracer::Material::AMaterial> _material;
+            RayTracer::ShapeConfig::AXIS _axis;
 
         protected:
         private:

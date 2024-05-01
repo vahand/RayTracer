@@ -1,0 +1,103 @@
+# Configuration of the camera
+camera:
+{
+    resolution:
+    {
+        width = 400;
+        height = 400;
+    }
+    position:
+    {
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
+    }
+    rotation:
+    {
+        x = 0.0;
+        y = 0.0;
+        z = 0.0;
+    }
+    fieldOfView = 45.0; # In degree
+}
+
+materials:
+{
+    material_ground:
+    {
+        type = "lambertian";
+        color = { r = 255.0; g = 255.0; b = 0.0; }
+    }
+    material_center:
+    {
+        type = "lambertian";
+        color = { r = 0.0; g = 255.0; b = 255.0; }
+    }
+    material_left:
+    {
+        type = "metal";
+        fuzziness = 0.0;
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    material_right:
+    {
+        type = "lightDiffuse";
+        color = { r = 255.0; g = 255.0; b = 255.0; }
+    }
+}
+
+# Primitives in the scene
+primitives:
+{
+
+    # List of spheres
+    spheres = (
+        {
+            sphereLeft: { x = 2.5; y = 8.0; z = 20.0; r = 2.0; material = "material_left"; }
+        },
+        {
+            sphereCenter: { x = 7.5; y = 8.0; z = 20.0; r = 2.0; material = "material_center"; }
+        },
+        {
+            sphereLight1: { x = 12.5; y = 8.0; z = 10.0; r = 2.0; material = "material_right"; }
+        },
+        {
+            sphereLight2: { x = 12.5; y = 8.0; z = 20.0; r = 2.0; material = "material_right"; }
+        },
+        {
+            sphereLight3: { x = 7.5; y = 0.0; z = 20.0; r = 2.0; material = "material_right"; }
+        }
+    );
+
+    planes = (
+        {
+            plane: { axis = "Y"; position = 9.0; material = "material_ground"; }
+        }
+    );
+}
+
+# Light configuration
+lights:
+{
+    ambient = 0.4;
+    diffuse = 0.6;
+
+    # List of point lights
+    point = (
+        {
+            vahanLight: { x = 400.0; y = 100.0; z = 500.0; }
+        },
+        {
+            oop: { x = 400.0; y = 100.0; z = 500.0; }
+        }
+    ) ;
+
+    # List of directional lights
+    directional = () ;
+}
+
+transformations:
+{
+    sphere1: { type = "translation" ; vector: { x = 12 ; y = 67 ; z = 34 } } # a translation transfo. applied to sphere1
+    sphere2: { type = "rotation" ; vector: { x = 12 ; y = 67 ; z = 34 } } # a rotation transfo. applied to sphere2
+}

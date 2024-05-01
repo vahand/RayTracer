@@ -13,6 +13,7 @@ SRC = 	src/main.cpp	\
 		src/Core.cpp	\
 		src/Loader.cpp	\
 		src/Parser.cpp	\
+		primitives/cube/src/Cube.cpp	\
 
 OBJ = $(SRC:.cpp=.o)
 
@@ -21,6 +22,7 @@ CXXFLAGS = -fPIC
 all:
 	make core
 	make primitive
+	make material
 
 core: $(TARGET)
 
@@ -30,13 +32,18 @@ $(TARGET): $(OBJ)
 primitive:
 	make -C primitives
 
+material:
+	make -C materials
+
 clean:
 	rm -f $(OBJ)
 	make fclean -C primitives
+	make clean -C materials
 
 fclean: clean
 	rm -f $(TARGET)
 	make fclean -C primitives
+	make fclean -C materials
 
 re:	fclean all
 

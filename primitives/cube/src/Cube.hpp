@@ -34,7 +34,7 @@ namespace RayTracer {
 
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
             {
-
+                return false;
             }
 
             Math::Point3D center() const { return _origin; }

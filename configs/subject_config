@@ -23,8 +23,17 @@ camera:
 
 materials:
 {
-    redMat: { type = "lambertian"; color = { r = 0.5; g = 0.5; b = 0.5; } }
-    metal: { type = "metal"; fuzziness = 0.1; color = { r = 0.5; g = 0.5; b = 0.5; }} # fuzziness is only for metals (optional otherwise 0)
+    redMat:
+    {
+        type = "lambertian";
+        color = { r = 0.5; g = 0.5; b = 0.5; }
+    }
+    metal:
+    {
+        type = "metal";
+        fuzziness = 0.1;
+        color = { r = 0.5; g = 0.5; b = 0.5; }
+    } # fuzziness is only for metals (optional otherwise 0)
 }
 
 # Primitives in the scene
@@ -35,30 +44,4 @@ primitives:
             vahanPlane: { axis = "Y" ; position = 15.0; material = "redMat"; }
         }
     );
-}
-
-# Light configuration
-lights:
-{
-    ambient = 0.4;
-    diffuse = 0.6;
-
-    # List of point lights
-    point = (
-        {
-            vahanLight: { x = 400.0; y = 100.0; z = 500.0; }
-        },
-        {
-            oop: { x = 400.0; y = 100.0; z = 500.0; }
-        }
-    ) ;
-
-    # List of directional lights
-    directional = () ;
-}
-
-transformations:
-{
-    sphere1: { type = "translation" ; vector: { x = 12 ; y = 67 ; z = 34 } } # a translation transfo. applied to sphere1
-    sphere2: { type = "rotation" ; vector: { x = 12 ; y = 67 ; z = 34 } } # a rotation transfo. applied to sphere2
 }
