@@ -45,6 +45,12 @@ class Workers {
 
             _threads.resize(_threadsCount);
 
+            _mutexes.clear();
+            finalImage.clear();
+
+            placeholderImage.clear();
+            placeholderMutex.unlock();
+
             for (int i = 0; i < _threadsCount; i++) {
                 _mutexes.push_back(std::make_unique<std::mutex>());
                 _mutexes.at(i)->unlock();
@@ -131,6 +137,63 @@ class Workers {
             printImage();
         }
 
+        void beginRender()
+        {
+            _yUpdate = 0;
+            _startTime = std::chrono::high_resolution_clock::now();
+        }
+
+        void copyToPlaceholder()
+        {
+            for (int y = 0; y < finalImage.size(); y++) {
+                if (finalImage.find(y) != finalImage.end()) {
+                    placeholderMutex.lock();
+                    placeholderImage[y] = finalImage[y];
+                    placeholderMutex.unlock();
+                }
+            }
+        }
+
+        void renderUpdate(RayTracer::Core &core)
+        {
+            int threadIndex = getFreeThreadIndex();
+            while (threadIndex != -1 && _yUpdate < core._screenHeight) {
+                _yUpdate++;
+                core.displayProgress(_yUpdate, core._screenHeight, _startTime, threadIndex);
+
+                _mutexes.at(threadIndex)->lock();
+                _threads.at(threadIndex) = std::thread(&Workers::renderLine, this, _yUpdate, std::ref(core), std::ref(*_mutexes.at(threadIndex)));
+                _threads.at(threadIndex).detach();
+                threadIndex = getFreeThreadIndex();
+            }
+
+            // update placeholder image (copy all key/values from finalImage)
+            copyToPlaceholder();
+
+            if (_yUpdate >= core._screenHeight) {
+                _endTime = std::chrono::high_resolution_clock::now();
+                std::chrono::duration<double> elapsed = _endTime - _startTime;
+                core.displayProgress(core._screenHeight, core._screenHeight, _startTime);
+                std::cerr << "\nDone! - Total Lines: " << core._screenHeight << std::endl;
+
+                for (int i = 0; i < _mutexes.size(); i++) {
+                    if (_mutexes.at(i)->try_lock()) {
+                        _mutexes.at(i)->unlock();
+                    } else {
+                        i--;
+                        usleep(250);
+                    }
+                }
+
+                processImage();
+                copyToPlaceholder();
+                usleep(1000);
+                _rendering = false;
+            }
+        }
+
+        bool isRendering() const { return _rendering; }
+        void setRendering(bool rendering) { _rendering = rendering; }
 
         void writeImageToFile(const std::string &filename) const
         {
@@ -142,6 +205,21 @@ class Workers {
                 }
             }
             file.close();
+        }
+
+        void processImage() {
+            static const RayTracer::Range colorRange(0.0, 255.0);
+
+            std::cerr << "Processing image..." << std::endl;
+            for (int y = 0; y < _height; y++) {
+                for (int x = 0; x < _width; x++) {
+                    RayTracer::Color colorGamma = RayTracer::Core::getGammaColor(finalImage.at(y)[x]);
+                    int r = colorRange.bound(colorGamma._r);
+                    int g = colorRange.bound(colorGamma._g);
+                    int b = colorRange.bound(colorGamma._b);
+                    finalImage.at(y)[x] = RayTracer::Color(r, g, b);
+                }
+            }
         }
 
         void printImage() const
@@ -172,6 +250,8 @@ class Workers {
         }
 
         std::unordered_map<int, std::vector<RayTracer::Color>> finalImage;
+        std::unordered_map<int, std::vector<RayTracer::Color>> placeholderImage;
+        std::mutex placeholderMutex;
         std::vector<std::thread> _threads;
         std::vector<std::unique_ptr<std::mutex>> _mutexes;
 
@@ -182,6 +262,11 @@ class Workers {
         int _threadsCount;
         int _width;
         int _height;
+
+        int _yUpdate = 0;
+        std::chrono::time_point<std::chrono::high_resolution_clock> _startTime;
+        std::chrono::time_point<std::chrono::high_resolution_clock> _endTime;
+        bool _rendering = false;
 
 };
 
