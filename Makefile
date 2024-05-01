@@ -16,18 +16,17 @@ SRC = 	src/main.cpp	\
 
 OBJ = $(SRC:.cpp=.o)
 
+SFMLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 CXXFLAGS = -fPIC
 
-all:
-	make core
-	make plugins
+all: core plugins
 
 core: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CXX) -o $@ $^ -lconfig -lconfig++
+	$(CXX) -o $@ $^ -lconfig -lconfig++ $(SFMLFLAGS)
 
-primitive:
+plugins:
 	make -C plugins
 
 clean:
