@@ -7,7 +7,7 @@
 
 #include "Lambertian.hpp"
 
-extern "C" RayTracer::Material::AMaterial * initMaterial()
+extern "C" RayTracer::Material::IMaterial * initMaterial()
 {
     std::cerr << "Lambertian entryPoint" << std::endl;
     return new RayTracer::Material::Lambertian();

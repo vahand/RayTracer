@@ -7,7 +7,7 @@
 
 #include "LightDiffuse.hpp"
 
-extern "C" RayTracer::Material::AMaterial * initMaterial()
+extern "C" RayTracer::Material::IMaterial * initMaterial()
 {
     std::cerr << "LightDiffuse entryPoint" << std::endl;
     return new RayTracer::Material::LightDiffuse();

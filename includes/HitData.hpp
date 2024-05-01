@@ -15,7 +15,7 @@
 
 namespace RayTracer {
     namespace Material {
-        class AMaterial;
+        class IMaterial;
     }
 }
 
@@ -37,7 +37,7 @@ class HitData {
                 normal = -united_normal;
         }
 
-        std::shared_ptr<RayTracer::Material::AMaterial> material;
+        std::shared_ptr<RayTracer::Material::IMaterial> material;
 };
 
 #include "AMaterial.hpp"

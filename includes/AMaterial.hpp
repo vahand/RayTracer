@@ -8,35 +8,28 @@
 #ifndef MATERIAL_HPP_
     #define MATERIAL_HPP_
 
-    #include "Ray.hpp"
-    #include "Color.hpp"
-    #include "Vector3D.hpp"
-    #include "HitData.hpp"
-    #include "Texture.hpp"
-    #include "MaterialConfig.hpp"
+    #include "IMaterial.hpp"
 
 namespace RayTracer {
     namespace Material {
 
-        class AMaterial {
+        class AMaterial : public IMaterial {
             public:
                 AMaterial() = default;
-                ~AMaterial() = default;
+                virtual ~AMaterial() = default;
 
-            virtual void setup(MaterialConfig& config) {}
+                virtual bool diffuse (
+                    const RayTracer::Ray& r_in,
+                    const HitData& data,
+                    RayTracer::Color& dissipation,
+                    RayTracer::Ray& diffusedRay
+                ) override {
+                    return false;
+                }
 
-            virtual bool diffuse (
-                const RayTracer::Ray& r_in,
-                const HitData& data,
-                RayTracer::Color& dissipation,
-                RayTracer::Ray& diffusedRay
-            ) {
-                return false;
-            }
-
-            virtual RayTracer::Color emit() const {
-                return RayTracer::Color(0, 0, 0);
-            }
+                virtual RayTracer::Color emit() const override {
+                    return RayTracer::Color(0, 0, 0);
+                }
         };
     }
 }

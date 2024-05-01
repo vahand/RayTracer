@@ -26,7 +26,7 @@ namespace RayTracer {
             Math::Point3D _origin;
             Math::Vector3D _direction;
             int _type;
-            std::shared_ptr<RayTracer::Material::AMaterial> _material;
+            std::shared_ptr<RayTracer::Material::IMaterial> _material;
             RayTracer::ShapeConfig::AXIS _axis;
 
         protected:

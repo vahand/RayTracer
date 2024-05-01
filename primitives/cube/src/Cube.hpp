@@ -26,7 +26,7 @@ namespace RayTracer {
                     ~CubeFace();
             };
             Cube() = default;
-            Cube(const Math::Point3D origin, double xDim, double yDim, double zDim, std::shared_ptr<RayTracer::Material::AMaterial> material)
+            Cube(const Math::Point3D origin, double xDim, double yDim, double zDim, std::shared_ptr<RayTracer::Material::IMaterial> material)
                 : _material(material), _origin(origin), _xDim(xDim), _yDim(yDim), _zDim(zDim)
             {
 
@@ -48,7 +48,7 @@ namespace RayTracer {
             double _xDim;
             double _yDim;
             double _zDim;
-            std::shared_ptr<RayTracer::Material::AMaterial> _material;
+            std::shared_ptr<RayTracer::Material::IMaterial> _material;
             std::unordered_map<std::string, Math::Point3D> _vertexes;
 
             double xO() { return _origin.x(); }

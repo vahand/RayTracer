@@ -18,7 +18,7 @@ namespace RayTracer {
     class Plane : public AShape {
         public:
             Plane() = default;
-            Plane(Math::Point3D origin, RayTracer::ShapeConfig::AXIS axis, std::shared_ptr<RayTracer::Material::AMaterial> material)
+            Plane(Math::Point3D origin, RayTracer::ShapeConfig::AXIS axis, std::shared_ptr<RayTracer::Material::IMaterial> material)
             {
                 _origin = origin;
                 _axis = axis;
@@ -87,7 +87,7 @@ namespace RayTracer {
             Math::Point3D _origin;
             RayTracer::ShapeConfig::AXIS _axis;
             Math::Vector3D _normal;
-            std::shared_ptr<RayTracer::Material::AMaterial> _material;
+            std::shared_ptr<RayTracer::Material::IMaterial> _material;
     };
 }
 
