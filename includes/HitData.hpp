@@ -40,6 +40,6 @@ class HitData {
         std::shared_ptr<RayTracer::Material::AMaterial> material;
 };
 
-#include "Material.hpp"
+#include "AMaterial.hpp"
 
 #endif /* !HITDATA_HPP_ */

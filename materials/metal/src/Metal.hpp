@@ -8,7 +8,7 @@
 #ifndef METAL_HPP_
 #define METAL_HPP_
 
-    #include "../../../includes/Material.hpp"
+    #include "../../../includes/AMaterial.hpp"
 
 namespace RayTracer {
     namespace Material {

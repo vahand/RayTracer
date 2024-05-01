@@ -8,7 +8,7 @@
 #ifndef LAMBERTIAN_HPP_
 #define LAMBERTIAN_HPP_
 
-    #include "../../../includes/Material.hpp"
+    #include "../../../includes/AMaterial.hpp"
 
 namespace RayTracer {
     namespace Material {

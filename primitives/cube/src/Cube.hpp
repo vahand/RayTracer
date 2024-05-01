@@ -12,7 +12,7 @@
     #include "../../../includes/HitData.hpp"
     #include "../../../includes/Range.hpp"
     #include "../../../includes/Ray.hpp"
-    #include "../../../includes/Material.hpp"
+    #include "../../../includes/AMaterial.hpp"
     #include "../../../includes/Color.hpp"
     #include "../../../includes/ShapeConfig.hpp"
     #include <unordered_map>

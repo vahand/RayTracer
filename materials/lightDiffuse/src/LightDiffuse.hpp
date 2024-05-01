@@ -8,7 +8,7 @@
 #ifndef LIGHTDIFFUSE_HPP_
 #define LIGHTDIFFUSE_HPP_
 
-    #include "../../../includes/Material.hpp"
+    #include "../../../includes/AMaterial.hpp"
 
 namespace RayTracer {
     namespace Material {
