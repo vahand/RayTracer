@@ -4,3 +4,4 @@ raytracer
 tmp
 *.ppm
 .vscode*
+a.out
