@@ -60,48 +60,47 @@ namespace RayTracer
             }
 
             void initialize() {
-                double theta = _fov_degrees * M_PI / 180;
+                double theta = _fovDegrees * M_PI / 180;
                 double half_height = tan(theta / 2);
-                double half_width = _aspect_ratio * half_height;
-                this->_samples = _samples;
-                this->_samples_scale = 1.0 / _samples;
+                double half_width = _aspectRatio * half_height;
+                this->_samplesScale = 1.0 / _samples;
 
                 Math::Vector3D offset = _direction.normalize();
                 Math::Vector3D upper = _up.CrossProduct(offset);
                 Math::Vector3D leftCross = offset.CrossProduct(upper);
 
-                _screen_center = _origin + offset;
-                _bottom_side = (upper * half_width) * 2;
-                _left_side = (leftCross * half_height) * 2;
+                _screenCenter = _origin + offset;
+                _bottomSide = (upper * half_width) * 2;
+                _leftSide = (leftCross * half_height) * 2;
 
-                _screen = Rectangle3D(_screen_center, _bottom_side, _left_side);
+                _screen = Rectangle3D(_screenCenter, _bottomSide, _leftSide);
 
-                _pixelDelta_x = _bottom_side * (1.0 / _image_width);
-                _pixelDelta_y = _left_side * (1.0 / _image_height);
+                _pixelDelta_x = _bottomSide * (1.0 / _imageWidth);
+                _pixelDelta_y = _leftSide * (1.0 / _imageHeight);
 
                 std::cerr << "Camera initialized" << std::endl;
             }
 
-
-            double _samples_scale;
+            double _samplesScale;
             double _samples;
             Math::Point3D _origin;
 
             Math::Vector3D _direction;
             Math::Vector3D _up;
-            double _aspect_ratio;
-            double _fov_degrees;
-            double _image_width;
-            double _image_height;
+            double _aspectRatio;
+            double _fovDegrees;
+            double _imageWidth;
+            double _imageHeight;
 
             Math::Vector3D _pixelDelta_x;
             Math::Vector3D _pixelDelta_y;
+
         private:
             Rectangle3D _screen;
 
-            Math::Point3D _screen_center;
-            Math::Vector3D _bottom_side;
-            Math::Vector3D _left_side;
+            Math::Point3D _screenCenter;
+            Math::Vector3D _bottomSide;
+            Math::Vector3D _leftSide;
     };
 }
 

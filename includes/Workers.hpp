@@ -91,7 +91,7 @@ class Workers {
                     RayTracer::Ray ray = core._camera.rayAround(u, v);
                     finalColor += RayTracer::Core::getRayColor(ray, core, core._maxDepth);
                 }
-                finalColor *= core._camera._samples_scale;
+                finalColor *= core._camera._samplesScale;
                 finalImage[y].push_back(finalColor);
             }
             mutex.unlock();

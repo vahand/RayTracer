@@ -315,7 +315,7 @@ namespace Graphics
 
                 m_view = sf::View(sf::FloatRect(0.f, 0.f, static_cast<float>(width), static_cast<float>(height)));
                 m_window.setView(m_view);
-                _aspect_ratio = static_cast<double>(width) / static_cast<double>(height);
+                _aspectRatio = static_cast<double>(width) / static_cast<double>(height);
 
                 initRayTracerWindow();
             }
@@ -487,7 +487,7 @@ namespace Graphics
             sf::RenderWindow m_window;
             sf::View m_view;
             sf::Font m_font;
-            double _aspect_ratio;
+            double _aspectRatio;
 
             std::vector<std::unique_ptr<Graphics::SFML::SFMLButton>> m_buttons;
             std::vector<std::unique_ptr<ResponsiveElement>> m_elements;

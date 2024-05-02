@@ -13,19 +13,21 @@ RayTracer::Core::Core(int screenWidth, int screenHeight)
     _screenWidth = screenWidth;
     _screenHeight = screenHeight;
 
+    double aspectRatio = static_cast<double>(screenWidth) / static_cast<double>(screenHeight);
+
     Math::Point3D cameraPosition(0, 0, 0);
     Math::Vector3D camera_direction(0, 0, 1);
     Math::Vector3D camera_up(0, 1, 0);
 
     this->_camera = RayTracer::Camera(cameraPosition, camera_direction, camera_up);
-    this->_camera._aspect_ratio = static_cast<double>(screenWidth / screenHeight);
-    this->_camera._fov_degrees = 45;
-    this->_camera._samples = 100;
-    this->_camera._image_width = screenWidth;
-    this->_camera._image_height = screenHeight;
+    this->_camera._aspectRatio = aspectRatio;
+    this->_camera._fovDegrees = 45;
+    this->_camera._samples = 10;
+    this->_camera._imageWidth = screenWidth;
+    this->_camera._imageHeight = screenHeight;
     this->_camera.initialize();
 
-    this->_maxDepth = 50;
+    this->_maxDepth = 10;
     this->sceneBackground = RayTracer::Color(0, 0, 0);
 }
 
