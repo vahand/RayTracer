@@ -12,39 +12,39 @@
 #include "../../../../includes/HitData.hpp"
 #include "../../../../includes/Range.hpp"
 #include "../../../../includes/Ray.hpp"
+#include "../../../../includes/AMaterial.hpp"
 #include <cmath>
 
 namespace RayTracer {
     class Plane : public AShape {
         public:
-            enum AXIS {
-                X,
-                Y,
-                Z
-            };
-
             Plane() = default;
-            Plane(Math::Point3D origin, RayTracer::Plane::AXIS axis, std::shared_ptr<RayTracer::Material::AMaterial> material)
+            Plane(Math::Point3D origin, RayTracer::ShapeConfig::AXIS axis, std::shared_ptr<RayTracer::Material::IMaterial> material)
             {
                 _origin = origin;
                 _axis = axis;
                 _material = material;
-                if (_axis == RayTracer::Plane::AXIS::X) {
+                if (_axis == RayTracer::ShapeConfig::AXIS::X) {
                     _normal = Math::Vector3D(1, 0, 0);
-                } else if (_axis == RayTracer::Plane::AXIS::Y) {
+                } else if (_axis == RayTracer::ShapeConfig::AXIS::Y) {
                     _normal = Math::Vector3D(0, 1, 0);
                 } else {
                     _normal = Math::Vector3D(0, 0, 1);
                 }
             }
-            ~Plane() = default;
 
             void setup(const RayTracer::ShapeConfig& config)
             {
                 _origin = config._origin;
-                // _axis = config._axis;
-                _normal = config._direction;
+                _axis = config._axis;
                 _material = config._material;
+                if (_axis == RayTracer::ShapeConfig::AXIS::X) {
+                    _normal = Math::Vector3D(1, 0, 0);
+                } else if (_axis == RayTracer::ShapeConfig::AXIS::Y) {
+                    _normal = Math::Vector3D(0, 1, 0);
+                } else {
+                    _normal = Math::Vector3D(0, 0, 1);
+                }
             }
 
             Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const
@@ -86,9 +86,9 @@ namespace RayTracer {
         protected:
         private:
             Math::Point3D _origin;
-            RayTracer::Plane::AXIS _axis;
+            RayTracer::ShapeConfig::AXIS _axis;
             Math::Vector3D _normal;
-            std::shared_ptr<RayTracer::Material::AMaterial> _material;
+            std::shared_ptr<RayTracer::Material::IMaterial> _material;
     };
 }
 

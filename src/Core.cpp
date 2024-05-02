@@ -68,3 +68,66 @@ RayTracer::IShape& RayTracer::Core::getNewShape(LIBRARY_TYPE type)
     std::cerr << "Shape of type " << type << " created successfully" << std::endl;
     return *func_ptr_casted();
 }
+
+// std::shared_ptr<RayTracer::Material::IMaterial> RayTracer::Core::getNewMaterial(LIBRARY_TYPE type)
+// {
+//     std::shared_ptr<void> handle = _handles[type];
+
+//     if (!isMaterialType(type))
+//         throw RayTracer::Core::RayException("getNewMaterial: Must have a material type");
+//     if (handle == nullptr)
+//         throw RayTracer::Core::RayException("No library found for type " + type);
+//     void *func_ptr = dlsym(handle.get(), "initMaterial");
+//     if (func_ptr == nullptr)
+//         throw RayTracer::Core::RayException(dlerror());
+//     RayTracer::Material::IMaterial *(*func_ptr_casted)() = reinterpret_cast<RayTracer::Material::IMaterial *(*)()>(func_ptr);
+//     std::cerr << "Material of type " << type << " created succesfully" << std::endl;
+//     return std::make_shared<RayTracer::Material::AMaterial>(*func_ptr_casted());
+// }
+
+// void RayTracer::Core::addMaterial(RayTracer::Material::IMaterial &material, LIBRARY_TYPE type, MaterialConfig& config, const std::string& name)
+// {
+//     if (type == LIBRARY_TYPE::LAMBERTIAN)
+//         static_cast<RayTracer::Material::Lambertian&>(material).setup(config);
+//     else if (type == LIBRARY_TYPE::METAL)
+//         static_cast<RayTracer::Material::Metal&>(material).setup(config);
+//     else if (type == LIBRARY_TYPE::LIGHT_DIFFUSE)
+//         static_cast<RayTracer::Material::LightDiffuse&>(material).setup(config);
+//     _loadedMaterials[name] = std::make_shared<RayTracer::Material::AMaterial>(material);
+// }
+
+void RayTracer::Core::loadNewMaterial(LIBRARY_TYPE type, MaterialConfig& config, const std::string& name)
+{
+    std::shared_ptr<void> handle = _handles[type];
+
+    if (!isMaterialType(type))
+        throw RayTracer::Core::RayException("getNewMaterial: Must have a material type");
+    if (handle == nullptr)
+        throw RayTracer::Core::RayException("No library found for type " + type);
+    void *func_ptr = dlsym(handle.get(), "initMaterial");
+    if (func_ptr == nullptr)
+        throw RayTracer::Core::RayException(dlerror());
+    RayTracer::Material::IMaterial *(*func_ptr_casted)() = reinterpret_cast<RayTracer::Material::IMaterial *(*)()>(func_ptr);
+    std::cerr << "Material of type " << type << " created succesfully" << std::endl;
+    if (type == LIBRARY_TYPE::LAMBERTIAN) {
+        _loadedMaterials[name] = std::make_shared<RayTracer::Material::Lambertian>();
+        _loadedMaterials[name]->setup(config);
+    }
+    else if (type == LIBRARY_TYPE::METAL) {
+        _loadedMaterials[name] = std::make_shared<RayTracer::Material::Metal>();
+        _loadedMaterials[name]->setup(config);
+    }
+    else if (type == LIBRARY_TYPE::LIGHT_DIFFUSE) {
+        _loadedMaterials[name] = std::make_shared<RayTracer::Material::LightDiffuse>();
+        _loadedMaterials[name]->setup(config);
+    }
+    // RayTracer::Material::AMaterial material = *func_ptr_casted();
+    // if (type == LIBRARY_TYPE::LAMBERTIAN)
+    //     static_cast<RayTracer::Material::Lambertian&>(material).setup(config);
+    // else if (type == LIBRARY_TYPE::METAL)
+    //     static_cast<RayTracer::Material::Metal&>(material).setup(config);
+    // else if (type == LIBRARY_TYPE::LIGHT_DIFFUSE)
+    //     static_cast<RayTracer::Material::LightDiffuse&>(material).setup(config);
+    // _loadedMaterials[name] = std::make_shared<RayTracer::Material::AMaterial>(material);
+    // _loadedMaterials[name]->setup(config);
+}

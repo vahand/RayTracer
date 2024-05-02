@@ -8,6 +8,10 @@
 #include "../includes/Core.hpp"
 #include "../plugins/primitives/sphere/includes/Sphere.hpp"
 #include "../plugins/primitives/plane/includes/Plane.hpp"
+#include "../plugins/primitives/cube/includes/Cube.hpp"
+#include "../plugins/materials/lambertian/src/Lambertian.hpp"
+#include "../plugins/materials/metal/src/Metal.hpp"
+#include "../plugins/materials/lightDiffuse/src/LightDiffuse.hpp"
 #include "../includes/Parser.hpp"
 #include "../includes/Light.hpp"
 
@@ -17,7 +21,8 @@
 
 static bool hasOption(int ac, char **av, const std::string &option)
 {
-    for (int i = 0; i < ac; i++) {
+    for (int i = 0; i < ac; i++)
+    {
         if (std::string(av[i]) == option)
             return true;
     }
@@ -26,7 +31,8 @@ static bool hasOption(int ac, char **av, const std::string &option)
 
 static void *getOptionValue(int ac, char **av, const std::string &option, const std::string &shortOption = "")
 {
-    for (int i = 0; i < ac; i++) {
+    for (int i = 0; i < ac; i++)
+    {
         if (std::string(av[i]) == option)
             return av[i + 1];
         if (shortOption != "" && std::string(av[i]) == shortOption)
@@ -39,7 +45,8 @@ int main(int ac, char **av)
 {
     std::unique_ptr<Graphics::AGraphicals> display;
 
-    if (hasOption(ac, av, "-h") || hasOption(ac, av, "--help")) {
+    if (hasOption(ac, av, "-h") || hasOption(ac, av, "--help"))
+    {
         std::cerr << "Usage: ./raytracer [options] > [image_path]" << std::endl;
         std::cerr << "\nOptions:" << std::endl;
         std::cerr << "\t-h, --help:\t Display this help message" << std::endl;
@@ -50,33 +57,34 @@ int main(int ac, char **av)
 
     bool threadsOption = hasOption(ac, av, "-t") || hasOption(ac, av, "--threads");
     int threadsCount = 1;
-    if (threadsOption) {
+    if (threadsOption)
+    {
         threadsCount = std::stoi(static_cast<const char *>(getOptionValue(ac, av, "--threads", "-t")));
     }
 
     bool guiOption = hasOption(ac, av, "-g") || hasOption(ac, av, "--gui");
 
-    // RayTracer::Core core(400, 400);
-    // Workers workers(threadsCount, 400, 400);
     std::shared_ptr<RayTracer::Core> core = std::make_shared<RayTracer::Core>(400, 400);
     std::shared_ptr<Workers> workers = std::make_shared<Workers>(threadsCount, 400, 400);
     core->loadLibrairies();
 
-    if (guiOption) {
+    if (guiOption)
+    {
         display = std::make_unique<Graphics::SFML::SFMLDisplay>();
         display->setup(core, workers);
         display->createWindow(1280, 720, "RayTracer");
     }
 
-    // RayTracer::Parser parser(core, "./configs/subject_config");
+    // RayTracer::Parser parser(core, "./configs/mathis_config3");
     // parser.printConfig();
 
     double sphereRadius = 2.0;
 
     auto material_ground = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(255, 255, 0));
     auto material_center = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0, 255, 255));
-    auto material_left   = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(255, 0, 0), 0.0);
-    auto material_right  = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(255, 255, 255));
+    auto material_cube = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0, 0, 255));
+    auto material_left = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(255, 0, 0), 0.0);
+    auto material_right = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(255, 255, 255));
 
     Math::Point3D sphere_left_pos(2.5, 8, 20);
     RayTracer::Sphere sphere_left(sphere_left_pos, sphereRadius, material_left);
@@ -84,11 +92,8 @@ int main(int ac, char **av)
     Math::Point3D sphere_center_pos(7.5, 8, 20);
     RayTracer::Sphere sphere_center(sphere_center_pos, sphereRadius, material_center);
 
-    Math::Point3D sphere_ground_pos(7.5, 108, 0);
-    RayTracer::Sphere sphere_ground(sphere_ground_pos, 100, material_ground);
-
     Math::Point3D plane_position(0, 10, 0);
-    RayTracer::Plane plane(plane_position, RayTracer::Plane::AXIS::Y, material_ground);
+    RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
 
     Math::Point3D sphere_light1_pos(12.5, 8, 10);
     Math::Point3D sphere_light2_pos(12.5, 8, 20);
@@ -114,17 +119,17 @@ int main(int ac, char **av)
     std::cerr << " - Max depth: " << core->_maxDepth << std::endl;
     std::cerr << " - Threads: " << workers->getThreadsCount() << std::endl;
 
-    if (guiOption) {
+    if (guiOption)
+    {
         std::cerr << "Rendering with GUI" << std::endl;
-        while (display->isWindowOpen()) {
+        while (display->isWindowOpen())
+        {
             display->renderAll();
         }
-    } else {
+    }
+    else
+    {
         workers->initialize(*core);
-        // workers->render(*core);
-        workers->setRendering(true);
-        workers->beginRender();
-        while (workers->isRendering())
-            workers->renderUpdate(*core);
+        workers->render(*core);
     }
 }
