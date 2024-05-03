@@ -350,6 +350,7 @@ namespace Graphics
                 std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);
                 renderButton->setTriggerFunction([this](sf::RenderWindow &window) {
                     std::cerr << "Render button clicked" << std::endl;
+                    _fastRendering = false;
                     _workers->initialize(*_core);
                     _workers->beginRender();
                     m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
@@ -358,7 +359,12 @@ namespace Graphics
 
                 std::unique_ptr<SFMLButton> fastRenderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 85), sf::Vector2f(14, 4), "FAST-RENDER", sf::Color(0, 170, 100), sf::Color(0, 100, 60), sf::Color::White);
                 fastRenderButton->setTriggerFunction([this](sf::RenderWindow &window) {
-                    std::cerr << "Render button clicked" << std::endl;
+                    std::cerr << "FastRender button clicked" << std::endl;
+                    _fastRendering = true;
+                    _workers->initialize(*_core);
+                    _workers->beginRender();
+                    m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
+                    _workers->setRendering(true);
                 });
 
                 m_buttons.push_back(std::move(renderButton));
@@ -470,7 +476,7 @@ namespace Graphics
                     m_renderedImage->render(m_window, sf::Vector2f(34, 50));
 
                     if (_workers->isRendering()) {
-                        _workers->renderUpdate(*_core);
+                        _workers->renderUpdate(*_core, _fastRendering);
 
                         _workers->placeholderMutex.lock();
                         updateRenderedImage(_workers->placeholderImage, !_workers->isRendering());
@@ -492,6 +498,7 @@ namespace Graphics
             std::vector<std::unique_ptr<Graphics::SFML::SFMLButton>> m_buttons;
             std::vector<std::unique_ptr<ResponsiveElement>> m_elements;
 
+            bool _fastRendering = false;
             std::unique_ptr<PixelImage> m_renderedImage;
             bool _finalDisplay = false;
             std::vector<sf::Event> m_events;
