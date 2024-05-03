@@ -79,7 +79,7 @@ class Workers {
             return -1;
         }
 
-        bool renderLine(int y, RayTracer::Core &core, std::mutex &mutex)
+        bool renderLine(int y, RayTracer::Core &core, std::mutex &mutex, bool fastRender = false)
         {
             if (finalImage.find(y) != finalImage.end() && finalImage.at(y).size() == core._screenWidth) {
                 mutex.unlock();
@@ -88,9 +88,15 @@ class Workers {
 
             for (int x = 0; x < core._screenWidth; x++) {
                 RayTracer::Color finalColor(0, 0, 0);
+                if (fastRender) {
+                    RayTracer::Ray ray = core._camera.rayAround(x, y);
+                    finalColor = RayTracer::Core::getRayColor(ray, core, core._maxDepth, fastRender);
+                    finalImage[y].insert(finalImage[y].begin(), finalColor);
+                    continue;
+                }
                 for (int sample = 0; sample < core._camera._samples; sample++) {
                     RayTracer::Ray ray = core._camera.rayAround(x, y);
-                    finalColor += RayTracer::Core::getRayColor(ray, core, core._maxDepth);
+                    finalColor += RayTracer::Core::getRayColor(ray, core, core._maxDepth, false);
                 }
                 finalColor *= core._camera._samplesScale;
                 finalImage[y].insert(finalImage[y].begin(), RayTracer::Core::getGammaColor(finalColor));
@@ -99,7 +105,7 @@ class Workers {
             return true;
         }
 
-        void render(RayTracer::Core &core)
+        void render(RayTracer::Core &core, bool fastRender = false)
         {
             auto startTime = std::chrono::high_resolution_clock::now();
 
@@ -113,7 +119,7 @@ class Workers {
                 core.displayProgress(y, core._screenHeight, startTime, threadIndex);
 
                 _mutexes.at(threadIndex)->lock();
-                _threads.at(threadIndex) = std::thread(&Workers::renderLine, this, y, std::ref(core), std::ref(*_mutexes.at(threadIndex)));
+                _threads.at(threadIndex) = std::thread(&Workers::renderLine, this, y, std::ref(core), std::ref(*_mutexes.at(threadIndex)), fastRender);
                 _threads.at(threadIndex).detach();
             }
 
@@ -159,7 +165,7 @@ class Workers {
             finalImageMutex.unlock();
         }
 
-        void renderUpdate(RayTracer::Core &core)
+        void renderUpdate(RayTracer::Core &core, bool fastRender = false)
         {
             int threadIndex = getFreeThreadIndex();
             while (threadIndex != -1 && _yUpdate < core._screenHeight) {
@@ -167,7 +173,7 @@ class Workers {
                 core.displayProgress(_yUpdate, core._screenHeight, _startTime, threadIndex);
 
                 _mutexes.at(threadIndex)->lock();
-                _threads.at(threadIndex) = std::thread(&Workers::renderLine, this, _yUpdate, std::ref(core), std::ref(*_mutexes.at(threadIndex)));
+                _threads.at(threadIndex) = std::thread(&Workers::renderLine, this, _yUpdate, std::ref(core), std::ref(*_mutexes.at(threadIndex)), fastRender);
                 _threads.at(threadIndex).detach();
                 threadIndex = getFreeThreadIndex();
             }
