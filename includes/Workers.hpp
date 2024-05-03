@@ -16,6 +16,8 @@
     #include <fstream>
     #include <unordered_map>
     #include <unistd.h>
+    #include <chrono>
+    #include <algorithm>
 
 class Workers {
     public:
@@ -59,6 +61,8 @@ class Workers {
             for (int y = 0; y < core._screenHeight; y++) {
                 finalImage[y] = std::vector<RayTracer::Color>();
                 finalImage[y].reserve(core._screenWidth);
+                placeholderImage[y] = std::vector<RayTracer::Color>();
+                placeholderImage[y].reserve(core._screenWidth);
             }
 
             std::cerr << "[INFO] Initialized " << _mutexes.size() << " mutexes and " << _threads.size() << " threads." << std::endl;
@@ -83,16 +87,13 @@ class Workers {
             }
 
             for (int x = 0; x < core._screenWidth; x++) {
-                double u = static_cast<double>(x) / core._screenWidth;
-                double v = static_cast<double>(y) / core._screenHeight;
-
                 RayTracer::Color finalColor(0, 0, 0);
                 for (int sample = 0; sample < core._camera._samples; sample++) {
-                    RayTracer::Ray ray = core._camera.rayAround(u, v);
+                    RayTracer::Ray ray = core._camera.rayAround(x, y);
                     finalColor += RayTracer::Core::getRayColor(ray, core, core._maxDepth);
                 }
                 finalColor *= core._camera._samplesScale;
-                finalImage[y].push_back(finalColor);
+                finalImage[y].insert(finalImage[y].begin(), RayTracer::Core::getGammaColor(finalColor));
             }
             mutex.unlock();
             return true;
@@ -145,13 +146,17 @@ class Workers {
 
         void copyToPlaceholder()
         {
+            finalImageMutex.lock();
             for (int y = 0; y < finalImage.size(); y++) {
-                if (finalImage.find(y) != finalImage.end()) {
-                    placeholderMutex.lock();
-                    placeholderImage[y] = finalImage[y];
-                    placeholderMutex.unlock();
-                }
+                if (finalImage.find(y) == finalImage.end())
+                    continue;
+                if (finalImage.at(y).size() != _width)
+                    continue;
+                placeholderMutex.lock();
+                placeholderImage[y] = finalImage[y];
+                placeholderMutex.unlock();
             }
+            finalImageMutex.unlock();
         }
 
         void renderUpdate(RayTracer::Core &core)
@@ -185,9 +190,7 @@ class Workers {
                     }
                 }
 
-                processImage();
                 copyToPlaceholder();
-                usleep(1000);
                 _rendering = false;
             }
         }
@@ -208,16 +211,11 @@ class Workers {
         }
 
         void processImage() {
-            static const RayTracer::Range colorRange(0.0, 255.0);
-
             std::cerr << "Processing image..." << std::endl;
             for (int y = 0; y < _height; y++) {
                 for (int x = 0; x < _width; x++) {
                     RayTracer::Color colorGamma = RayTracer::Core::getGammaColor(finalImage.at(y)[x]);
-                    int r = colorRange.bound(colorGamma._r);
-                    int g = colorRange.bound(colorGamma._g);
-                    int b = colorRange.bound(colorGamma._b);
-                    finalImage.at(y)[x] = RayTracer::Color(r, g, b);
+                    finalImage.at(y)[x] = RayTracer::Color(colorGamma._r, colorGamma._g, colorGamma._b);
                 }
             }
         }
@@ -229,10 +227,9 @@ class Workers {
             std::cout << "P3\n" << _width << " " << _height << "\n255\n";
             for (int y = 0; y < _height; y++) {
                 for (int x = 0; x < _width; x++) {
-                    RayTracer::Color colorGamma = RayTracer::Core::getGammaColor(finalImage.at(y)[x]);
-                    int r = colorRange.bound(colorGamma._r);
-                    int g = colorRange.bound(colorGamma._g);
-                    int b = colorRange.bound(colorGamma._b);
+                    int r = colorRange.bound(finalImage.at(y)[x]._r);
+                    int g = colorRange.bound(finalImage.at(y)[x]._g);
+                    int b = colorRange.bound(finalImage.at(y)[x]._b);
                     std::cout << r << " " << g << " " << b << "\n";
                 }
             }
@@ -251,7 +248,10 @@ class Workers {
 
         std::unordered_map<int, std::vector<RayTracer::Color>> finalImage;
         std::unordered_map<int, std::vector<RayTracer::Color>> placeholderImage;
+
         std::mutex placeholderMutex;
+        std::mutex finalImageMutex;
+
         std::vector<std::thread> _threads;
         std::vector<std::unique_ptr<std::mutex>> _mutexes;
 

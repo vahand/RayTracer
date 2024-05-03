@@ -15,16 +15,15 @@ RayTracer::Core::Core(int screenWidth, int screenHeight)
 
     double aspectRatio = static_cast<double>(screenWidth) / static_cast<double>(screenHeight);
 
-    Math::Point3D cameraPosition(0, 0, 0);
-    Math::Vector3D camera_direction(0, 0, 1);
-    Math::Vector3D camera_up(0, 1, 0);
+    this->_camera = RayTracer::Camera(screenWidth, screenHeight);
 
-    this->_camera = RayTracer::Camera(cameraPosition, camera_direction, camera_up);
-    this->_camera._aspectRatio = aspectRatio;
-    this->_camera._fovDegrees = 45;
-    this->_camera._samples = 10;
-    this->_camera._imageWidth = screenWidth;
-    this->_camera._imageHeight = screenHeight;
+    this->_camera._samples = 100;
+
+    this->_camera._fovInDegrees = 90;
+    this->_camera._position = Math::Point3D(0, 6, -20);
+    this->_camera._focusPoint = Math::Point3D(0, 2, 0);
+    this->_camera._vecUp = Math::Vector3D(0, 1, 0);
+
     this->_camera.initialize();
 
     this->_maxDepth = 10;
@@ -43,19 +42,24 @@ void RayTracer::Core::loadLibrary(std::string path)
 
 void RayTracer::Core::loadLibrairies()
 {
-    try {
-        for (const auto &entry : std::filesystem::directory_iterator("./lib")) {
+    try
+    {
+        for (const auto &entry : std::filesystem::directory_iterator("./lib"))
+        {
             std::string filename = entry.path().filename().string();
-            if (filename.find(".so") != std::string::npos) {
+            if (filename.find(".so") != std::string::npos)
+            {
                 loadLibrary("./lib/" + filename);
             }
         }
-    } catch (std::filesystem::filesystem_error &e) {
+    }
+    catch (std::filesystem::filesystem_error &e)
+    {
         throw RayException(e.what());
     }
 }
 
-RayTracer::IShape& RayTracer::Core::getNewShape(LIBRARY_TYPE type)
+RayTracer::IShape &RayTracer::Core::getNewShape(LIBRARY_TYPE type)
 {
     std::shared_ptr<void> handle = _handles[type];
 

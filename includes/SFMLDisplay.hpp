@@ -496,8 +496,6 @@ namespace Graphics
             bool _finalDisplay = false;
             std::vector<sf::Event> m_events;
 
-            // RayTracer::Core _core;
-            // Workers _workers;
             std::shared_ptr<RayTracer::Core> _core;
             std::shared_ptr<Workers> _workers;
         };

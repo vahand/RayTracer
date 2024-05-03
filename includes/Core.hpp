@@ -8,192 +8,223 @@
 #ifndef CORE_HPP_
 #define CORE_HPP_
 
-    #include "../plugins/primitives/sphere/includes/Sphere.hpp"
-    #include "../plugins/primitives/plane/includes/Plane.hpp"
-    #include "Ray.hpp"
-    #include "Color.hpp"
-    #include "Camera.hpp"
-    #include "Light.hpp"
-    #include "HitData.hpp"
-    #include "Range.hpp"
-    #include "Utils.hpp"
+#include "../plugins/primitives/sphere/includes/Sphere.hpp"
+#include "../plugins/primitives/plane/includes/Plane.hpp"
+#include "Ray.hpp"
+#include "Color.hpp"
+#include "Camera.hpp"
+#include "Light.hpp"
+#include "HitData.hpp"
+#include "Range.hpp"
+#include "Utils.hpp"
 
-    #include <vector>
-    #include <memory>
-    #include <unordered_map>
-    #include <fcntl.h>
-    #include <dirent.h>
-    #include <iostream>
-    #include <filesystem>
+#include <vector>
+#include <memory>
+#include <unordered_map>
+#include <fcntl.h>
+#include <dirent.h>
+#include <iostream>
+#include <filesystem>
 
-    #define CYAN "\033[0;36m"
-    #define RED "\033[0;31m"
-    #define GREEN "\033[0;32m"
-    #define YELLOW "\033[0;33m"
-    #define GRAY "\033[0;90m"
-    #define BLUE "\033[0;34m"
-    #define MAGENTA "\033[0;35m"
-    #define WHITE "\033[0;37m"
-    #define BOLD "\033[1m"
-    #define UNDERLINE "\033[4m"
-    #define ITALIC "\033[3m"
-    #define BLINK "\033[5m"
-    #define RESET "\033[0m"
+#define CYAN "\033[0;36m"
+#define RED "\033[0;31m"
+#define GREEN "\033[0;32m"
+#define YELLOW "\033[0;33m"
+#define GRAY "\033[0;90m"
+#define BLUE "\033[0;34m"
+#define MAGENTA "\033[0;35m"
+#define WHITE "\033[0;37m"
+#define BOLD "\033[1m"
+#define UNDERLINE "\033[4m"
+#define ITALIC "\033[3m"
+#define BLINK "\033[5m"
+#define RESET "\033[0m"
 
-namespace RayTracer {
-    class Core {
+namespace RayTracer
+{
+    class Core
+    {
+    public:
+        class RayException : public std::exception
+        {
         public:
-            class RayException : public std::exception {
-                public:
-                    RayException(std::string const &message) { _message = message;}
-                    const char *what() const noexcept override { return _message.c_str();}
-
-                private:
-                    std::string _message;
-            };
-
-            enum LIBRARY_TYPE {
-                SPHERE,
-                PLANE,
-                CONE,
-                CYLINDER,
-                AMBIANT_LIGHT,
-            };
-
-            Core(int screenWidth, int screenHeight);
-            ~Core() = default;
-
-            std::vector<std::reference_wrapper<IShape>> _shapes;
-            std::vector<std::reference_wrapper<Light>> _lights;
-            std::unordered_map<LIBRARY_TYPE, std::shared_ptr<void>> _handles;
-            RayTracer::Color sceneBackground;
-            int _screenWidth;
-            int _screenHeight;
-            int _maxDepth = 10;
-            RayTracer::Camera _camera;
-
-            void addShape(IShape &shape) { _shapes.push_back(shape); }
-            void addLight(Light &light) { _lights.push_back(light); }
-
-            void printShape() {
-                for (auto &shape : _shapes) {
-                    std::cerr << shape.get().getName() << std::endl;
-                }
-            }
-            void printLight() {
-                for (auto &light : _lights) {
-                    std::cerr << light.get().getName() << std::endl;
-                }
-            }
-
-            bool hit(const RayTracer::Ray &r, RayTracer::Range ray_range, HitData &data) const
-            {
-                HitData dataTmp;
-                bool hasHitted = false;
-                auto closest = ray_range.max;
-
-                for (const auto &object : _shapes) {
-                    if (object.get().hit(r, RayTracer::Range(ray_range.min, closest), dataTmp)) {
-                        hasHitted = true;
-                        closest = dataTmp.tValue;
-                        data = dataTmp;
-                    }
-                }
-
-                return hasHitted;
-            }
-
-            static RayTracer::Color getGammaColor(RayTracer::Color color)
-            {
-                double r = color._r / 255.0;
-                double g = color._g / 255.0;
-                double b = color._b / 255.0;
-
-                r = std::sqrt(r);
-                g = std::sqrt(g);
-                b = std::sqrt(b);
-
-                return RayTracer::Color(r * 255, g * 255, b * 255);
-            }
-
-            static RayTracer::Color getRayColor(const RayTracer::Ray& r, const RayTracer::Core& core, int limit = 10) {
-                if (limit <= 0)
-                    return RayTracer::Color(0, 0, 0);
-
-                HitData data;
-                double infinity = std::numeric_limits<double>::infinity();
-                if (!core.hit(r, RayTracer::Range(0.001, infinity), data))
-                    return core.sceneBackground;
-
-                RayTracer::Ray diffusedRay;
-                RayTracer::Color dissipation;
-                RayTracer::Color emitted = data.material->emit();
-
-                if (!data.material->diffuse(r, data, dissipation, diffusedRay))
-                    return emitted;
-
-                RayTracer::Color diffusedColor = dissipation * getRayColor(diffusedRay, core, limit - 1);
-                return emitted + diffusedColor;
-            }
-
-            static void displayProgress(
-                int current, int total,
-                std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now(),
-                int threadIndex = 0)
-            {
-                int progress = static_cast<int>((static_cast<double>(current) / total) * 100);
-                int barWidth = 70;
-                int filledWidth = static_cast<int>(barWidth * (static_cast<double>(progress) / 100));
-
-                auto now = std::chrono::high_resolution_clock::now();
-                auto totalElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime).count();
-
-                double timeEstimate = 0.0;
-                if (current != 0) {
-                    timeEstimate = (totalElapsed / current) * (total - current);
-                }
-
-                std::clog << "\r" << ITALIC << "[";
-                for (int i = 0; i < barWidth; ++i) {
-                    if (i < filledWidth) {
-                        if (progress < 35) {
-                            std::clog << RED << "=";
-                        } else if (progress < 70) {
-                            std::clog << YELLOW << "=";
-                        } else {
-                            std::clog << GREEN << "=";
-                        }
-                    } else if (i == filledWidth) {
-                        std::clog << ">";
-                    } else {
-                        std::clog << " ";
-                    }
-                }
-                std::clog << RESET << ITALIC << "] " << CYAN << progress << "%" << GRAY << " (" << current << "/" << total << ")";
-                std::clog << "\t<-> Elapsed: " << CYAN << static_cast<int>(totalElapsed / 1000.0) << "s" << GRAY << " /~ " << MAGENTA << static_cast<int>(timeEstimate / 1000) << RESET << " (s) Left";
-                std::clog << GRAY << " - T: " << threadIndex;
-                std::clog << " \t" << RESET;
-                std::clog.flush();
-            }
-
-            void loadLibrairies();
-            RayTracer::IShape& getNewShape(LIBRARY_TYPE type);
+            RayException(std::string const &message) { _message = message; }
+            const char *what() const noexcept override { return _message.c_str(); }
 
         private:
-            void loadLibrary(std::string path);
+            std::string _message;
+        };
 
-            bool isShapeType(LIBRARY_TYPE type) {
-                if (type != 4)
-                    return true;
-                else
-                    return false;
+        enum LIBRARY_TYPE
+        {
+            SPHERE,
+            PLANE,
+            CONE,
+            CYLINDER,
+            AMBIANT_LIGHT,
+        };
+
+        Core(int screenWidth, int screenHeight);
+        ~Core() = default;
+
+        std::vector<std::reference_wrapper<IShape>> _shapes;
+        std::vector<std::reference_wrapper<Light>> _lights;
+        std::unordered_map<LIBRARY_TYPE, std::shared_ptr<void>> _handles;
+        RayTracer::Color sceneBackground;
+        int _screenWidth;
+        int _screenHeight;
+        int _maxDepth = 10;
+        RayTracer::Camera _camera;
+
+        void addShape(IShape &shape) { _shapes.push_back(shape); }
+        void addLight(Light &light) { _lights.push_back(light); }
+
+        void printShape()
+        {
+            for (auto &shape : _shapes)
+            {
+                std::cerr << shape.get().getName() << std::endl;
             }
-            bool isLightType(LIBRARY_TYPE type) {
-                if (type == 4)
-                    return true;
-                else
-                    return false;
+        }
+        void printLight()
+        {
+            for (auto &light : _lights)
+            {
+                std::cerr << light.get().getName() << std::endl;
             }
+        }
+
+        bool hit(const RayTracer::Ray &r, RayTracer::Range ray_range, HitData &data) const
+        {
+            HitData dataTmp;
+            bool hasHitted = false;
+            auto closest = ray_range.max;
+
+            for (const auto &object : _shapes)
+            {
+                if (object.get().hit(r, RayTracer::Range(ray_range.min, closest), dataTmp))
+                {
+                    hasHitted = true;
+                    closest = dataTmp.tValue;
+                    data = dataTmp;
+                }
+            }
+
+            return hasHitted;
+        }
+
+        static RayTracer::Color getGammaColor(RayTracer::Color color)
+        {
+            static const RayTracer::Range colorRange(0.0, 255.0);
+
+            double r = color._r / 255.0;
+            double g = color._g / 255.0;
+            double b = color._b / 255.0;
+
+            r = std::sqrt(r) * 255;
+            g = std::sqrt(g) * 255;
+            b = std::sqrt(b) * 255;
+
+            r = colorRange.bound(r);
+            g = colorRange.bound(g);
+            b = colorRange.bound(b);
+
+            return RayTracer::Color(r, g, b);
+        }
+
+        static RayTracer::Color getRayColor(const RayTracer::Ray &r, const RayTracer::Core &core, int limit = 10)
+        {
+            if (limit <= 0)
+                return RayTracer::Color(0, 0, 0);
+
+            HitData data;
+            double infinity = std::numeric_limits<double>::infinity();
+            if (!core.hit(r, RayTracer::Range(0.001, infinity), data))
+                return core.sceneBackground;
+
+            RayTracer::Ray diffusedRay;
+            RayTracer::Color dissipation;
+            RayTracer::Color emitted = data.material->emit();
+
+            if (!data.material->diffuse(r, data, dissipation, diffusedRay))
+                return emitted;
+
+            RayTracer::Color diffusedColor = dissipation * getRayColor(diffusedRay, core, limit - 1);
+            return emitted + diffusedColor;
+        }
+
+        static void displayProgress(
+            int current, int total,
+            std::chrono::time_point<std::chrono::high_resolution_clock> startTime = std::chrono::high_resolution_clock::now(),
+            int threadIndex = 0)
+        {
+            int progress = static_cast<int>((static_cast<double>(current) / total) * 100);
+            int barWidth = 70;
+            int filledWidth = static_cast<int>(barWidth * (static_cast<double>(progress) / 100));
+
+            auto now = std::chrono::high_resolution_clock::now();
+            auto totalElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - startTime).count();
+
+            double timeEstimate = 0.0;
+            if (current != 0)
+            {
+                timeEstimate = (totalElapsed / current) * (total - current);
+            }
+
+            std::clog << "\r" << ITALIC << "[";
+            for (int i = 0; i < barWidth; ++i)
+            {
+                if (i < filledWidth)
+                {
+                    if (progress < 35)
+                    {
+                        std::clog << RED << "=";
+                    }
+                    else if (progress < 70)
+                    {
+                        std::clog << YELLOW << "=";
+                    }
+                    else
+                    {
+                        std::clog << GREEN << "=";
+                    }
+                }
+                else if (i == filledWidth)
+                {
+                    std::clog << ">";
+                }
+                else
+                {
+                    std::clog << " ";
+                }
+            }
+            std::clog << RESET << ITALIC << "] " << CYAN << progress << "%" << GRAY << " (" << current << "/" << total << ")";
+            std::clog << "\t<-> Elapsed: " << CYAN << static_cast<int>(totalElapsed / 1000.0) << "s" << GRAY << " /~ " << MAGENTA << static_cast<int>(timeEstimate / 1000) << RESET << " (s) Left";
+            std::clog << GRAY << " - T: " << threadIndex;
+            std::clog << " \t" << RESET;
+            std::clog.flush();
+        }
+
+        void loadLibrairies();
+        RayTracer::IShape &getNewShape(LIBRARY_TYPE type);
+
+    private:
+        void loadLibrary(std::string path);
+
+        bool isShapeType(LIBRARY_TYPE type)
+        {
+            if (type != 4)
+                return true;
+            else
+                return false;
+        }
+        bool isLightType(LIBRARY_TYPE type)
+        {
+            if (type == 4)
+                return true;
+            else
+                return false;
+        }
     };
 }
 
