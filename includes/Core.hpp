@@ -147,7 +147,7 @@ namespace RayTracer
             return RayTracer::Color(r, g, b);
         }
 
-        static RayTracer::Color getRayColor(const RayTracer::Ray &r, const RayTracer::Core &core, int limit = 10)
+        static RayTracer::Color getRayColor(const RayTracer::Ray &r, const RayTracer::Core &core, int limit = 10, bool fastRender = false)
         {
             if (limit <= 0)
                 return RayTracer::Color(0, 0, 0);
@@ -163,6 +163,9 @@ namespace RayTracer
 
             if (!data.material->diffuse(r, data, dissipation, diffusedRay))
                 return emitted;
+
+            if (fastRender)
+                return emitted + dissipation;
 
             RayTracer::Color diffusedColor = dissipation * getRayColor(diffusedRay, core, limit - 1);
             return emitted + diffusedColor;
