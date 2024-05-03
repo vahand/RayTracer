@@ -10,9 +10,9 @@
 
 #include "../plugins/primitives/sphere/includes/Sphere.hpp"
 #include "../plugins/primitives/plane/includes/Plane.hpp"
-#include "../plugins/materials/lambertian/src/Lambertian.hpp"
-#include "../plugins/materials/metal/src/Metal.hpp"
-#include "../plugins/materials/lightDiffuse/src/LightDiffuse.hpp"
+#include "../plugins/materials/lambertian/includes/Lambertian.hpp"
+#include "../plugins/materials/metal/includes/Metal.hpp"
+#include "../plugins/materials/lightDiffuse/includes/LightDiffuse.hpp"
 #include "Ray.hpp"
 #include "Color.hpp"
 #include "Camera.hpp"

@@ -9,14 +9,13 @@
 #include "../plugins/primitives/sphere/includes/Sphere.hpp"
 #include "../plugins/primitives/plane/includes/Plane.hpp"
 #include "../plugins/primitives/cube/includes/Cube.hpp"
-#include "../plugins/materials/lambertian/src/Lambertian.hpp"
-#include "../plugins/materials/metal/src/Metal.hpp"
-#include "../plugins/materials/lightDiffuse/src/LightDiffuse.hpp"
+#include "../plugins/materials/lambertian/includes/Lambertian.hpp"
+#include "../plugins/materials/metal/includes/Metal.hpp"
+#include "../plugins/materials/lightDiffuse/includes/LightDiffuse.hpp"
 #include "../includes/Parser.hpp"
 #include "../includes/Light.hpp"
 
 #include "../includes/Workers.hpp"
-
 #include "../includes/SFMLDisplay.hpp"
 
 static bool hasOption(int ac, char **av, const std::string &option)
