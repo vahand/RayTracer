@@ -16,7 +16,11 @@
 class Utils {
     public:
 
-        static double randomRangedDouble(double x) {
+        static double randomRangedDouble(double min, double max) {
+            return min + (max - min) * randomOneDouble();
+        }
+
+        static double randomScaledDouble(double x) {
             return (2 * x * randomOneDouble()) - x;
         }
 

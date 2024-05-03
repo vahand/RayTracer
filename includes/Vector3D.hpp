@@ -122,6 +122,10 @@ namespace Math {
                 return *this;
             }
 
+            Vector3D divByDouble(const double &val) const {
+                return Vector3D(X / val, Y / val, Z / val);
+            }
+
             double X;
             double Y;
             double Z;
@@ -141,6 +145,14 @@ namespace Math {
                 return Vector3D(x_result, y_result, z_result);
             }
 
+            double length() const {
+                return sqrt(lengthSquared());
+            }
+
+            static Vector3D unit_vector(const Vector3D& v) {
+                return v.divByDouble(v.length());
+            }
+
             Vector3D normalize() const {
                 double length = sqrt(this->lengthSquared());
                 return Vector3D(x() / length, y() / length, z() / length);
@@ -155,7 +167,7 @@ namespace Math {
             }
 
             static Vector3D random(double scale = 0.005) {
-                return Vector3D(Utils::randomRangedDouble(scale), Utils::randomRangedDouble(scale), Utils::randomRangedDouble(scale));
+                return Vector3D(Utils::randomScaledDouble(scale), Utils::randomScaledDouble(scale), Utils::randomScaledDouble(scale));
             }
 
             static Vector3D randomUnitSphereVector(double scale = 0.005) {
