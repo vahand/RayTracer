@@ -72,7 +72,7 @@ int main(int ac, char **av)
     {
         display = std::make_unique<Graphics::SFML::SFMLDisplay>();
         display->setup(core, workers);
-        display->createWindow(1280, 720, "RayTracer");
+        display->createWindow(400, 400, "RayTracer");
     }
 
     // RayTracer::Parser parser(core, "./configs/mathis_config3");
@@ -86,38 +86,56 @@ int main(int ac, char **av)
     auto material_left = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(255, 0, 0), 0.0);
     auto material_right = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(255, 255, 255));
 
-    Math::Point3D sphere_left_pos(2.5, 8, 20);
+    Math::Point3D sphere_left_pos(0, 2, 0);
     RayTracer::Sphere sphere_left(sphere_left_pos, sphereRadius, material_left);
 
-    Math::Point3D sphere_center_pos(7.5, 8, 20);
+    Math::Point3D sphere_center_pos(5, 2, 0);
     RayTracer::Sphere sphere_center(sphere_center_pos, sphereRadius, material_center);
 
-    Math::Point3D plane_position(0, 10, 0);
+    Math::Point3D sphere_right_pos(10, 2, 0);
+    RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_right);
+
+    // Math::Point3D sphere_ground_pos(7.5, 108, 0);
+    // RayTracer::Sphere sphere_ground(sphere_ground_pos, 100, material_ground);
+
+    Math::Point3D plane_position(0, 0, 0);
     RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
 
-    Math::Point3D sphere_light1_pos(12.5, 8, 10);
-    Math::Point3D sphere_light2_pos(12.5, 8, 20);
-    Math::Point3D sphere_light3_pos(7.5, 0, 20);
+    Math::Point3D sphere_light1_pos(20, 0, 0);
+    Math::Point3D sphere_light2_pos(-20, 0, 0);
+    Math::Point3D sphere_light3_pos(0, 0, 20);
+    Math::Point3D sphere_light4_pos(0, 0, -20);
+    Math::Point3D sphere_light5_pos(0, 20, 0);
+    Math::Point3D sphere_light6_pos(0, -20, 0);
 
     RayTracer::Sphere sphere_light1(sphere_light1_pos, sphereRadius, material_right);
     RayTracer::Sphere sphere_light2(sphere_light2_pos, sphereRadius, material_right);
     RayTracer::Sphere sphere_light3(sphere_light3_pos, sphereRadius, material_right);
+    RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_right);
+    RayTracer::Sphere sphere_light5(sphere_light5_pos, sphereRadius, material_right);
+    RayTracer::Sphere sphere_light6(sphere_light6_pos, sphereRadius, material_right);
 
     core->addShape(sphere_light1);
     core->addShape(sphere_light2);
     core->addShape(sphere_light3);
+    core->addShape(sphere_light4);
+    core->addShape(sphere_light5);
+    core->addShape(sphere_light6);
     core->addShape(plane);
 
     // core->addShape(sphere_ground);
     core->addShape(sphere_center);
     core->addShape(sphere_left);
+    core->addShape(sphere_right);
 
     std::cerr << "Rendering settings: " << std::endl;
-    std::cerr << " - Width: " << core->_camera._image_width << std::endl;
-    std::cerr << " - Height: " << core->_camera._image_height << std::endl;
+    std::cerr << " - Width: " << core->_camera._viewWidth << std::endl;
+    std::cerr << " - Height: " << core->_camera._viewHeight << std::endl;
     std::cerr << " - Quality (samples): " << core->_camera._samples << std::endl;
     std::cerr << " - Max depth: " << core->_maxDepth << std::endl;
     std::cerr << " - Threads: " << workers->getThreadsCount() << std::endl;
+
+    workers->initialize(*core);
 
     if (guiOption)
     {
@@ -129,7 +147,6 @@ int main(int ac, char **av)
     }
     else
     {
-        workers->initialize(*core);
         workers->render(*core);
     }
 }
