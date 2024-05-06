@@ -55,7 +55,12 @@ namespace RayTracer {
 
             double d = getDConstante();
 
-            bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const
+            Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const
+            {
+                return Math::Vector3D(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
+            }
+
+            bool hit(const RayTracer::Ray& ray, RayTracer::Range &ray_range, HitData& data) const
             {
                     double d = getDConstante();
                     double t = (d - ray.origin().DotProduct(getNormalVector())) / getNormalVector().DotProduct(ray.direction());
@@ -68,9 +73,8 @@ namespace RayTracer {
                         return false;
                     if (ray_point.Z < _min_Z || ray_point.Z > _max_Z)
                         return false;
+                    ray_range.max = sqrt(getVectorFromPoints(ray_point, ray.origin()).lengthSquared());
                     data.tValue = t;
-                    data.point = ray.at(data.tValue);
-                    data.normal = getNormalVector();
                     return true;
             }
 
@@ -98,14 +102,17 @@ namespace RayTracer {
             {
                 // call hit for each face
                 // update HitData with the closest face's data
+                bool isTouched = false;
                 for (auto& face : _faces) {
                     if (face.second.hit(ray, ray_range, data)) {
+                        data.point = ray.at(data.tValue);
+                        data.normal = face.second.getNormalVector();
                         data.determineFace(ray, data.normal);
                         data.material = _material;
-                        return true;
+                        isTouched = true;
                     }
                 }
-                return false;
+                return isTouched;
             }
 
             Math::Point3D center() const { return _origin; }
