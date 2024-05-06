@@ -10,6 +10,8 @@
 
 #include "../plugins/primitives/sphere/includes/Sphere.hpp"
 #include "../plugins/primitives/plane/includes/Plane.hpp"
+#include "../plugins/primitives/cylinder/includes/Cylinder.hpp"
+#include "../plugins/primitives/cone/includes/Cone.hpp"
 #include "../plugins/materials/lambertian/includes/Lambertian.hpp"
 #include "../plugins/materials/metal/includes/Metal.hpp"
 #include "../plugins/materials/lightDiffuse/includes/LightDiffuse.hpp"
@@ -225,9 +227,7 @@ namespace RayTracer
 
         void loadLibrairies();
         RayTracer::IShape &getNewShape(LIBRARY_TYPE type);
-        std::shared_ptr<RayTracer::Material::IMaterial> getNewMaterial(LIBRARY_TYPE type);
         void loadNewMaterial(LIBRARY_TYPE type, MaterialConfig &config, const std::string &name);
-        void addMaterial(RayTracer::Material::IMaterial &, LIBRARY_TYPE type, MaterialConfig &config, const std::string &name);
 
     private:
         void loadLibrary(std::string path);

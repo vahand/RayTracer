@@ -23,6 +23,8 @@ namespace RayTracer {
             ~ShapeConfig() = default;
 
             double _radius;
+            double _height;
+            double _angle;
             Math::Point3D _origin;
             Math::Vector3D _direction;
             int _type;

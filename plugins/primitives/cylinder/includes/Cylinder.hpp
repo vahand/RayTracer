@@ -15,6 +15,16 @@
 namespace RayTracer {
     class Cylinder : public AShape {
         public:
+            struct CylinderHitData
+            {
+                double aDirection;
+                double bDirection;
+                double aRayOrigin;
+                double bRayOrigin;
+                double aOrigin;
+                double bOrigin;
+            };
+
             Cylinder() = default;
             Cylinder(Math::Point3D& origin, double radius, double height, std::shared_ptr<RayTracer::Material::IMaterial> material, RayTracer::ShapeConfig::AXIS axis)
             : _radius(radius), _height(height), _material(material), _axis(axis)
@@ -24,11 +34,29 @@ namespace RayTracer {
 
             void setup(const RayTracer::ShapeConfig& config)
             {
+                _origin = config._origin;
+                _radius = config._radius;
+                _height = config._height;
+                _material = config._material;
+                _axis = config._axis;
             }
 
             Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const
             {
                 return Math::Vector3D(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
+            }
+
+            struct CylinderHitData getCylinderHitData(Math::Point3D origin, Math::Point3D rayOrigin, Math::Vector3D rayDirection) const
+            {
+                struct CylinderHitData data;
+                RayTracer::ShapeConfig::AXIS axis = _axis;
+                data.aDirection = (axis == ShapeConfig::Y || axis == ShapeConfig::Z) ? rayDirection.X : rayDirection.Y;
+                data.bDirection = (axis == ShapeConfig::X || axis == ShapeConfig::Y) ? rayDirection.Z : rayDirection.Y;
+                data.aRayOrigin = (axis == ShapeConfig::Y || axis == ShapeConfig::Z) ? rayOrigin.X : rayOrigin.Y;
+                data.bRayOrigin = (axis == ShapeConfig::X || axis == ShapeConfig::Y) ? rayOrigin.Z : rayOrigin.Y;
+                data.aOrigin = (axis == ShapeConfig::Y || axis == ShapeConfig::Z) ? origin.X : origin.Y;
+                data.bOrigin = (axis == ShapeConfig::X || axis == ShapeConfig::Y) ? origin.Z : origin.Y;
+                return data;
             }
 
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
@@ -37,10 +65,17 @@ namespace RayTracer {
                 Math::Point3D origin = center();
                 Math::Point3D rayOrigin = ray.origin();
                 Math::Vector3D rayDirection = ray.direction();
-                double a = rayDirection.x() * rayDirection.x() + rayDirection.z() * rayDirection.z();
-                double b = 2.0 * (rayOrigin.X * rayDirection.X + rayOrigin.Z * rayDirection.Z - origin.X * rayDirection.X - origin.Z * rayDirection.Z);
-                double c = rayOrigin.X * rayOrigin.X + rayOrigin.Z * rayOrigin.Z + origin.X * origin.X + origin.Z * origin.Z
-                    - 2.0 * (rayOrigin.X * origin.X + rayOrigin.Z * origin.Z) - r * r;
+                struct CylinderHitData hittingData = getCylinderHitData(origin, rayOrigin, rayDirection);
+                double a = hittingData.aDirection * hittingData.aDirection + hittingData.bDirection * hittingData.bDirection;
+                double b = 2.0 * (hittingData.aRayOrigin * hittingData.aDirection
+                    + hittingData.bRayOrigin * hittingData.bDirection
+                    - hittingData.aOrigin * hittingData.aDirection
+                    - hittingData.bOrigin * hittingData.bDirection);
+                double c = hittingData.aRayOrigin * hittingData.aRayOrigin
+                    + hittingData.bRayOrigin * hittingData.bRayOrigin
+                    + hittingData.aOrigin * hittingData.aOrigin
+                    + hittingData.bOrigin * hittingData.bOrigin
+                    - 2.0 * (hittingData.aRayOrigin * hittingData.aOrigin + hittingData.bRayOrigin * hittingData.bOrigin) - r * r;
 
                 double discriminant = b * b - 4.0 * a * c;
                 if (discriminant < 0)
