@@ -85,7 +85,6 @@ namespace RayTracer {
 
         protected:
         private:
-            Math::Point3D _origin;
             RayTracer::ShapeConfig::AXIS _axis;
             Math::Vector3D _normal;
             std::shared_ptr<RayTracer::Material::IMaterial> _material;

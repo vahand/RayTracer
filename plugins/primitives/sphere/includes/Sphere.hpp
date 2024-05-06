@@ -22,7 +22,9 @@ namespace RayTracer {
         public:
             Sphere() = default;
             Sphere(const Math::Point3D& center, double radius, std::shared_ptr<RayTracer::Material::IMaterial> material)
-                : _material(material), _origin(center), _radius(radius) {}
+                : _material(material), _radius(radius) {
+                    _origin = center;
+                }
 
             void setup(const RayTracer::ShapeConfig& config)
             {
@@ -73,7 +75,7 @@ namespace RayTracer {
             double radius() const { return _radius; }
 
         private:
-            Math::Point3D _origin;
+            // Math::Point3D _origin;
             double _radius;
             std::shared_ptr<RayTracer::Material::IMaterial> _material;
     };

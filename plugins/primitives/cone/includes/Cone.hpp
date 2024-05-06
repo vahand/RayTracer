@@ -17,8 +17,9 @@ namespace RayTracer {
         public:
             Cone() = default;
             Cone(Math::Point3D& origin, double radius, double height, std::shared_ptr<RayTracer::Material::IMaterial> material, RayTracer::ShapeConfig::AXIS axis, double angle)
-            : _origin(origin), _radius(radius), _height(height), _material(material), _axis(axis), _angle(angle)
+            : _radius(radius), _height(height), _material(material), _axis(axis), _angle(angle)
             {
+                _origin = origin;
                 _vertex = Math::Point3D(_origin.x(), _origin.y(), _origin.z() + height);
             }
 
@@ -75,7 +76,6 @@ namespace RayTracer {
 
         protected:
         private:
-            Math::Point3D _origin;
             Math::Point3D _vertex;
             double _radius;
             double _height;

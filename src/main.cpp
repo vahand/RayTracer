@@ -71,7 +71,7 @@ int main(int ac, char **av)
     {
         display = std::make_unique<Graphics::SFML::SFMLDisplay>();
         display->setup(core, workers);
-        display->createWindow(400, 400, "RayTracer");
+        display->createWindow(1280, 720, "RayTracer");
     }
 
     // RayTracer::Parser parser(core, "./configs/mathis_config3");
@@ -113,6 +113,8 @@ int main(int ac, char **av)
     RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_right);
     RayTracer::Sphere sphere_light5(sphere_light5_pos, sphereRadius, material_right);
     RayTracer::Sphere sphere_light6(sphere_light6_pos, sphereRadius, material_right);
+
+    sphere_left.translate(Math::Vector3D(-10, 2, 0));
 
     core->addShape(sphere_light1);
     core->addShape(sphere_light2);

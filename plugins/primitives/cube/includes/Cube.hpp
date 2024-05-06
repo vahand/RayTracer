@@ -88,8 +88,9 @@ namespace RayTracer {
 
             Cube() = default;
             Cube(const Math::Point3D origin, double xDim, double yDim, double zDim, std::shared_ptr<RayTracer::Material::IMaterial> material)
-                : _material(material), _origin(origin), _xDim(xDim), _yDim(yDim), _zDim(zDim)
+                : _material(material), _xDim(xDim), _yDim(yDim), _zDim(zDim)
             {
+                _origin = origin;
                 initVertexes();
                 initFaces();
             }
@@ -122,7 +123,6 @@ namespace RayTracer {
 
         protected:
         private:
-            Math::Point3D _origin;
             double _xDim;
             double _yDim;
             double _zDim;
