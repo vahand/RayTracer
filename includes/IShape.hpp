@@ -30,7 +30,7 @@ namespace RayTracer {
             virtual bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const = 0;
             virtual void setup(const RayTracer::ShapeConfig& config) = 0;
             virtual void translate(const Math::Vector3D& translation) = 0;
-            // virtual void rotate(const Math::Vector3D& rotation) = 0;
+            virtual void rotate(const Math::Vector3D& rotation) = 0;
 
             virtual const std::string& getName() const = 0;
             virtual void setName(const std::string& name) = 0;
