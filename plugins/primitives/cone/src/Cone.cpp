@@ -6,3 +6,14 @@
 */
 
 #include "../includes/Cone.hpp"
+
+extern "C" RayTracer::IShape * initShape()
+{
+    std::cerr << "Cone entryPoint" << std::endl;
+    return new RayTracer::Cone();
+}
+
+extern "C" int getType()
+{
+    return 2;
+}

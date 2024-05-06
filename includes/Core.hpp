@@ -10,6 +10,8 @@
 
 #include "../plugins/primitives/sphere/includes/Sphere.hpp"
 #include "../plugins/primitives/plane/includes/Plane.hpp"
+#include "../plugins/primitives/cylinder/includes/Cylinder.hpp"
+#include "../plugins/primitives/cone/includes/Cone.hpp"
 #include "../plugins/materials/lambertian/includes/Lambertian.hpp"
 #include "../plugins/materials/metal/includes/Metal.hpp"
 #include "../plugins/materials/lightDiffuse/includes/LightDiffuse.hpp"

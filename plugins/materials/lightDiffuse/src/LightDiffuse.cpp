@@ -5,7 +5,7 @@
 ** LightDiffuse
 */
 
-#include "LightDiffuse.hpp"
+#include "../includes/LightDiffuse.hpp"
 
 extern "C" RayTracer::Material::IMaterial * initMaterial()
 {

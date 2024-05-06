@@ -44,6 +44,11 @@ materials:
         type = "lightDiffuse";
         color = { r = 255.0; g = 255.0; b = 255.0; }
     }
+    material_cube:
+    {
+        type = "lambertian";
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
 }
 
 # Primitives in the scene
@@ -53,25 +58,40 @@ primitives:
     # List of spheres
     spheres = (
         {
-            sphereLeft: { x = 2.5; y = 8.0; z = 20.0; r = 2.0; material = "material_left"; }
+            sphereLight1: { x = 20.0; y = 0.0; z = 0.0; r = 2.0; material = "material_right"; }
         },
         {
-            sphereCenter: { x = 7.5; y = 8.0; z = 20.0; r = 2.0; material = "material_center"; }
+            sphereLight2: { x = -20.0; y = 0.0; z = 0.0; r = 2.0; material = "material_right"; }
         },
         {
-            sphereLight1: { x = 12.5; y = 8.0; z = 10.0; r = 2.0; material = "material_right"; }
+            sphereLight3: { x = 0.0; y = 0.0; z = 20.0; r = 2.0; material = "material_right"; }
         },
         {
-            sphereLight2: { x = 12.5; y = 8.0; z = 20.0; r = 2.0; material = "material_right"; }
+            sphereLight4: { x = 0.0; y = 0.0; z = -20.0; r = 2.0; material = "material_right"; }
         },
         {
-            sphereLight3: { x = 7.5; y = 0.0; z = 20.0; r = 2.0; material = "material_right"; }
+            sphereLight5: { x = 0.0; y = 20.0; z = 0.0; r = 2.0; material = "material_right"; }
+        },
+        {
+            sphereLight6: { x = 0.0; y = -20.0; z = 0.0; r = 2.0; material = "material_right"; }
         }
     );
 
     planes = (
         {
-            plane: { axis = "Y"; position = 9.0; material = "material_ground"; }
+            plane: { axis = "Y"; position = 0.0; material = "material_ground"; }
+        }
+    );
+
+    cones = (
+        {
+            cone1: { x = 0.0; y = 6.0; z = 20.0; r = 2.0; h = 5.0; material = "material_cube"; axis = "Y"; angle = 45.0;}
+        }
+    );
+
+    cylinders = (
+        {
+            cylinder1: { x = -6.0; y = 0.0; z = 10.0; r = 3.0; h = 5.0; material = "material_center"; axis = "Y"; }
         }
     );
 }

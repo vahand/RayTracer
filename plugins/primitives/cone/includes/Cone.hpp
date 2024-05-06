@@ -36,6 +36,13 @@ namespace RayTracer {
 
             void setup(const RayTracer::ShapeConfig& config)
             {
+                _origin = config._origin;
+                _radius = config._radius;
+                _height = config._height;
+                _material = config._material;
+                _axis = config._axis;
+                _angle = config._angle;
+                _vertex = Math::Point3D(_origin.x(), _origin.y(), _origin.z() + _height);
             }
 
             Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const

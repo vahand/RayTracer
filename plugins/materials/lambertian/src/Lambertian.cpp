@@ -5,7 +5,7 @@
 ** Lambertian
 */
 
-#include "Lambertian.hpp"
+#include "../includes/Lambertian.hpp"
 
 extern "C" RayTracer::Material::IMaterial * initMaterial()
 {

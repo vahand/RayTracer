@@ -66,7 +66,7 @@ RayTracer::IShape &RayTracer::Core::getNewShape(LIBRARY_TYPE type)
     if (!isShapeType(type))
         throw RayTracer::Core::RayException("getNewShape: Must have a shape type");
     if (handle == nullptr)
-        throw RayTracer::Core::RayException("No library loaded for type " + type);
+        throw RayTracer::Core::RayException("No library loaded for type " + std::to_string(type));
     void *func_ptr = dlsym(handle.get(), "initShape");
     if (func_ptr == nullptr)
         throw RayTracer::Core::RayException(dlerror());

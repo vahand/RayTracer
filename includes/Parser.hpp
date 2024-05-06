@@ -66,7 +66,9 @@ namespace RayTracer {
             std::string getPrimitiveName(libconfig::Setting &);
             void parseSpheres();
             void parsePlanes();
-            RayTracer::ShapeConfig::AXIS getPlaneAxis(const std::string&);
+            void parseCone();
+            void parseCylinder();
+            RayTracer::ShapeConfig::AXIS getParsedAxis(const std::string&);
             Math::Point3D getPlaneOrigin(double, RayTracer::ShapeConfig::AXIS);
 
             // LIGHTS

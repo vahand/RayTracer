@@ -5,7 +5,7 @@
 ** Metal
 */
 
-#include "Metal.hpp"
+#include "../includes/Metal.hpp"
 
 extern "C" RayTracer::Material::IMaterial * initMaterial()
 {
