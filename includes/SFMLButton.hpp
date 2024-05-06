@@ -87,22 +87,22 @@ namespace Graphics
                 m_text.setString(text);
             }
 
-            void render(sf::RenderWindow &window)
+            void render(sf::RenderWindow &window, bool locked = false)
             {
-                if (isHovered(window, sf::Vector2f(sf::Mouse::getPosition(window))))
-                {
+                if (isHovered(window, sf::Vector2f(sf::Mouse::getPosition(window)))) {
                     m_button.setFillColor(m_hoverColor);
-                }
-                else
-                {
+                } else {
                     m_button.setFillColor(m_buttonColor);
                 }
+
+                if (locked)
+                    m_button.setFillColor(sf::Color(100, 100, 100));
                 window.draw(m_button);
                 if (m_font.getInfo().family != "")
                     window.draw(m_text);
             }
 
-            void update(sf::RenderWindow &window, const sf::Vector2f &mousePosition, const std::vector<sf::Event> &events)
+            void update(sf::RenderWindow &window, const sf::Vector2f &mousePosition, const std::vector<sf::Event> &events, bool locked = false)
             {
                 double sizeX = std::ceil((static_cast<double>(_percentSize.x) / 100.0) * window.getSize().x);
                 double sizeY = std::ceil((static_cast<double>(_percentSize.y) / 100.0) * window.getSize().y);
@@ -124,6 +124,10 @@ namespace Graphics
                 sf::FloatRect textBounds = m_text.getLocalBounds();
                 m_text.setPosition(posX + (sizeX - textBounds.width) / 2, posY + (sizeY - textBounds.height) / 3);
 
+                this->render(window, locked);
+
+                if (locked)
+                    return;
                 for (auto &event : events)
                 {
                     if (isClicked(window, mousePosition, event))

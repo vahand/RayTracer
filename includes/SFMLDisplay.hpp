@@ -217,6 +217,8 @@ namespace Graphics
                 std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);
                 renderButton->setTriggerFunction([this](sf::RenderWindow &window) {
                     std::cerr << "Render button clicked" << std::endl;
+                    if (_workers->isRendering())
+                        return;
                     _fastRendering = false;
                     _workers->initialize(*_core);
                     _workers->beginRender();
@@ -227,6 +229,8 @@ namespace Graphics
                 std::unique_ptr<SFMLButton> fastRenderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 85), sf::Vector2f(14, 4), "FAST-RENDER", sf::Color(0, 170, 100), sf::Color(0, 100, 60), sf::Color::White);
                 fastRenderButton->setTriggerFunction([this](sf::RenderWindow &window) {
                     std::cerr << "FastRender button clicked" << std::endl;
+                    if (_workers->isRendering())
+                        return;
                     _fastRendering = true;
                     _workers->initialize(*_core);
                     _workers->beginRender();
@@ -327,16 +331,13 @@ namespace Graphics
 
                 clearWindow();
 
-                for (auto &element : m_elements)
-                {
+                for (auto &element : m_elements) {
                     element->update(m_window);
                     element->render(m_window);
                 }
 
-                for (auto &button : m_buttons)
-                {
-                    button->update(m_window, sf::Vector2f(sf::Mouse::getPosition(m_window)), m_events);
-                    button->render(m_window);
+                for (auto &button : m_buttons) {
+                    button->update(m_window, sf::Vector2f(sf::Mouse::getPosition(m_window)), m_events, _workers->isRendering());
                 }
 
                 if (m_renderedImage) {
