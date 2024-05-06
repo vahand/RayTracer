@@ -27,7 +27,7 @@ namespace RayTracer {
                 if (_axis == RayTracer::ShapeConfig::AXIS::X) {
                     _normal = Math::Vector3D(1, 0, 0);
                 } else if (_axis == RayTracer::ShapeConfig::AXIS::Y) {
-                    _normal = Math::Vector3D(0, 1, 0);
+                    _normal = Math::Vector3D(0.707, 1, 0);
                 } else {
                     _normal = Math::Vector3D(0, 0, 1);
                 }
@@ -83,10 +83,18 @@ namespace RayTracer {
                 return getNormalVector().DotProduct(vector) == 0.0;
             }
 
+            void rotate(const Math::Vector3D &rotation) override {
+                _rotation = rotation;
+            
+                _normal *= rotation;
+                return;
+            }
+
         protected:
         private:
             RayTracer::ShapeConfig::AXIS _axis;
             Math::Vector3D _normal;
+            Math::Vector3D _rotation;
             std::shared_ptr<RayTracer::Material::IMaterial> _material;
     };
 }

@@ -101,6 +101,7 @@ int main(int ac, char **av)
 
     Math::Point3D plane_position(0, 0, 0);
     RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
+    // plane.rotate(Math::Vector3D(M_PI, 0, 0));
 
     Math::Point3D sphere_light1_pos(20, 0, 0);
     Math::Point3D sphere_light2_pos(-20, 0, 0);
@@ -129,7 +130,7 @@ int main(int ac, char **av)
     core->addShape(sphere_light6);
     core->addShape(plane);
 
-    core->addShape(cone);
+    // core->addShape(cone);
 
     // core->addShape(sphere_ground);
     core->addShape(sphere_center);

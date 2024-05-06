@@ -24,6 +24,12 @@ namespace RayTracer {
                 _origin.Z += translation.Z;
             }
 
+            void degreeToRadian(Math::Vector3D &angle) override {
+                angle.X = (angle.x() * M_PI / 180);
+                angle.Y = (angle.y() * M_PI / 180);
+                angle.Z = (angle.z() * M_PI / 180);
+            }
+
             bool operator==(const AShape &shape) const {
                 return _origin == shape._origin && _color == shape._color && _type == shape._type;
             }

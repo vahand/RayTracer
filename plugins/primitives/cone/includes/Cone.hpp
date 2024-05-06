@@ -73,6 +73,8 @@ namespace RayTracer {
             Math::Point3D vertex() const { return _vertex; }
             double radius() const { return _radius; }
 
+            void rotate(const Math::Vector3D &rotation) override
+            { (void)rotation; return; }
 
         protected:
         private:

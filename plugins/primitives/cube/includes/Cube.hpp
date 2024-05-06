@@ -121,6 +121,9 @@ namespace RayTracer {
             double yDim() const { return _yDim; }
             double zDim() const { return _zDim; }
 
+            void rotate(const Math::Vector3D &rotation) override
+            { (void)rotation; return; }
+
         protected:
         private:
             double _xDim;
