@@ -9,6 +9,8 @@
 #include "../plugins/primitives/sphere/includes/Sphere.hpp"
 #include "../plugins/primitives/plane/includes/Plane.hpp"
 #include "../plugins/primitives/cube/includes/Cube.hpp"
+#include "../plugins/primitives/cone/includes/Cone.hpp"
+#include "../plugins/primitives/cylinder/includes/Cylinder.hpp"
 #include "../plugins/materials/lambertian/includes/Lambertian.hpp"
 #include "../plugins/materials/metal/includes/Metal.hpp"
 #include "../plugins/materials/lightDiffuse/includes/LightDiffuse.hpp"
@@ -71,7 +73,7 @@ int main(int ac, char **av)
     {
         display = std::make_unique<Graphics::SFML::SFMLDisplay>();
         display->setup(core, workers);
-        display->createWindow(400, 400, "RayTracer");
+        display->createWindow(1280, 720, "RayTracer");
     }
 
     // RayTracer::Parser parser(core, "./configs/mathis_config3");
@@ -114,6 +116,9 @@ int main(int ac, char **av)
     RayTracer::Sphere sphere_light5(sphere_light5_pos, sphereRadius, material_right);
     RayTracer::Sphere sphere_light6(sphere_light6_pos, sphereRadius, material_right);
 
+    Math::Point3D cone_position(-8, 5, 8);
+    RayTracer::Cone cone(cone_position, 2, 5, material_center, RayTracer::ShapeConfig::AXIS::Y, 45);
+
     core->addShape(sphere_light1);
     core->addShape(sphere_light2);
     core->addShape(sphere_light3);
@@ -121,6 +126,8 @@ int main(int ac, char **av)
     core->addShape(sphere_light5);
     core->addShape(sphere_light6);
     core->addShape(plane);
+
+    core->addShape(cone);
 
     // core->addShape(sphere_ground);
     core->addShape(sphere_center);
