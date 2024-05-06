@@ -15,6 +15,18 @@
 namespace RayTracer {
     class Cone : public AShape {
         public:
+            struct ConeHitData
+            {
+                double aDirection;
+                double bDirection;
+                double cDirection;
+                double aRayOrigin;
+                double bRayOrigin;
+                double cRayOrigin;
+                double aOrigin;
+                double bOrigin;
+                double cOrigin;
+            };
             Cone() = default;
             Cone(Math::Point3D& origin, double radius, double height, std::shared_ptr<RayTracer::Material::IMaterial> material, RayTracer::ShapeConfig::AXIS axis, double angle)
             : _origin(origin), _radius(radius), _height(height), _material(material), _axis(axis), _angle(angle)
@@ -31,6 +43,32 @@ namespace RayTracer {
                 return Math::Vector3D(lhs.x() - rhs.x(), lhs.y() - rhs.y(), lhs.z() - rhs.z());
             }
 
+            struct ConeHitData getConeHitData(Math::Vector3D rayDirection, Math::Point3D origin, Math::Point3D rayOrigin) const
+            {
+                struct ConeHitData data;
+                RayTracer::ShapeConfig::AXIS axis = _axis;
+                data.aDirection = (axis == ShapeConfig::Y || axis == ShapeConfig::Z) ? rayDirection.X : rayDirection.Y;
+                data.bDirection = (axis == ShapeConfig::X || axis == ShapeConfig::Y) ? rayDirection.Z : rayDirection.Y;
+                data.aRayOrigin = (axis == ShapeConfig::Y || axis == ShapeConfig::Z) ? rayOrigin.X : rayOrigin.Y;
+                data.bRayOrigin = (axis == ShapeConfig::X || axis == ShapeConfig::Y) ? rayOrigin.Z : rayOrigin.Y;
+                data.aOrigin = (axis == ShapeConfig::Y || axis == ShapeConfig::Z) ? origin.X : origin.Y;
+                data.bOrigin = (axis == ShapeConfig::X || axis == ShapeConfig::Y) ? origin.Z : origin.Y;
+                if (axis == ShapeConfig::X) {
+                    data.cDirection = rayDirection.X;
+                    data.cRayOrigin = rayOrigin.X;
+                    data.cOrigin = origin.X;
+                } else if (axis == ShapeConfig::Y) {
+                    data.cDirection = rayDirection.Y;
+                    data.cRayOrigin = rayOrigin.Y;
+                    data.cOrigin = origin.Y;
+                } else {
+                    data.cDirection = rayDirection.Z;
+                    data.cRayOrigin = rayOrigin.Z;
+                    data.cOrigin = origin.Z;
+                }
+                return data;
+            }
+
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
             {
                 double alpha = _angle;
@@ -38,12 +76,25 @@ namespace RayTracer {
                 Math::Vector3D rayDirection = ray.direction();
                 Math::Point3D rayOrigin = ray.origin();
                 Math::Point3D origin = center();
-                double a = (rayDirection.X * rayDirection.X) + (rayDirection.Z * rayDirection.Z) - (squaredTan * rayDirection.Y * rayDirection.Y);
-                double b = 2.0 * ((rayOrigin.X * rayDirection.X) - (rayDirection.X * origin.X) + (rayOrigin.Z * rayDirection.Z)
-                    - (rayDirection.Z * origin.Z) - (squaredTan * rayOrigin.Y * rayDirection.Y) + (squaredTan * rayDirection.Y * origin.Y));
-                double c = (rayOrigin.X * rayOrigin.X) - 2.0 * (rayOrigin.X * origin.X) + (origin.X * origin.X)
-                    + (rayOrigin.Z * rayOrigin.Z) - 2.0 * (rayOrigin.Z * origin.Z) + (origin.Z * origin.Z)
-                    - (squaredTan * rayOrigin.Y * rayOrigin.Y) + (squaredTan * 2.0 * rayOrigin.Y * origin.Y) - squaredTan * (origin.Y * origin.Y);
+                struct ConeHitData hittingData = getConeHitData(rayDirection, origin, rayOrigin);
+                double a = (hittingData.aDirection * hittingData.aDirection)
+                    + (hittingData.bDirection * hittingData.bDirection)
+                    - (squaredTan * hittingData.cDirection * hittingData.cDirection);
+                double b = 2.0 * ((hittingData.aRayOrigin * hittingData.aDirection)
+                    - (hittingData.aDirection * hittingData.aOrigin)
+                    + (hittingData.bRayOrigin * hittingData.bDirection)
+                    - (hittingData.bDirection * hittingData.bOrigin)
+                    - (squaredTan * hittingData.cRayOrigin * hittingData.cDirection)
+                    + (squaredTan * hittingData.cDirection * hittingData.cOrigin));
+                double c = (hittingData.aRayOrigin * hittingData.aRayOrigin)
+                    - 2.0 * (hittingData.aRayOrigin * hittingData.aOrigin)
+                    + (hittingData.aOrigin * hittingData.aOrigin)
+                    + (hittingData.bRayOrigin * hittingData.bRayOrigin)
+                    - 2.0 * (hittingData.bRayOrigin * hittingData.bOrigin)
+                    + (hittingData.bOrigin * hittingData.bOrigin)
+                    - (squaredTan * hittingData.cRayOrigin * hittingData.cRayOrigin)
+                    + (squaredTan * 2.0 * hittingData.cRayOrigin * hittingData.cOrigin)
+                    - squaredTan * (hittingData.cOrigin * hittingData.cOrigin);
 
                 double discriminant = b * b - 4.0 * a * c;
                 if (discriminant < 0)
