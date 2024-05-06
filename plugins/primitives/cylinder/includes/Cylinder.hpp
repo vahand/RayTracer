@@ -17,8 +17,9 @@ namespace RayTracer {
         public:
             Cylinder() = default;
             Cylinder(Math::Point3D& origin, double radius, double height, std::shared_ptr<RayTracer::Material::IMaterial> material, RayTracer::ShapeConfig::AXIS axis)
-            : _origin(origin), _radius(radius), _height(height), _material(material), _axis(axis)
+            : _radius(radius), _height(height), _material(material), _axis(axis)
             {
+                _origin = origin;
             }
 
             void setup(const RayTracer::ShapeConfig& config)
@@ -69,7 +70,6 @@ namespace RayTracer {
 
         protected:
         private:
-            Math::Point3D _origin;
             double _radius;
             double _height;
             std::shared_ptr<RayTracer::Material::IMaterial> _material;

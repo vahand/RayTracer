@@ -119,6 +119,8 @@ int main(int ac, char **av)
     Math::Point3D cone_position(-8, 5, 8);
     RayTracer::Cone cone(cone_position, 2, 5, material_center, RayTracer::ShapeConfig::AXIS::Y, 45);
 
+    sphere_left.translate(Math::Vector3D(-10, 2, 0));
+
     core->addShape(sphere_light1);
     core->addShape(sphere_light2);
     core->addShape(sphere_light3);

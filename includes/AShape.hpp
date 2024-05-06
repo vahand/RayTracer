@@ -18,12 +18,16 @@ namespace RayTracer {
 
             const std::string& getName() const override { return _name; }
             void setName(const std::string& name) override { _name = name; }
+            void translate(const Math::Vector3D& translation) override {
+                _origin.X += translation.X;
+                _origin.Y += translation.Y;
+                _origin.Z += translation.Z;
+            }
 
             bool operator==(const AShape &shape) const {
                 return _origin == shape._origin && _color == shape._color && _type == shape._type;
             }
 
-        private:
             Math::Point3D _origin;
             RayTracer::Color _color;
             RayTracer::ShapeType _type;
