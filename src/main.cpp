@@ -9,7 +9,6 @@
 #include "../plugins/primitives/sphere/includes/Sphere.hpp"
 #include "../plugins/primitives/plane/includes/Plane.hpp"
 #include "../plugins/primitives/cube/includes/Cube.hpp"
-#include "../plugins/primitives/cylinder/includes/Cylinder.hpp"
 #include "../plugins/materials/lambertian/src/Lambertian.hpp"
 #include "../plugins/materials/metal/src/Metal.hpp"
 #include "../plugins/materials/lightDiffuse/src/LightDiffuse.hpp"
@@ -109,9 +108,6 @@ int main(int ac, char **av)
     Math::Point3D sphere_light5_pos(0, 20, 0);
     Math::Point3D sphere_light6_pos(0, -20, 0);
 
-    Math::Point3D position_cylinder(7.5, 8, 10);
-    RayTracer::Cylinder Cylinder(position_cylinder, RayTracer::ShapeConfig::AXIS::Y, 5, 10, material_cube);
-
     RayTracer::Sphere sphere_light1(sphere_light1_pos, sphereRadius, material_right);
     RayTracer::Sphere sphere_light2(sphere_light2_pos, sphereRadius, material_right);
     RayTracer::Sphere sphere_light3(sphere_light3_pos, sphereRadius, material_right);
@@ -126,7 +122,6 @@ int main(int ac, char **av)
     core->addShape(sphere_light5);
     core->addShape(sphere_light6);
     core->addShape(plane);
-    // core->addShape(Cylinder);
 
     // core->addShape(sphere_ground);
     core->addShape(sphere_center);
