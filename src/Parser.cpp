@@ -370,6 +370,57 @@ void RayTracer::Parser::parseMaterialsSection()
     }
 }
 
+std::string RayTracer::Parser::getShapeNameForTransformation(libconfig::Setting &config)
+{
+    std::string name = config.getName();
+    if (name.empty())
+        throw RayTracer::Parser::ParserException("Transformations: Invalid name parameter");
+    if (_parsedPrimitives.size() > 0) {
+        for (auto &parsedPrimitive : _parsedPrimitives) {
+            if (parsedPrimitive == name)
+                return name;
+        }
+    }
+    std::clog << MAGENTA << BOLD << "WARNING: " << RESET << MAGENTA << "Shape \"" << name << "\" not found in config file" << RESET << std::endl;
+    return "";
+}
+
+void RayTracer::Parser::callTransformationMethod(const std::string& type, const std::string& shapeName, const Math::Vector3D& vector)
+{
+    if (type != "translate" && type != "rotate" && type != "scale")
+        std::clog << MAGENTA << BOLD << "WARNING: " << RESET << MAGENTA << "Unknown transformation type \"" << type << "\" in config file" << RESET << std::endl;
+    if (shapeName.empty())
+        return;
+    IShape &shape = refCore.getShape(shapeName);
+    if (type == "translate") {
+        std::cerr << "Translation for shape " << shapeName << std::endl;
+        shape.translate(vector);
+    } else if (type == "rotate") {
+        std::cerr << "Rotation for shape " << shapeName << std::endl;
+        shape.rotate(vector);
+    }
+}
+
+void RayTracer::Parser::parseTransformationsSection()
+{
+    try {
+        for (int i = 0; i < _transformationsSection->getLength(); i++) {
+            libconfig::Setting &transformation = _transformationsSection->operator[](i);
+            const std::string &name = getShapeNameForTransformation(transformation);
+            if (name.empty())
+                continue;
+            const std::string transformationType = transformation.lookup("type");
+            libconfig::Setting &transformationVector = transformation.lookup("vector");
+            Math::Vector3D vector(transformationVector[0], transformationVector[1], transformationVector[2]);
+            callTransformationMethod(transformationType, name, vector);
+        }
+    } catch (const libconfig::SettingNotFoundException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are missing for transformations in config file \"" + _path + "\"");
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are bad formatted for transformations in config file \"" + _path + "\"");
+    }
+}
+
 void RayTracer::Parser::parseConfig()
 {
     try {
@@ -397,6 +448,14 @@ void RayTracer::Parser::parseConfig()
             parsePrimitives();
         } else {
             throw RayTracer::Parser::ParserException("Failed to find primitives settings in config file \"" + _path + "\"");
+        }
+
+        _transformationsSection = &_cfg.lookup("transformations");
+        if (_transformationsSection != nullptr) {
+            std::cerr << ">> Transformations found in config file!" << std::endl;
+            parseTransformationsSection();
+        } else {
+            std::clog << RED << "WARNING: No transformations have been defined in config file" << RESET << std::endl;
         }
 
         // _lightsSection = &_cfg.lookup("lights");

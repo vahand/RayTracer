@@ -168,7 +168,7 @@ int main(int ac, char **av)
             workers->render(*core);
         }
     } catch (const std::exception &e) {
-        std::cerr << "An error occured: " << e.what() << std::endl;
+        std::clog << RED << BOLD << "An error occured: " << RESET << e.what() << std::endl;
         return 84;
     }
 }

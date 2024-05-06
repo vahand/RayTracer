@@ -118,6 +118,6 @@ lights:
 
 transformations:
 {
-    sphere1: { type = "translation" ; vector: { x = 12 ; y = 67 ; z = 34 } } # a translation transfo. applied to sphere1
-    sphere2: { type = "rotation" ; vector: { x = 12 ; y = 67 ; z = 34 } } # a rotation transfo. applied to sphere2
+    qdheuxh: { type = "translate" ; vector: { x = 12.0 ; y = 67.0 ; z = 34.0 } } # a translation transfo. applied to sphere1
+    cylinder1: { type = "rotate" ; vector: { x = 12.0 ; y = 67.0 ; z = 34.0 } } # a rotation transfo. applied to sphere2
 }

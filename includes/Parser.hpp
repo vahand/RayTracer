@@ -58,6 +58,13 @@ namespace RayTracer {
             void parseMaterialsSection();
             std::string getMaterialName(libconfig::Setting &);
 
+            // TRANSFORMATIONS
+            libconfig::Setting *_transformationsSection;
+
+            std::string getShapeNameForTransformation(libconfig::Setting &);
+            void parseTransformationsSection();
+            void callTransformationMethod(const std::string& type, const std::string& shapeName, const Math::Vector3D& vector);
+
             // PRIMITIVES
             libconfig::Setting *_primitivesSection;
             std::vector<std::string> _parsedPrimitives;

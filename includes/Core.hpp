@@ -89,6 +89,16 @@ namespace RayTracer
         void addLight(Light &light) { _lights.push_back(light); }
         void addMaterial(const std::string &name, std::shared_ptr<RayTracer::Material::IMaterial> material) { _loadedMaterials[name] = material; }
 
+        IShape &getShape(const std::string &name)
+        {
+            for (auto &shape : _shapes)
+            {
+                if (shape.get().getName() == name)
+                    return shape.get();
+            }
+            throw RayException("getShape: Shape not found");
+        }
+
         void printShape()
         {
             for (auto &shape : _shapes)
