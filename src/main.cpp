@@ -84,50 +84,59 @@ int main(int ac, char **av)
     auto material_ground = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(255, 255, 0));
     auto material_center = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0, 255, 255));
     auto material_cube = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0, 0, 255));
-    auto material_left = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(255, 0, 0), 0.0);
-    auto material_right = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(255, 255, 255));
+    auto material_red_metal = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(255, 0, 0), 0.0);
+    auto material_light = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(255, 255, 255));
+    auto material_gray_metal = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(128, 128, 128), 0.5);
 
     Math::Point3D sphere_left_pos(0, 2, 0);
-    RayTracer::Sphere sphere_left(sphere_left_pos, sphereRadius, material_left);
+    RayTracer::Sphere sphere_left(sphere_left_pos, sphereRadius, material_red_metal);
 
     Math::Point3D sphere_center_pos(5, 2, 0);
     RayTracer::Sphere sphere_center(sphere_center_pos, sphereRadius, material_center);
 
     Math::Point3D sphere_right_pos(10, 2, 0);
-    RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_right);
+    RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_light);
 
     // Math::Point3D sphere_ground_pos(7.5, 108, 0);
     // RayTracer::Sphere sphere_ground(sphere_ground_pos, 100, material_ground);
 
     Math::Point3D plane_position(0, 0, 0);
-    RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
+    RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_gray_metal);
 
     Math::Point3D sphere_light1_pos(20, 0, 0);
     Math::Point3D sphere_light2_pos(-20, 0, 0);
     Math::Point3D sphere_light3_pos(0, 0, 20);
-    Math::Point3D sphere_light4_pos(0, 0, -20);
+    Math::Point3D sphere_light4_pos(-5, 2, -20);
     Math::Point3D sphere_light5_pos(0, 20, 0);
     Math::Point3D sphere_light6_pos(0, -20, 0);
 
-    RayTracer::Sphere sphere_light1(sphere_light1_pos, sphereRadius, material_right);
-    RayTracer::Sphere sphere_light2(sphere_light2_pos, sphereRadius, material_right);
-    RayTracer::Sphere sphere_light3(sphere_light3_pos, sphereRadius, material_right);
-    RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_right);
-    RayTracer::Sphere sphere_light5(sphere_light5_pos, sphereRadius, material_right);
-    RayTracer::Sphere sphere_light6(sphere_light6_pos, sphereRadius, material_right);
+    // RayTracer::Sphere sphere_light1(sphere_light1_pos, sphereRadius, material_light);
+    // RayTracer::Sphere sphere_light2(sphere_light2_pos, sphereRadius, material_light);
+    // RayTracer::Sphere sphere_light3(sphere_light3_pos, sphereRadius, material_light);
+    RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_light);
+    // RayTracer::Sphere sphere_light5(sphere_light5_pos, sphereRadius, material_light);
+    // RayTracer::Sphere sphere_light6(sphere_light6_pos, sphereRadius, material_light);
 
-    Math::Point3D cone_position(-8, 5, 8);
-    RayTracer::Cone cone(cone_position, 2, 5, material_center, RayTracer::ShapeConfig::AXIS::Y, 45);
+    // Math::Point3D cone_position(-8, 0, 8);
+    // RayTracer::Cone cone(cone_position, 2, 5, material_ground, RayTracer::ShapeConfig::AXIS::Y, 45);
 
-    core->addShape(sphere_light1);
-    core->addShape(sphere_light2);
-    core->addShape(sphere_light3);
+    Math::Point3D cylinder_position(-8, 0, 8);
+    RayTracer::Cylinder cylinder(cylinder_position, 2, 5, material_ground, RayTracer::ShapeConfig::AXIS::Y);
+
+    Math::Point3D sky_pos(0, 60, 0);
+    RayTracer::Sphere sky(sky_pos, 30, material_light);
+
+    // core->addShape(sphere_light1);
+    // core->addShape(sphere_light2);
+    // core->addShape(sphere_light3);
     core->addShape(sphere_light4);
-    core->addShape(sphere_light5);
-    core->addShape(sphere_light6);
+    // core->addShape(sphere_light5);
+    // core->addShape(sphere_light6);
     core->addShape(plane);
+    core->addShape(sky);
 
-    core->addShape(cone);
+    // core->addShape(cone);
+    core->addShape(cylinder);
 
     // core->addShape(sphere_ground);
     core->addShape(sphere_center);

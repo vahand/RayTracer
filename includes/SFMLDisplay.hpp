@@ -12,14 +12,6 @@
 #include "SFMLButton.hpp"
 #include "SFMLSlider.hpp"
 
-class ResponsiveElement
-{
-public:
-    virtual void update(sf::RenderWindow &window) = 0;
-    virtual void render(sf::RenderWindow &window) const = 0;
-    virtual void setBackgroundColor(const sf::Color &color) = 0;
-};
-
 namespace Graphics
 {
     namespace SFML
@@ -105,7 +97,7 @@ namespace Graphics
                 _defaultAspectRatio = 16.0 / 9.0;
             }
 
-            void update(sf::RenderWindow &window) override
+            void update(sf::RenderWindow &window, bool locked = false) override
             {
                 double sizeX = std::ceil((static_cast<double>(_sizePercent.x) / 100.0) * window.getSize().x);
                 double sizeY = std::ceil((static_cast<double>(_sizePercent.y) / 100.0) * window.getSize().y);
@@ -213,6 +205,28 @@ namespace Graphics
 
                 m_elements.push_back(std::make_unique<Panel>(sf::Vector2f(leftX + borderWidth, borderWidth), sf::Vector2f(rightX, globalY)));
                 m_elements[2]->setBackgroundColor(sf::Color(186, 186, 186, 255));
+
+                // create a slider for FOV
+                m_elements.push_back(std::make_unique<SFMLSlider>(
+                    sf::Vector2i(30, 150),
+                    45,
+                    sf::Color(0, 156, 227),
+                    sf::Color(0, 110, 162),
+                    sf::Vector2f(66 + 33/2 - 16/2, 5),
+                    sf::Vector2f(16, 2),
+                    "FOV",
+                    [this]() {
+                        if (_workers->isRendering())
+                            return;
+                        _core->_camera._fovInDegrees = m_elements[3]->getValue();
+                        _core->_camera.initialize();
+                        _fastRendering = true;
+                        _workers->initialize(*_core);
+                        _workers->beginRender();
+                        m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
+                        _workers->setRendering(true);
+                    }
+                ));
 
                 std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);
                 renderButton->setTriggerFunction([this](sf::RenderWindow &window) {
