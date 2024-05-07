@@ -26,10 +26,13 @@ namespace RayTracer {
             _normal(normal) {
                 _min_X = topLeftCorner.X;
                 _max_X = topRightCorner.X;
-                _min_Y = topLeftCorner.Y;
-                _max_Y = bottomLeftCorner.Y;
-                _min_Z = topLeftCorner.Z;
-                _max_Z = bottomLeftCorner.Z;
+                _min_Y = bottomLeftCorner.Y;
+                _max_Y = topLeftCorner.Y;
+                _min_Z = bottomLeftCorner.Z;
+                if (_normal.X == 1)
+                    _max_X = topRightCorner.X;
+                else
+                    _max_Z = topLeftCorner.Z;
             }
 
             ~CubeFace() = default;
@@ -52,8 +55,6 @@ namespace RayTracer {
             double _max_Z;
 
             Math::Vector3D _normal;
-
-            double d = getDConstante();
 
             Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const
             {
@@ -101,8 +102,6 @@ namespace RayTracer {
 
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
             {
-                // call hit for each face
-                // update HitData with the closest face's data
                 bool isTouched = false;
                 for (auto& face : _faces) {
                     if (face.second.hit(ray, ray_range, data)) {
@@ -155,14 +154,14 @@ namespace RayTracer {
 
             void initVertexes()
             {
-                _vertexes["A"] = Math::Point3D(xO() - _xDim / 2.0, yO() - _yDim / 2.0, zO() - _zDim / 2.0);
-                _vertexes["B"] = Math::Point3D(xO() + _xDim / 2.0, yO() - _yDim / 2.0, zO() - _zDim / 2.0);
-                _vertexes["C"] = Math::Point3D(xO() - _xDim / 2.0, yO() + _yDim / 2.0, zO() - _zDim / 2.0);
-                _vertexes["D"] = Math::Point3D(xO() + _xDim / 2.0, yO() + _yDim / 2.0, zO() - _zDim / 2.0);
-                _vertexes["E"] = Math::Point3D(xO() - _xDim / 2.0, yO() - _yDim / 2.0, zO() + _zDim / 2.0);
-                _vertexes["F"] = Math::Point3D(xO() + _xDim / 2.0, yO() - _yDim / 2.0, zO() + _zDim / 2.0);
-                _vertexes["G"] = Math::Point3D(xO() - _xDim / 2.0, yO() + _yDim / 2.0, zO() + _zDim / 2.0);
-                _vertexes["H"] = Math::Point3D(xO() + _xDim / 2.0, yO() + _yDim / 2.0, zO() + _zDim / 2.0);
+                _vertexes["A"] = Math::Point3D(xO() - _xDim / 2.0, yO() + _yDim / 2.0, zO() - _zDim / 2.0);
+                _vertexes["B"] = Math::Point3D(xO() + _xDim / 2.0, yO() + _yDim / 2.0, zO() - _zDim / 2.0);
+                _vertexes["C"] = Math::Point3D(xO() - _xDim / 2.0, yO() - _yDim / 2.0, zO() - _zDim / 2.0);
+                _vertexes["D"] = Math::Point3D(xO() + _xDim / 2.0, yO() - _yDim / 2.0, zO() - _zDim / 2.0);
+                _vertexes["E"] = Math::Point3D(xO() - _xDim / 2.0, yO() + _yDim / 2.0, zO() + _zDim / 2.0);
+                _vertexes["F"] = Math::Point3D(xO() + _xDim / 2.0, yO() + _yDim / 2.0, zO() + _zDim / 2.0);
+                _vertexes["G"] = Math::Point3D(xO() - _xDim / 2.0, yO() - _yDim / 2.0, zO() + _zDim / 2.0);
+                _vertexes["H"] = Math::Point3D(xO() + _xDim / 2.0, yO() - _yDim / 2.0, zO() + _zDim / 2.0);
             }
 
             void initFaces() {
@@ -170,8 +169,8 @@ namespace RayTracer {
                 _faces["backFace"] = CubeFace(E(), F(), G(), H(), Math::Vector3D(0, 0, 1));
                 _faces["topFace"] = CubeFace(E(), F(), A(), B(), Math::Vector3D(0, 1, 0));
                 _faces["bottomFace"] = CubeFace(G(), H(), C(), D(), Math::Vector3D(0, 1, 0));
-                _faces["leftFace"] = CubeFace(E(), A(), G(), C(), Math::Vector3D(1, 0, 0));
-                _faces["rightFace"] = CubeFace(B(), D(), F(), H(), Math::Vector3D(1, 0, 0));
+                _faces["leftFace"] = CubeFace(A(), E(), C(), G(), Math::Vector3D(1, 0, 0));
+                _faces["rightFace"] = CubeFace(B(), F(), D(), H(), Math::Vector3D(1, 0, 0));
             }
     };
 }
