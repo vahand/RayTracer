@@ -387,8 +387,10 @@ std::string RayTracer::Parser::getShapeNameForTransformation(libconfig::Setting 
 
 void RayTracer::Parser::callTransformationMethod(const std::string& type, const std::string& shapeName, const Math::Vector3D& vector)
 {
-    if (type != "translate" && type != "rotate" && type != "scale")
+    if (type != "translate" && type != "rotate" && type != "scale") {
         std::clog << MAGENTA << BOLD << "WARNING: " << RESET << MAGENTA << "Unknown transformation type \"" << type << "\" in config file" << RESET << std::endl;
+        return;
+    }
     if (shapeName.empty())
         return;
     IShape &shape = refCore.getShape(shapeName);
