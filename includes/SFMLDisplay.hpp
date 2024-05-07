@@ -24,6 +24,7 @@ namespace Graphics
             {
                 m_image.create(m_width, m_height, sf::Color::Black);
             }
+            ~PixelImage() = default;
 
             void setPixelColor(int x, int y, sf::Color color, bool replace = false)
             {
@@ -74,6 +75,11 @@ namespace Graphics
 
                 // Draw the sprite
                 window.draw(sprite);
+            }
+
+            sf::Vector2i getImageSize() const
+            {
+                return sf::Vector2i(m_width, m_height);
             }
 
         private:
@@ -223,7 +229,6 @@ namespace Graphics
                         _fastRendering = true;
                         _workers->initialize(*_core);
                         _workers->beginRender();
-                        m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
                         _workers->setRendering(true);
                     }
                 ));
@@ -231,34 +236,34 @@ namespace Graphics
                 std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);
                 renderButton->setTriggerFunction([this](sf::RenderWindow &window) {
                     std::cerr << "Render button clicked" << std::endl;
-                    if (_workers->isRendering())
+                    if (_workers->isRendering() && !_locked)
                         return;
+                    _locked = true;
                     _fastRendering = false;
                     _workers->initialize(*_core);
                     _workers->beginRender();
-                    m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
                     _workers->setRendering(true);
                 });
 
                 std::unique_ptr<SFMLButton> fastRenderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 85), sf::Vector2f(14, 4), "FAST-RENDER", sf::Color(0, 170, 100), sf::Color(0, 100, 60), sf::Color::White);
                 fastRenderButton->setTriggerFunction([this](sf::RenderWindow &window) {
                     std::cerr << "FastRender button clicked" << std::endl;
-                    if (_workers->isRendering())
+                    if (_workers->isRendering() && !_locked)
                         return;
+                    _locked = true;
                     _fastRendering = true;
                     _workers->initialize(*_core);
                     _workers->beginRender();
-                    m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
                     _workers->setRendering(true);
                 });
 
                 m_buttons.push_back(std::move(renderButton));
                 m_buttons.push_back(std::move(fastRenderButton));
 
-                m_renderedImage = std::make_unique<PixelImage>(1280, 720, sf::Vector2f(0, 0));
-                for (int x = 0; x < 1280; x++)
+                m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
+                for (int y = 1; y < _core->_screenHeight; y++)
                 {
-                    for (int y = 0; y < 720; y++)
+                    for (int x = 0; x < _core->_screenWidth; x++)
                     {
                         sf::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
                         m_renderedImage->setPixelColor(x, y, randomColor);
@@ -351,7 +356,7 @@ namespace Graphics
                 }
 
                 for (auto &button : m_buttons) {
-                    button->update(m_window, sf::Vector2f(sf::Mouse::getPosition(m_window)), m_events, _workers->isRendering());
+                    button->update(m_window, sf::Vector2f(sf::Mouse::getPosition(m_window)), m_events, _workers->isRendering() || _locked);
                 }
 
                 if (m_renderedImage) {
@@ -361,8 +366,16 @@ namespace Graphics
                         _workers->renderUpdate(*_core, _fastRendering);
 
                         _workers->placeholderMutex.lock();
-                        updateRenderedImage(_workers->placeholderImage, !_workers->isRendering());
+                        updateRenderedImage(_workers->placeholderImage, !_workers->isRendering() || _locked);
                         _workers->placeholderMutex.unlock();
+                        _startLockTime = std::chrono::high_resolution_clock::now();
+                    } else {
+                        if (_locked) {
+                            auto now = std::chrono::high_resolution_clock::now();
+                            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - _startLockTime).count();
+                            if (duration > 1000)
+                                _locked = false;
+                        }
                     }
                 }
 
@@ -384,6 +397,8 @@ namespace Graphics
             std::unique_ptr<PixelImage> m_renderedImage;
             bool _finalDisplay = false;
             std::vector<sf::Event> m_events;
+            bool _locked = false;
+            std::chrono::time_point<std::chrono::high_resolution_clock> _startLockTime;
 
             std::shared_ptr<RayTracer::Core> _core;
             std::shared_ptr<Workers> _workers;

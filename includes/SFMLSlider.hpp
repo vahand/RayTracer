@@ -81,6 +81,14 @@ namespace Graphics {
                     window.draw(m_textName);
                 }
 
+                bool isHovered(sf::RenderWindow &window, double posX, double posY, double sizeX, double sizeY) {
+                    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+                    if (mousePos.x >= posX && mousePos.x < posX + sizeX + 1)
+                        if (mousePos.y >= posY && mousePos.y <= posY + sizeY + 1)
+                            return true;
+                    return false;
+                }
+
                 void update(sf::RenderWindow &window, bool locked = false) override {
                     double sizeX = std::ceil((static_cast<double>(_percentSize.x) / 100.0) * window.getSize().x);
                     double sizeY = std::ceil((static_cast<double>(_percentSize.y) / 100.0) * window.getSize().y);
@@ -102,13 +110,11 @@ namespace Graphics {
                     if (!locked) {
                         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                            if (mousePos.x >= posX && mousePos.x < posX + sizeX + 1) {
-                                if (mousePos.y >= posY && mousePos.y <= posY + sizeY + 1) {
-                                    isDragging = true;
-                                    _value = ((mousePos.x - posX) * (_range.y - _range.x) / sizeX) + _range.x;
-                                }
-                                setValue(_value);
+                            if (isHovered(window, posX, posY, sizeX, sizeY)) {
+                                isDragging = true;
+                                _value = ((mousePos.x - posX) * (_range.y - _range.x) / sizeX) + _range.x;
                             }
+                            setValue(_value);
                         } else {
                             if (isDragging) {
                                 isDragging = false;
@@ -116,6 +122,17 @@ namespace Graphics {
                                     setValue(_value, true);
                                     prevValue = _value;
                                 }
+                            }
+                        }
+
+                        if (isHovered(window, posX, posY, sizeX, sizeY)) {
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+                                _value -= 1;
+                                setValue(_value, true);
+                            }
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+                                _value += 1;
+                                setValue(_value, true);
                             }
                         }
                     }
