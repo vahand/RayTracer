@@ -20,8 +20,8 @@ namespace Graphics
         class PixelImage
         {
         public:
-            PixelImage(int width, int height, sf::Vector2f origin) : m_width(width), m_height(height), m_origin(origin)
-            {
+            PixelImage(int width, int height, sf::Vector2f origin)
+                : m_width(width), m_height(height), m_origin(origin) {
                 m_image.create(m_width, m_height, sf::Color::Black);
             }
             ~PixelImage() = default;
@@ -45,40 +45,28 @@ namespace Graphics
             void render(sf::RenderWindow& window, sf::Vector2f positionPercent) {
                 sf::Vector2u windowSize = window.getSize();
 
-                // Calculate the size of the image
                 float size = std::min(windowSize.x, windowSize.y) * 0.5f;
                 double aspectRatio = static_cast<double>(m_width) / static_cast<double>(m_height);
 
                 double maxX = windowSize.x * 0.62;
                 double maxY = windowSize.y * 0.96;
-
                 double scaleX = maxX / m_width - 0.1;
                 double scaleY = maxY / m_height - 0.1;
                 double scale = std::min(scaleX, scaleY);
 
-                // Calculate the position based on percentage values
-                float x = windowSize.x * (positionPercent.x / 100.0);
-                float y = windowSize.y * (positionPercent.y / 100.0);
+                float x = windowSize.x * (positionPercent.x / 100.0) - (m_width * scale) / 2 + 10;
+                float y = windowSize.y * (positionPercent.y / 100.0) - (m_height * scale) / 2;
 
-                // Calculate the position to center the image
-                x -= (m_width * scale) / 2 + 10;
-                y -= (m_height * scale) / 2;
-
-                // Create a texture from the image
                 sf::Texture texture;
                 texture.loadFromImage(m_image);
-
-                // Create a sprite to display the texture
                 sf::Sprite sprite(texture);
                 sprite.setScale(scale, scale);
                 sprite.setPosition(x, y);
 
-                // Draw the sprite
                 window.draw(sprite);
             }
 
-            sf::Vector2i getImageSize() const
-            {
+            sf::Vector2i getImageSize() const {
                 return sf::Vector2i(m_width, m_height);
             }
 
@@ -164,14 +152,11 @@ namespace Graphics
             void createWindow(int width, int height, const std::string &title) override
             {
                 std::cerr << "[SFMLDisplay] Creating window with width: " << width << " and height: " << height << " and title: " << title << std::endl;
-                if (!m_window.isOpen())
-                {
+                if (!m_window.isOpen()) {
                     sf::VideoMode videoMode(width, height);
                     m_window.create(videoMode, title);
                     displayWindow();
-                }
-                else
-                {
+                } else {
                     m_window.close();
                     createWindow(width, height, title);
                 }
@@ -212,7 +197,7 @@ namespace Graphics
                 m_elements.push_back(std::make_unique<Panel>(sf::Vector2f(leftX + borderWidth, borderWidth), sf::Vector2f(rightX, globalY)));
                 m_elements[2]->setBackgroundColor(sf::Color(186, 186, 186, 255));
 
-                // create a slider for FOV
+                //? FOV SLIDER
                 m_elements.push_back(std::make_unique<SFMLSlider>(
                     sf::Vector2i(30, 150),
                     45,
@@ -231,6 +216,24 @@ namespace Graphics
                         _workers->beginRender();
                         _workers->setRendering(true);
                     }
+                ));
+
+                //? SAMPLES SLIDER
+                m_elements.push_back(std::make_unique<SFMLSlider>(
+                    sf::Vector2i(10, 5000),
+                    _core->_camera._samples,
+                    sf::Color(0, 156, 227),
+                    sf::Color(0, 110, 162),
+                    sf::Vector2f(66 + 33/2 - 16/2, 10),
+                    sf::Vector2f(16, 2),
+                    "SAMPLES",
+                    [this]() {
+                        if (_workers->isRendering())
+                            return;
+                        _core->_camera._samples = m_elements[4]->getValue();
+                        _core->_camera.initialize();
+                    },
+                    true
                 ));
 
                 std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);
@@ -308,8 +311,11 @@ namespace Graphics
                 {
                     if (event.type == sf::Event::KeyPressed || event.type == sf::Event::MouseButtonPressed)
                         m_events.push_back(event);
-                    if (event.type == sf::Event::Closed)
-                    {
+                    if (event.type == sf::Event::Closed || (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)) {
+                        if (_workers->isRendering()) {
+                            _workers->setRendering(false);
+                            _workers->waitForWorkersEnd();
+                        }
                         m_window.close();
                     }
                     if (event.type == sf::Event::Resized)
@@ -373,8 +379,12 @@ namespace Graphics
                         if (_locked) {
                             auto now = std::chrono::high_resolution_clock::now();
                             auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(now - _startLockTime).count();
-                            if (duration > 1000)
+                            if (duration > 1000) {
                                 _locked = false;
+                                _workers->placeholderMutex.lock();
+                                updateRenderedImage(_workers->placeholderImage, true);
+                                _workers->placeholderMutex.unlock();
+                            }
                         }
                     }
                 }

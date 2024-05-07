@@ -201,7 +201,7 @@ class Workers {
                 _endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = _endTime - _startTime;
                 std::cerr << "\nDone! - Total Lines: " << core._screenHeight << std::endl;
-
+                waitForWorkersEnd();
                 copyToPlaceholder();
                 _rendering = false;
             }

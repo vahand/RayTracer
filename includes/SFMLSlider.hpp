@@ -23,7 +23,8 @@ namespace Graphics {
                     sf::Vector2f percentPosition,
                     sf::Vector2f percentSize,
                     std::string name = "Slider",
-                    std::function<void(void)> callback = nullptr
+                    std::function<void(void)> callback = nullptr,
+                    bool callbackEveryActions = false
                 ) {
                     _range = range;
                     _value = value;
@@ -45,6 +46,8 @@ namespace Graphics {
                     m_textName.setString(name);
 
                     _callback = callback;
+                    _callbackEveryActions = callbackEveryActions;
+                    m_textValue.setString(std::to_string(_value) + "/" + std::to_string(_range.y));
                 };
                 ~SFMLSlider() = default;
 
@@ -114,7 +117,7 @@ namespace Graphics {
                                 isDragging = true;
                                 _value = ((mousePos.x - posX) * (_range.y - _range.x) / sizeX) + _range.x;
                             }
-                            setValue(_value);
+                            setValue(_value, _callbackEveryActions);
                         } else {
                             if (isDragging) {
                                 isDragging = false;
@@ -170,6 +173,7 @@ namespace Graphics {
                 sf::Vector2i _range;
                 int _value;
                 std::function<void(void)> _callback;
+                bool _callbackEveryActions = false;
 
                 sf::Text m_textValue;
                 sf::Text m_textName;
