@@ -17,10 +17,10 @@ RayTracer::Core::Core(int screenWidth, int screenHeight)
 
     this->_camera = RayTracer::Camera(screenWidth, screenHeight);
 
-    this->_camera._samples = 500;
+    this->_camera._samples = 50;
 
     this->_camera._fovInDegrees = 90;
-    this->_camera._position = Math::Point3D(0, 6, -20);
+    this->_camera._position = Math::Point3D(0, 6, -30);
     this->_camera._focusPoint = Math::Point3D(0, 2, 0);
     this->_camera._vecUp = Math::Vector3D(0, 1, 0);
 

@@ -31,6 +31,7 @@ namespace RayTracer {
                 } else {
                     _normal = Math::Vector3D(0, 0, 1);
                 }
+                _rotation = Math::Vector3D(0, 0, 0);
             }
 
             void setup(const RayTracer::ShapeConfig& config)

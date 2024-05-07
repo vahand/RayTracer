@@ -46,7 +46,8 @@ static void *getOptionValue(int ac, char **av, const std::string &option, const 
 
 int main(int ac, char **av)
 {
-    try {
+    try
+    {
         std::unique_ptr<Graphics::AGraphicals> display;
 
         if (hasOption(ac, av, "-h") || hasOption(ac, av, "--help"))
@@ -76,75 +77,40 @@ int main(int ac, char **av)
         {
             display = std::make_unique<Graphics::SFML::SFMLDisplay>();
             display->setup(core, workers);
-            display->createWindow(400, 400, "RayTracer");
+            display->createWindow(1280, 720, "RayTracer");
         }
 
-        RayTracer::Parser parser(*core, "./configs/mathis_config3");
-        parser.printConfig();
+        // RayTracer::Parser parser(*core, "./configs/mathis_config3");
+        // parser.printConfig();
 
-        // double sphereRadius = 2.0;
+        double sphereRadius = 2.0;
 
-        // auto material_ground = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(255, 255, 0));
-        // auto material_center = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0, 255, 255));
-        // auto material_cube = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(255, 0, 0));
-        // auto material_left = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(255, 0, 0), 0.0);
-        // auto material_right = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(255, 255, 255));
+        auto material_ground = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(255, 255, 0));
+        auto material_center = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0, 255, 255));
+        auto material_cube = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(0, 0, 255));
+        auto material_red_metal = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(255, 0, 0), 0.0);
+        auto material_light = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(255, 255, 255));
+        auto material_gray_metal = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(128, 128, 128), 0.5);
 
-        // Math::Point3D sphere_left_pos(0, 2, 0);
-        // RayTracer::Sphere sphere_left(sphere_left_pos, sphereRadius, material_left);
+        Math::Point3D sphere_left_pos(0, 2, 0);
+        RayTracer::Sphere sphere_left(sphere_left_pos, sphereRadius, material_red_metal);
+        Math::Point3D sphere_right_pos(10, 2, 0);
+        RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_light);
 
-        // Math::Point3D sphere_center_pos(5, 2, 0);
-        // RayTracer::Sphere sphere_center(sphere_center_pos, sphereRadius, material_center);
+        Math::Point3D plane_position(0, -10, 0);
+        RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
+        Math::Point3D sphere_light4_pos(-5, 2, -20);
+        RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_light);
+        Math::Point3D cylinder_position(-8, 0, 8);
+        RayTracer::Cylinder cylinder(cylinder_position, 2, 5, material_ground, RayTracer::ShapeConfig::AXIS::Y);
+        Math::Point3D sky_pos(0, 60, 0);
+        RayTracer::Sphere sky(sky_pos, 30, material_light);
 
-        // Math::Point3D sphere_right_pos(10, 2, 0);
-        // RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_right);
+        core->addShape(sphere_light4);
+        core->addShape(plane);
+        core->addShape(sky);
 
-        // // Math::Point3D sphere_ground_pos(7.5, 108, 0);
-        // // RayTracer::Sphere sphere_ground(sphere_ground_pos, 100, material_ground);
-
-        // Math::Point3D plane_position(0, 0, 0);
-        // RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
-    // plane.rotate(Math::Vector3D(M_PI, 0, 0));
-
-        // Math::Point3D sphere_light1_pos(20, 0, 0);
-        // Math::Point3D sphere_light2_pos(-20, 0, 0);
-        // Math::Point3D sphere_light3_pos(0, 0, 20);
-        // Math::Point3D sphere_light4_pos(0, 0, -20);
-        // Math::Point3D sphere_light5_pos(0, 20, 0);
-        // Math::Point3D sphere_light6_pos(0, -20, 0);
-
-        // RayTracer::Sphere sphere_light1(sphere_light1_pos, sphereRadius, material_right);
-        // RayTracer::Sphere sphere_light2(sphere_light2_pos, sphereRadius, material_right);
-        // RayTracer::Sphere sphere_light3(sphere_light3_pos, sphereRadius, material_right);
-        // RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_right);
-        // RayTracer::Sphere sphere_light5(sphere_light5_pos, sphereRadius, material_right);
-        // RayTracer::Sphere sphere_light6(sphere_light6_pos, sphereRadius, material_right);
-
-    // Math::Point3D cone_position(-8, 5, 8);
-    // RayTracer::Cone cone(cone_position, 2, 5, material_center, RayTracer::ShapeConfig::AXIS::Y, 45);
-
-    // sphere_left.translate(Math::Vector3D(-10, 2, 0));
-
-        // Math::Point3D cone_position(0, 6, 20);
-        // RayTracer::Cone cone(cone_position, 2, 5, material_cube, RayTracer::ShapeConfig::AXIS::Y, 45);
-
-        // Math::Point3D cylinder_position(-6, 0, 10);
-        // RayTracer::Cylinder cylinder(cylinder_position, 3, 5, material_center, RayTracer::ShapeConfig::AXIS::Y);
-
-        // core->addShape(sphere_light1);
-        // core->addShape(sphere_light2);
-        // core->addShape(sphere_light3);
-        // core->addShape(sphere_light4);
-        // core->addShape(sphere_light5);
-        // core->addShape(sphere_light6);
-        // core->addShape(plane);
-        // core->addShape(cone);
-        // // core->addShape(cylinder);
-
-        // // core->addShape(sphere_ground);
-        // core->addShape(sphere_center);
-        // core->addShape(sphere_left);
-        // core->addShape(sphere_right);
+        core->addShape(cylinder);
 
         std::cerr << "Rendering settings: " << std::endl;
         std::cerr << " - Width: " << core->_camera._viewWidth << std::endl;
@@ -167,7 +133,9 @@ int main(int ac, char **av)
         {
             workers->render(*core);
         }
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception &e)
+    {
         std::clog << RED << BOLD << "An error occured: " << RESET << e.what() << std::endl;
         return 84;
     }

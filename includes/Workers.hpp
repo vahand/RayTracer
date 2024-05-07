@@ -35,6 +35,18 @@ class Workers {
             }
 
             std::cerr << "[INFO] Running with " << _threadsCount << " / " << std::thread::hardware_concurrency() << " threads." << std::endl;
+
+            _threads.clear();
+            _threads.resize(_threadsCount);
+
+            _mutexes.clear();
+            _mutexes.resize(_threadsCount);
+
+            for (int i = 0; i < _threadsCount; i++) {
+                _mutexes.at(i) = std::make_unique<std::mutex>();
+                _mutexes.at(i)->unlock();
+            }
+
         }
         ~Workers() = default;
 
@@ -45,18 +57,8 @@ class Workers {
                 exit(84);
             }
 
-            _threads.resize(_threadsCount);
-
-            _mutexes.clear();
-            finalImage.clear();
-
-            placeholderImage.clear();
-            placeholderMutex.unlock();
-
-            for (int i = 0; i < _threadsCount; i++) {
-                _mutexes.push_back(std::make_unique<std::mutex>());
-                _mutexes.at(i)->unlock();
-            }
+            finalImageMutex.lock();
+            placeholderMutex.lock();
 
             for (int y = 0; y < core._screenHeight; y++) {
                 finalImage[y] = std::vector<RayTracer::Color>();
@@ -64,6 +66,9 @@ class Workers {
                 placeholderImage[y] = std::vector<RayTracer::Color>();
                 placeholderImage[y].reserve(core._screenWidth);
             }
+
+            finalImageMutex.unlock();
+            placeholderMutex.unlock();
 
             std::cerr << "[INFO] Initialized " << _mutexes.size() << " mutexes and " << _threads.size() << " threads." << std::endl;
         }
@@ -128,19 +133,10 @@ class Workers {
             core.displayProgress(core._screenHeight, core._screenHeight, startTime);
             std::cerr << "\nDone! - Total Lines: " << core._screenHeight << std::endl;
 
-            for (int i = 0; i < _mutexes.size(); i++) {
-                if (_mutexes.at(i)->try_lock()) {
-                    _mutexes.at(i)->unlock();
-                } else {
-                    i--;
-                    usleep(250);
-                }
-            }
-
+            waitForWorkersEnd();
             if (!isImageComplete()) {
                 std::cerr << "Error: The image is not complete. Printing it anyway..." << std::endl;
             }
-
             printImage();
         }
 
@@ -150,18 +146,37 @@ class Workers {
             _startTime = std::chrono::high_resolution_clock::now();
         }
 
+        void waitForWorkersEnd()
+        {
+            if (_threads.size() == 0)
+                return;
+            if (_mutexes.size() == 0)
+                return;
+
+            for (int i = 0; i < _mutexes.size(); i++) {
+                if (_mutexes.at(i) == nullptr)
+                    continue;
+                if (_mutexes.at(i).get() == nullptr)
+                    continue;
+                if (_mutexes.at(i)->try_lock()) {
+                    _mutexes.at(i)->unlock();
+                } else {
+                    i--;
+                    usleep(250);
+                }
+            }
+        }
+
         void copyToPlaceholder()
         {
             finalImageMutex.lock();
-            for (int y = 0; y < finalImage.size(); y++) {
-                if (finalImage.find(y) == finalImage.end())
-                    continue;
-                if (finalImage.at(y).size() != _width)
-                    continue;
-                placeholderMutex.lock();
+            placeholderMutex.lock();
+
+            for (int y = 0; y < _height; y++) {
                 placeholderImage[y] = finalImage[y];
-                placeholderMutex.unlock();
             }
+
+            placeholderMutex.unlock();
             finalImageMutex.unlock();
         }
 
@@ -175,6 +190,7 @@ class Workers {
                 _mutexes.at(threadIndex)->lock();
                 _threads.at(threadIndex) = std::thread(&Workers::renderLine, this, _yUpdate, std::ref(core), std::ref(*_mutexes.at(threadIndex)), fastRender);
                 _threads.at(threadIndex).detach();
+
                 threadIndex = getFreeThreadIndex();
             }
 
@@ -184,18 +200,8 @@ class Workers {
             if (_yUpdate >= core._screenHeight) {
                 _endTime = std::chrono::high_resolution_clock::now();
                 std::chrono::duration<double> elapsed = _endTime - _startTime;
-                core.displayProgress(core._screenHeight, core._screenHeight, _startTime);
                 std::cerr << "\nDone! - Total Lines: " << core._screenHeight << std::endl;
-
-                for (int i = 0; i < _mutexes.size(); i++) {
-                    if (_mutexes.at(i)->try_lock()) {
-                        _mutexes.at(i)->unlock();
-                    } else {
-                        i--;
-                        usleep(250);
-                    }
-                }
-
+                waitForWorkersEnd();
                 copyToPlaceholder();
                 _rendering = false;
             }
