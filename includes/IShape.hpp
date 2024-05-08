@@ -34,6 +34,7 @@ namespace RayTracer {
             virtual void degreeToRadian(Math::Vector3D &angle) = 0;
             virtual const std::string& getName() const = 0;
             virtual void setName(const std::string& name) = 0;
+            virtual void getNormalVectorRotate(Math::Vector3D &normal)const = 0;
 
     };
 }

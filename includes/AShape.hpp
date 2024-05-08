@@ -34,10 +34,34 @@ namespace RayTracer {
                 return _origin == shape._origin && _color == shape._color && _type == shape._type;
             }
 
+            void getNormalVectorRotate(Math::Vector3D &normal)const override {
+                Math::Vector3D vecTemp;
+
+                if (_rotation.X != 0) {
+                    vecTemp.X = (1 * normal.X) + (0 * normal.Y) + (0 * normal.Z);
+                    vecTemp.Y = (0 * normal.X) + (cos(_rotation.x()) * normal.Y) + (-sin(_rotation.x()) * normal.Z);
+                    vecTemp.Z = (0 * normal.X) + (sin(_rotation.x()) * normal.Y) + (cos(_rotation.x()) * normal.Z);
+                    normal = vecTemp;
+                }
+                if (_rotation.Y != 0) {
+                    vecTemp.X = (cos(_rotation.y()) * normal.X) + (0 * normal.Y) + (sin(_rotation.y()) * normal.Z);
+                    vecTemp.Y = (0 * normal.X) + (1 * normal.Y) + (0 * normal.Z);
+                    vecTemp.Z = (-sin(_rotation.y()) * normal.X) + (0 * normal.Y) + (cos(_rotation.y()) * normal.Z);
+                    normal = vecTemp;
+                }
+                if (_rotation.Z != 0) {
+                    vecTemp.X = (cos(_rotation.z()) * normal.X) + (-sin(_rotation.z()) * normal.Y) + (0 * normal.Z);
+                    vecTemp.Y = (sin(_rotation.z()) * normal.X) + (cos(_rotation.z()) * normal.Y) + (0 * normal.Z);
+                    vecTemp.Z = (0 * normal.X) + (0 * normal.Y) + (1 * normal.Z);
+                    normal = vecTemp;
+                }
+            }
+
             Math::Point3D _origin;
             RayTracer::Color _color;
             RayTracer::ShapeType _type;
             std::string _name;
+            Math::Vector3D _rotation;
     };
 }
 

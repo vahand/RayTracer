@@ -106,10 +106,17 @@ int main(int ac, char **av)
         Math::Point3D sky_pos(0, 60, 0);
         RayTracer::Sphere sky(sky_pos, 30, material_light);
 
+        Math::Point3D cone_position(5, 0, 5);
+        RayTracer::Cone cone(cone_position, 2, 5, material_center, RayTracer::ShapeConfig::AXIS::Y, 45);
+
         core->addShape(sphere_light4);
-        core->addShape(plane);
         core->addShape(sky);
 
+        cylinder.rotate(Math::Vector3D(0, 0, -45));
+        plane.rotate(Math::Vector3D(0, 0, 0));
+        cone.rotate(Math::Vector3D(0, 0, 45));
+        core->addShape(cone);
+        core->addShape(plane);
         core->addShape(cylinder);
 
         std::cerr << "Rendering settings: " << std::endl;

@@ -82,6 +82,7 @@ namespace RayTracer {
                 double alpha = _angle;
                 double squaredTan = tan(alpha) * tan(alpha);
                 Math::Vector3D rayDirection = ray.direction();
+                getNormalVectorRotate(rayDirection);
                 Math::Point3D rayOrigin = ray.origin();
                 Math::Point3D origin = center();
                 struct ConeHitData hittingData = getConeHitData(rayDirection, origin, rayOrigin);
@@ -131,8 +132,11 @@ namespace RayTracer {
             Math::Point3D vertex() const { return _vertex; }
             double radius() const { return _radius; }
 
-            void rotate(const Math::Vector3D &rotation) override
-            { (void)rotation; return; }
+            void rotate(const Math::Vector3D &rotation) override {
+                _rotation = rotation;
+                degreeToRadian(_rotation);
+            }
+
 
         protected:
         private:

@@ -63,20 +63,20 @@ namespace RayTracer {
 
             bool hit(const RayTracer::Ray& ray, RayTracer::Range &ray_range, HitData& data) const
             {
-                    double d = getDConstante();
-                    double t = (d - ray.origin().DotProduct(getNormalVector())) / getNormalVector().DotProduct(ray.direction());
-                    if (t < ray_range.min || t > ray_range.max)
-                        return false;
-                    Math::Point3D ray_point = ray.at(t);
-                    if (ray_point.X < _min_X || ray_point.X > _max_X)
-                        return false;
-                    if (ray_point.Y < _min_Y || ray_point.Y > _max_Y)
-                        return false;
-                    if (ray_point.Z < _min_Z || ray_point.Z > _max_Z)
-                        return false;
-                    ray_range.max = sqrt(getVectorFromPoints(ray_point, ray.origin()).lengthSquared());
-                    data.tValue = t;
-                    return true;
+                double d = getDConstante();
+                double t = (d - ray.origin().DotProduct(getNormalVector())) / getNormalVector().DotProduct(ray.direction());
+                if (t < ray_range.min || t > ray_range.max)
+                    return false;
+                Math::Point3D ray_point = ray.at(t);
+                if (ray_point.X < _min_X || ray_point.X > _max_X)
+                    return false;
+                if (ray_point.Y < _min_Y || ray_point.Y > _max_Y)
+                    return false;
+                if (ray_point.Z < _min_Z || ray_point.Z > _max_Z)
+                    return false;
+                ray_range.max = sqrt(getVectorFromPoints(ray_point, ray.origin()).lengthSquared());
+                data.tValue = t;
+                return true;
             }
 
             Math::Vector3D getNormalVector() const
