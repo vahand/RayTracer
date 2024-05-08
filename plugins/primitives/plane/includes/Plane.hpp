@@ -27,7 +27,7 @@ namespace RayTracer {
                 if (_axis == RayTracer::ShapeConfig::AXIS::X) {
                     _normal = Math::Vector3D(1, 0, 0);
                 } else if (_axis == RayTracer::ShapeConfig::AXIS::Y) {
-                    _normal = Math::Vector3D(0.707, 1, 0);
+                    _normal = Math::Vector3D(0, 1, 0);
                 } else {
                     _normal = Math::Vector3D(0, 0, 1);
                 }
@@ -84,9 +84,29 @@ namespace RayTracer {
             }
 
             void rotate(const Math::Vector3D &rotation) override {
+                Math::Vector3D vecTemp;
                 _rotation = rotation;
-            
-                _normal *= rotation;
+                degreeToRadian(_rotation);
+                std::cerr << "Rotate: " << _rotation.X << "  " << _rotation.Y << "  " << _rotation.Z << std::endl;
+                if (rotation.X != 0) {
+                    vecTemp.X = (1 * _normal.X) + (0 * _normal.Y) + (0 * _normal.Z);
+                    vecTemp.Y = (0 * _normal.X) + (cos(_rotation.x()) * _normal.Y) + (-sin(_rotation.x()) * _normal.Z);
+                    vecTemp.Z = (0 * _normal.X) + (sin(_rotation.x()) * _normal.Y) + (cos(_rotation.x()) * _normal.Z);
+                    _normal = vecTemp;
+                }
+                if (rotation.Y != 0) {
+                    vecTemp.X = (cos(_rotation.y()) * _normal.X) + (0 * _normal.Y) + (sin(_rotation.y()) * _normal.Z);
+                    vecTemp.Y = (0 * _normal.X) + (1 * _normal.Y) + (0 * _normal.Z);
+                    vecTemp.Z = (-sin(_rotation.y()) * _normal.X) + (0 * _normal.Y) + (cos(_rotation.y()) * _normal.Z);
+                    _normal = vecTemp;
+                }
+                if (rotation.Z != 0) {
+                    vecTemp.X = (cos(_rotation.z()) * _normal.X) + (-sin(_rotation.z()) * _normal.Y) + (0 * _normal.Z);
+                    vecTemp.Y = (sin(_rotation.z()) * _normal.X) + (cos(_rotation.z()) * _normal.Y) + (0 * _normal.Z);
+                    vecTemp.Z = (0 * _normal.X) + (0 * _normal.Y) + (1 * _normal.Z);
+                    _normal = vecTemp;
+                }
+                std::cerr << "Normal: " << _normal.X << "  " << _normal.Y << "  " << _normal.Z << std::endl;
                 return;
             }
 
