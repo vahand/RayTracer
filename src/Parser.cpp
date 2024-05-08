@@ -26,8 +26,8 @@ void RayTracer::Parser::printConfig()
     std::cerr << "FOV: " << camera_settings.fov << " degrees" << std::endl;
     std::cerr << std::endl;
     std::cerr << "Materials:" << std::endl;
-    std::cerr << refCore._loadedMaterials.size() << " materials loaded" << std::endl;
-    refCore.printMaterials();
+    std::cerr << _loadedMaterials.size() << " materials loaded" << std::endl;
+    printMaterials();
     std::cerr << std::endl;
     std::cerr << "Primitives:" << std::endl;
     std::cerr << refCore._shapes.size() << " shapes loaded" << std::endl;
@@ -101,33 +101,32 @@ std::string RayTracer::Parser::getMaterialName(libconfig::Setting &materialSetti
     return name;
 }
 
-void RayTracer::Parser::parseSpheres()
-{
-    try {
-        libconfig::Setting *spheres = &_primitivesSection->lookup("spheres");
-        std::cerr << "-->> Spheres found in config file!" << std::endl;
-        for (int i = 0; i < spheres->getLength(); i++) {
-            RayTracer::ShapeConfig config;
-
-            libconfig::Setting &subSphere = spheres->operator[](i);
-            libconfig::Setting &sphere = subSphere.operator[](0);
-            const std::string &name = getPrimitiveName(sphere);
-            config._origin = Math::Point3D(sphere[0], sphere[1], sphere[2]);
-            config._radius = sphere[3];
-            config._material = refCore._loadedMaterials[sphere[4]];
-            if (config._material == nullptr)
-                throw RayTracer::Parser::ParserException("Unknown material in config file");
-            IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::SPHERE);
-            static_cast<RayTracer::Sphere&>(newShape).setup(config);
-            newShape.setName(name);
-            refCore.addShape(newShape);
-        }
-    } catch (const libconfig::SettingNotFoundException &e) {
-        std::cerr << "-->> No spheres found in config file!" << std::endl;
-    } catch (const libconfig::SettingTypeException &e) {
-        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for spheres in config file \"" + _path + "\"");
-    }
-}
+// void RayTracer::Parser::parseSpheres()
+// {
+//     try {
+//         libconfig::Setting *spheres = &_primitivesSection->lookup("spheres");
+//         std::cerr << "-->> Spheres found in config file!" << std::endl;
+//         for (int i = 0; i < spheres->getLength(); i++) {
+//             RayTracer::ShapeConfig config(_loadedMaterials);
+//             libconfig::Setting &subSphere = spheres->operator[](i);
+//             libconfig::Setting &sphere = subSphere.operator[](0);
+//             const std::string &name = getPrimitiveName(sphere);
+//             config._origin = Math::Point3D(sphere[0], sphere[1], sphere[2]);
+//             config._radius = sphere[3];
+//             config._material = _loadedMaterials[sphere[4]];
+//             if (config._material == nullptr)
+//                 throw RayTracer::Parser::ParserException("Unknown material in config file");
+//             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::SPHERE);
+//             static_cast<RayTracer::Sphere&>(newShape).setup(config);
+//             newShape.setName(name);
+//             refCore.addShape(newShape);
+//         }
+//     } catch (const libconfig::SettingNotFoundException &e) {
+//         std::cerr << "-->> No spheres found in config file!" << std::endl;
+//     } catch (const libconfig::SettingTypeException &e) {
+//         throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for spheres in config file \"" + _path + "\"");
+//     }
+// }
 
 RayTracer::ShapeConfig::AXIS RayTracer::Parser::getParsedAxis(const std::string& parsedAxis)
 {
@@ -153,102 +152,91 @@ Math::Point3D RayTracer::Parser::getPlaneOrigin(double position, RayTracer::Shap
         return Math::Point3D(0, 0, 0);
 }
 
-void RayTracer::Parser::parsePlanes()
-{
-    try {
-        libconfig::Setting *planes = &_primitivesSection->lookup("planes");
-        std::cerr << "-->> Planes found in config file!" << std::endl;
-        for (int i = 0; i < planes->getLength(); i++) {
-            RayTracer::ShapeConfig config;
+// void RayTracer::Parser::parsePlanes()
+// {
+//     try {
+//         libconfig::Setting *planes = &_primitivesSection->lookup("planes");
+//         std::cerr << "-->> Planes found in config file!" << std::endl;
+//         for (int i = 0; i < planes->getLength(); i++) {
+//             RayTracer::ShapeConfig config(_loadedMaterials);
+//             libconfig::Setting &subPlane = planes->operator[](i);
+//             libconfig::Setting &plane = subPlane.operator[](0);
+//             const std::string &name = getPrimitiveName(plane);
+//             config._axis = getParsedAxis(plane[0]);
+//             config._origin = getPlaneOrigin(plane[1], config._axis);
+//             config._material = _loadedMaterials[plane[2]];
+//             if (config._material == nullptr)
+//                 throw RayTracer::Parser::ParserException("Unknown material in config file");
+//             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::PLANE);
+//             static_cast<RayTracer::Plane&>(newShape).setup(config);
+//             newShape.setName(name);
+//             refCore.addShape(newShape);
+//         }
+//     } catch (const libconfig::SettingNotFoundException &e) {
+//         std::cerr << "-->> No planes found in config file!" << std::endl;
+//     } catch (const libconfig::SettingTypeException &e) {
+//         throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for planes in config file \"" + _path + "\"");
+//     }
+// }
 
-            libconfig::Setting &subPlane = planes->operator[](i);
-            libconfig::Setting &plane = subPlane.operator[](0);
-            const std::string &name = getPrimitiveName(plane);
-            config._axis = getParsedAxis(plane[0]);
-            config._origin = getPlaneOrigin(plane[1], config._axis);
-            config._material = refCore._loadedMaterials[plane[2]];
-            if (config._material == nullptr)
-                throw RayTracer::Parser::ParserException("Unknown material in config file");
-            IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::PLANE);
-            static_cast<RayTracer::Plane&>(newShape).setup(config);
-            newShape.setName(name);
-            refCore.addShape(newShape);
-        }
-    } catch (const libconfig::SettingNotFoundException &e) {
-        std::cerr << "-->> No planes found in config file!" << std::endl;
-    } catch (const libconfig::SettingTypeException &e) {
-        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for planes in config file \"" + _path + "\"");
-    }
-}
+// void RayTracer::Parser::parseCylinder()
+// {
+//     try {
+//         libconfig::Setting *cylinders = &_primitivesSection->lookup("cylinders");
+//         std::cerr << "-->> Cylinders found in config file!" << std::endl;
+//         for (int i = 0; i < cylinders->getLength(); i++) {
+//             RayTracer::ShapeConfig config(_loadedMaterials);
+//             libconfig::Setting &subCylinder = cylinders->operator[](i);
+//             libconfig::Setting &cylinder = subCylinder.operator[](0);
+//             const std::string &name = getPrimitiveName(cylinder);
+//             config._origin = Math::Point3D(cylinder[0], cylinder[1], cylinder[2]);
+//             config._radius = cylinder[3];
+//             config._height = cylinder[4];
+//             config._material = _loadedMaterials[cylinder[5]];
+//             if (config._material == nullptr)
+//                 throw RayTracer::Parser::ParserException("Unknown material in config file");
+//             config._axis = getParsedAxis(cylinder[6]);
+//             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::CYLINDER);
+//             static_cast<RayTracer::Cylinder&>(newShape).setup(config);
+//             newShape.setName(name);
+//             refCore.addShape(newShape);
+//         }
+//     } catch (const libconfig::SettingNotFoundException &e) {
+//         std::cerr << "-->> No cylinders found in config file!" << std::endl;
+//     } catch (const libconfig::SettingTypeException &e) {
+//         throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for cylinders in config file \"" + _path + "\"");
+//     }
+// }
 
-void RayTracer::Parser::parseCylinder()
-{
-    try {
-        libconfig::Setting *cylinders = &_primitivesSection->lookup("cylinders");
-        std::cerr << "-->> Cylinders found in config file!" << std::endl;
-        for (int i = 0; i < cylinders->getLength(); i++) {
-            RayTracer::ShapeConfig config;
-
-            libconfig::Setting &subCylinder = cylinders->operator[](i);
-            libconfig::Setting &cylinder = subCylinder.operator[](0);
-            const std::string &name = getPrimitiveName(cylinder);
-            config._origin = Math::Point3D(cylinder[0], cylinder[1], cylinder[2]);
-            config._radius = cylinder[3];
-            config._height = cylinder[4];
-            config._material = refCore._loadedMaterials[cylinder[5]];
-            if (config._material == nullptr)
-                throw RayTracer::Parser::ParserException("Unknown material in config file");
-            config._axis = getParsedAxis(cylinder[6]);
-            IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::CYLINDER);
-            static_cast<RayTracer::Cylinder&>(newShape).setup(config);
-            newShape.setName(name);
-            refCore.addShape(newShape);
-        }
-    } catch (const libconfig::SettingNotFoundException &e) {
-        std::cerr << "-->> No cylinders found in config file!" << std::endl;
-    } catch (const libconfig::SettingTypeException &e) {
-        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for cylinders in config file \"" + _path + "\"");
-    }
-}
-
-void RayTracer::Parser::parseCone()
-{
-    try {
-        libconfig::Setting *cones = &_primitivesSection->lookup("cones");
-        std::cerr << "-->> cones found in config file!" << std::endl;
-        for (int i = 0; i < cones->getLength(); i++) {
-            RayTracer::ShapeConfig config;
-
-            libconfig::Setting &subCone = cones->operator[](i);
-            libconfig::Setting &cone = subCone.operator[](0);
-            const std::string &name = getPrimitiveName(cone);
-            config._origin = Math::Point3D(cone[0], cone[1], cone[2]);
-            config._radius = cone[3];
-            config._height = cone[4];
-            config._material = refCore._loadedMaterials[cone[5]];
-            if (config._material == nullptr)
-                throw RayTracer::Parser::ParserException("Unknown material in config file");
-            config._axis = getParsedAxis(cone[6]);
-            config._angle = cone[7];
-            IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::CONE);
-            static_cast<RayTracer::Cone&>(newShape).setup(config);
-            newShape.setName(name);
-            refCore.addShape(newShape);
-        }
-    } catch (const libconfig::SettingNotFoundException &e) {
-        std::cerr << "-->> No cones found in config file!" << std::endl;
-    } catch (const libconfig::SettingTypeException &e) {
-        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for cones in config file \"" + _path + "\"");
-    }
-}
-
-void RayTracer::Parser::parsePrimitives()
-{
-    parseSpheres();
-    parsePlanes();
-    parseCone();
-    parseCylinder();
-}
+// void RayTracer::Parser::parseCone()
+// {
+//     try {
+//         libconfig::Setting *cones = &_primitivesSection->lookup("cones");
+//         std::cerr << "-->> cones found in config file!" << std::endl;
+//         for (int i = 0; i < cones->getLength(); i++) {
+//             RayTracer::ShapeConfig config(_loadedMaterials);
+//             libconfig::Setting &subCone = cones->operator[](i);
+//             libconfig::Setting &cone = subCone.operator[](0);
+//             const std::string &name = getPrimitiveName(cone);
+//             config._origin = Math::Point3D(cone[0], cone[1], cone[2]);
+//             config._radius = cone[3];
+//             config._height = cone[4];
+//             config._material = _loadedMaterials[cone[5]];
+//             if (config._material == nullptr)
+//                 throw RayTracer::Parser::ParserException("Unknown material in config file");
+//             config._axis = getParsedAxis(cone[6]);
+//             config._angle = cone[7];
+//             IShape &newShape = refCore.getNewShape(RayTracer::Core::LIBRARY_TYPE::CONE);
+//             static_cast<RayTracer::Cone&>(newShape).setup(config);
+//             newShape.setName(name);
+//             refCore.addShape(newShape);
+//         }
+//     } catch (const libconfig::SettingNotFoundException &e) {
+//         std::cerr << "-->> No cones found in config file!" << std::endl;
+//     } catch (const libconfig::SettingTypeException &e) {
+//         throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for cones in config file \"" + _path + "\"");
+//     }
+// }
 
 void RayTracer::Parser::parseMainAmbientFactor()
 {
@@ -361,7 +349,7 @@ void RayTracer::Parser::parseMaterialsSection()
             libconfig::Setting &color = material.lookup("color");
             RayTracer::Color materialColor(color[0], color[1], color[2]);
             config._color = materialColor;
-            refCore.loadNewMaterial(type, config, name);
+            loadNewMaterial(type, config, name);
         }
     } catch (const libconfig::SettingNotFoundException &e) {
         throw RayTracer::Parser::ParserException("Some settings are missing in config file \"" + _path + "\"");
@@ -421,6 +409,69 @@ void RayTracer::Parser::parseTransformationsSection()
     }
 }
 
+void RayTracer::Parser::lookUpDoubleValue(libconfig::Setting &setting, const std::string& paramName, RayTracer::ShapeConfig& config)
+{
+    const std::string &name = setting.getName();
+    try {
+        double value = setting.lookup(paramName);
+        config._parameters[paramName] = std::to_string(value);
+    } catch (const libconfig::SettingNotFoundException &e) {
+        std::clog << CYAN << BOLD << "INFO: " << RESET << CYAN << "For primitive <" << BOLD << name << RESET << CYAN << ">, setting \"" << paramName << "\" is missing" << RESET << std::endl;
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are bad formatted for primitive \"" + name + "\" in config file \"" + _path + "\"");
+    }
+}
+void RayTracer::Parser::lookUpStringValue(libconfig::Setting &setting, const std::string& paramName, RayTracer::ShapeConfig& config)
+{
+    const std::string &name = setting.getName();
+    try {
+        std::string value = setting.lookup(paramName);
+        config._parameters[paramName] = value;
+    } catch (const libconfig::SettingNotFoundException &e) {
+        std::clog << CYAN << BOLD << "INFO: " << RESET << CYAN << "For primitive <" << BOLD << name << RESET << CYAN << ">, setting \"" << paramName << "\" is missing" << RESET << std::endl;
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are bad formatted for primitive \"" + name + "\" in config file \"" + _path + "\"");
+    }
+}
+
+void RayTracer::Parser::getPrimitiveConfig(libconfig::Setting &primitive, RayTracer::ShapeConfig& config)
+{
+    const std::string &name = getPrimitiveName(primitive);
+    if (name.empty())
+        throw RayTracer::Parser::ParserException("Primitives: Invalid name parameter");
+    config._parameters["name"] = name;
+    libconfig::Setting &origin = primitive.lookup("origin");
+    lookUpDoubleValue(origin, "x", config);
+    lookUpDoubleValue(origin, "y", config);
+    lookUpDoubleValue(origin, "z", config);
+    lookUpStringValue(primitive, "material", config);
+    lookUpDoubleValue(primitive, "radius", config);
+    lookUpDoubleValue(primitive, "height", config);
+    lookUpDoubleValue(primitive, "angle", config);
+    lookUpStringValue(primitive, "axis", config);
+}
+
+void RayTracer::Parser::parsePrimitives()
+{
+    std::string parsedPrimitiveName = "";
+    try {
+        for (int i = 0; i < _primitivesSection->getLength(); i++) {
+            RayTracer::ShapeConfig config(_loadedMaterials);
+            libconfig::Setting &primitive = _primitivesSection->operator[](i);
+            parsedPrimitiveName = primitive.getName();
+            int type = primitive.lookup("type");
+            getPrimitiveConfig(primitive, config);
+            IShape &newShape = refCore.getNewShape(static_cast<RayTracer::Core::LIBRARY_TYPE>(type));
+            static_cast<RayTracer::Cone&>(newShape).setup(config);
+            refCore.addShape(newShape);
+        }
+    } catch (const libconfig::SettingNotFoundException &e) {
+        std::clog << CYAN << BOLD << "INFO: " << RESET << CYAN << "For primitive <" << BOLD << parsedPrimitiveName << RESET << CYAN << ">, setting <" << BOLD << e.getPath() << RESET << CYAN << "> is missing" << RESET << std::endl;
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for primitives in config file \"" + _path + "\"");
+    }
+}
+
 void RayTracer::Parser::parseConfig()
 {
     try {
@@ -466,9 +517,9 @@ void RayTracer::Parser::parseConfig()
         //     std::cerr << ">> No lights found in config file!" << std::endl;
         // }
     } catch (const libconfig::FileIOException &e) {
-        throw RayTracer::Parser::ParserException("Failed to read config file \"" + _path + "\"");
+        throw RayTracer::Parser::ParserException("Failed to read config file \"" + _path + "\": " + e.what());
     } catch (const libconfig::ParseException &e) {
-        throw RayTracer::Parser::ParserException("Failed to parse config file \"" + _path + "\"");
+        throw RayTracer::Parser::ParserException("Failed to parse config file \"" + _path + "\": " + e.getError());
     }
 
 }

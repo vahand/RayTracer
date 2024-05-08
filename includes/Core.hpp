@@ -78,7 +78,6 @@ namespace RayTracer
         std::vector<std::reference_wrapper<IShape>> _shapes;
         std::vector<std::reference_wrapper<Light>> _lights;
         std::unordered_map<LIBRARY_TYPE, std::shared_ptr<void>> _handles;
-        std::unordered_map<std::string, std::shared_ptr<RayTracer::Material::IMaterial>> _loadedMaterials;
         RayTracer::Color sceneBackground;
         int _screenWidth;
         int _screenHeight;
@@ -87,7 +86,6 @@ namespace RayTracer
 
         void addShape(IShape &shape) { _shapes.push_back(shape); }
         void addLight(Light &light) { _lights.push_back(light); }
-        void addMaterial(const std::string &name, std::shared_ptr<RayTracer::Material::IMaterial> material) { _loadedMaterials[name] = material; }
 
         IShape &getShape(const std::string &name)
         {
@@ -111,13 +109,6 @@ namespace RayTracer
             for (auto &light : _lights)
             {
                 std::cerr << light.get().getName() << std::endl;
-            }
-        }
-        void printMaterials()
-        {
-            for (const auto &pair : _loadedMaterials)
-            {
-                std::cerr << pair.first << std::endl;
             }
         }
 
@@ -237,7 +228,6 @@ namespace RayTracer
 
         void loadLibrairies();
         RayTracer::IShape &getNewShape(LIBRARY_TYPE type);
-        void loadNewMaterial(LIBRARY_TYPE type, MaterialConfig &config, const std::string &name);
 
     private:
         void loadLibrary(std::string path);
