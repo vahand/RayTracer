@@ -23,13 +23,20 @@ namespace Graphics
             PixelImage(int width, int height, sf::Vector2f origin)
                 : m_width(width), m_height(height), m_origin(origin) {
                 m_image.create(m_width, m_height, sf::Color::Black);
+
+                for (int y = 0; y < m_height; y++) {
+                    tmpImage[y].reserve(m_width);
+                    for (int x = 0; x < m_width; x++) {
+                        sf::Color color = sf::Color::Black;
+                        tmpImage[y].push_back(color);
+                    }
+                }
             }
             ~PixelImage() = default;
 
-            void setPixelColor(int x, int y, sf::Color color, bool replace = false)
-            {
+            void setPixelColor(int x, int y, RayTracer::Color color, bool replace = false) {
                 if (!replace) {
-                    if (tmpImage.find(y) != tmpImage.end()){
+                    if (tmpImage.find(y) != tmpImage.end()) {
                         if (tmpImage[y].size() > x) {
                             return;
                         }
@@ -37,8 +44,8 @@ namespace Graphics
                 }
 
                 if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
-                    tmpImage[y].push_back(RayTracer::Color(color.r, color.g, color.b));
-                    m_image.setPixel(x, y, color);
+                    tmpImage[y][x] = sf::Color(color._r, color._g, color._b);
+                    m_image.setPixel(x, y, tmpImage[y][x]);
                 }
             }
 
@@ -76,7 +83,7 @@ namespace Graphics
             sf::Vector2f m_origin;
             sf::Image m_image;
 
-            std::unordered_map<int, std::vector<RayTracer::Color>> tmpImage;
+            std::unordered_map<int, std::vector<sf::Color>> tmpImage;
         };
 
         class Panel : public ResponsiveElement
@@ -174,8 +181,7 @@ namespace Graphics
             {
                 std::cerr << "[SFMLDisplay] Initing the RayTracer window" << std::endl;
 
-                if (!m_font.loadFromFile("assets/code.ttf"))
-                {
+                if (!m_font.loadFromFile("assets/code.ttf")) {
                     std::cerr << "Error: Could not load font" << std::endl;
                 }
 
@@ -212,7 +218,6 @@ namespace Graphics
                         _core->_camera._fovInDegrees = m_elements[3]->getValue();
                         _core->_camera.initialize();
                         _fastRendering = true;
-                        _workers->initialize(*_core);
                         _workers->beginRender();
                         _workers->setRendering(true);
                     }
@@ -243,7 +248,6 @@ namespace Graphics
                         return;
                     _locked = true;
                     _fastRendering = false;
-                    _workers->initialize(*_core);
                     _workers->beginRender();
                     _workers->setRendering(true);
                 });
@@ -255,7 +259,6 @@ namespace Graphics
                         return;
                     _locked = true;
                     _fastRendering = true;
-                    _workers->initialize(*_core);
                     _workers->beginRender();
                     _workers->setRendering(true);
                 });
@@ -268,7 +271,7 @@ namespace Graphics
                 {
                     for (int x = 0; x < _core->_screenWidth; x++)
                     {
-                        sf::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
+                        RayTracer::Color randomColor(rand() % 256, rand() % 256, rand() % 256);
                         m_renderedImage->setPixelColor(x, y, randomColor);
                     }
                 }
@@ -344,8 +347,7 @@ namespace Graphics
                     for (int x = 0; x < line.second.size(); x++)
                     {
                         RayTracer::Color color = line.second[x];
-                        sf::Color sfColor(color._r, color._g, color._b, 255);
-                        m_renderedImage->setPixelColor(x, line.first, sfColor, replace);
+                        m_renderedImage->setPixelColor(x, line.first, color, replace);
                     }
                 }
             }

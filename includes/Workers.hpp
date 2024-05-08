@@ -50,6 +50,7 @@ class Workers {
         }
         ~Workers() = default;
 
+        //? > Called only once at the beginning of the program
         void initialize(RayTracer::Core &core)
         {
             if (_threadsCount > std::thread::hardware_concurrency()) {
@@ -60,11 +61,25 @@ class Workers {
             finalImageMutex.lock();
             placeholderMutex.lock();
 
+            if (finalImage.size() > 0) {
+                for (int y = 0; y < core._screenHeight; y++) {
+                    finalImage[y].clear();
+                }
+                finalImage.clear();
+            }
+
+            if (placeholderImage.size() > 0) {
+                for (int y = 0; y < core._screenHeight; y++) {
+                    placeholderImage[y].clear();
+                }
+                placeholderImage.clear();
+            }
+
             for (int y = 0; y < core._screenHeight; y++) {
                 finalImage[y] = std::vector<RayTracer::Color>();
-                finalImage[y].reserve(core._screenWidth);
+                finalImage[y].resize(core._screenWidth + 1);
                 placeholderImage[y] = std::vector<RayTracer::Color>();
-                placeholderImage[y].reserve(core._screenWidth);
+                placeholderImage[y].resize(core._screenWidth + 1);
             }
 
             finalImageMutex.unlock();
