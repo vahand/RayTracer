@@ -11,6 +11,7 @@
     #include <string>
     #include "Workers.hpp"
     #include "Core.hpp"
+    #include "FileManager.hpp"
 
 class IGraphicals {
     public:
@@ -24,7 +25,7 @@ class IGraphicals {
         virtual void clearWindow() = 0;
         virtual void displayWindow() = 0;
         virtual void getEvents() = 0;
-        virtual void renderAll() = 0;
+        virtual void renderAll(RayTracer::FileManager &manager) = 0;
 
         virtual void updateRenderedImage(std::unordered_map<int, std::unique_ptr<std::vector<RayTracer::Color>>> image) = 0;
 

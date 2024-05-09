@@ -63,8 +63,7 @@ int main(int ac, char **av)
 
         bool threadsOption = hasOption(ac, av, "-t") || hasOption(ac, av, "--threads");
         int threadsCount = 1;
-        if (threadsOption)
-        {
+        if (threadsOption) {
             threadsCount = std::stoi(static_cast<const char *>(getOptionValue(ac, av, "--threads", "-t")));
         }
 
@@ -103,7 +102,7 @@ int main(int ac, char **av)
             std::cerr << "Rendering with GUI" << std::endl;
             while (display->isWindowOpen())
             {
-                display->renderAll();
+                display->renderAll(fileManager);
             }
         }
         else
