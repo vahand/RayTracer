@@ -15,6 +15,7 @@ SRC = 	src/main.cpp				\
 		src/Parser.cpp				\
 		src/FileManager.cpp			\
 		src/SFMLDisplay.cpp			\
+		src/save.cpp	\
 
 OBJ = $(SRC:.cpp=.o)
 
