@@ -26,7 +26,7 @@ class IGraphicals {
         virtual void getEvents() = 0;
         virtual void renderAll() = 0;
 
-        virtual void updateRenderedImage(std::unordered_map<int, std::vector<RayTracer::Color>> image) = 0;
+        virtual void updateRenderedImage(std::unordered_map<int, std::unique_ptr<std::vector<RayTracer::Color>>> image) = 0;
 
     protected:
     private:

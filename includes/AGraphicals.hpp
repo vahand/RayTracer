@@ -23,7 +23,7 @@ namespace Graphics {
             virtual void displayWindow() {};
             virtual void getEvents() {};
             virtual void renderAll() {};
-            virtual void updateRenderedImage(std::unordered_map<int, std::vector<RayTracer::Color>> image) {};
+            virtual void updateRenderedImage(std::unordered_map<int, std::unique_ptr<std::vector<RayTracer::Color>>> image) {};
 
             virtual bool isWindowOpen() { return false; };
 

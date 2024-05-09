@@ -330,15 +330,15 @@ namespace Graphics
                 m_window.setView(m_view);
             }
 
-            void updateRenderedImage(const std::unordered_map<int, std::vector<RayTracer::Color>> image)
+            void updateRenderedImage(const std::unordered_map<int, std::unique_ptr<std::vector<RayTracer::Color>>> &image)
             {
                 if (image.empty())
                     return;
                 for (auto &line : image)
                 {
-                    for (int x = 0; x < line.second.size(); x++)
+                    for (int x = 0; x < line.second->size(); x++)
                     {
-                        RayTracer::Color color = line.second[x];
+                        RayTracer::Color color = line.second->at(x);
                         m_renderedImage->setPixelColor(x, line.first, color);
                     }
                 }
