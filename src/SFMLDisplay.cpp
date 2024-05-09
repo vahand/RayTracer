@@ -141,6 +141,28 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
     });
     m_buttons.push_back(std::move(fastRenderButton));
 
+    //? SAVE Button
+    std::unique_ptr<SFMLButton> saveButton = std::make_unique<SFMLButton>(sf::Vector2f(66+33/2+14/2+1, 85), sf::Vector2f(6, 11), "SAVE", sf::Color(0, 155, 87), sf::Color(0, 110, 62), sf::Color::White);
+    saveButton->setTriggerFunction([this](sf::RenderWindow &window) {
+        if (_workers->isRendering())
+            return;
+        time_t now = time(0);
+        tm *ltm = localtime(&now);
+        std::string filename = "saved_" + std::to_string(ltm->tm_hour) + "_" + std::to_string(ltm->tm_min) + "_" + std::to_string(ltm->tm_sec) + ".ppm";
+        _workers->writeImageToFile(filename);
+    });
+    m_buttons.push_back(std::move(saveButton));
+
+    //? STOP Button
+    std::unique_ptr<SFMLButton> stopButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33/2 - 14, 85), sf::Vector2f(6, 11), "STOP", sf::Color(255, 0, 0), sf::Color(156, 0, 0), sf::Color::White, true);
+    stopButton->setTriggerFunction([this](sf::RenderWindow &window) {
+        if (_workers->isRendering()) {
+            _workers->setRendering(false);
+            _workers->waitForWorkersEnd();
+        }
+    });
+    m_buttons.push_back(std::move(stopButton));
+
     //? Placeholder Image initialization
     m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
     for (int y = 0; y < _core->_screenHeight; y++)

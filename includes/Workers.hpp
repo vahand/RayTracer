@@ -226,11 +226,27 @@ class Workers {
 
         void writeImageToFile(const std::string &filename) const
         {
-            std::ofstream file(filename);
+            static const RayTracer::Range colorRange(0.0, 255.0);
+            std::string rootPath = "./scenes/saved/";
+            if (access(rootPath.c_str(), F_OK) == -1) {
+                try {
+                    if (!std::filesystem::create_directory(rootPath)) {
+                        std::cerr << "Failed to create directory: ./scenes/saved/" << std::endl;
+                    }
+                } catch (std::filesystem::filesystem_error& e) {
+                    std::cerr << e.what() << '\n';
+                }
+            }
+
+            std::string fullPath = rootPath + filename;
+            std::ofstream file(fullPath);
             file << "P3\n" << _width << " " << _height << "\n255\n";
             for (int y = 0; y < _height; y++) {
                 for (int x = 0; x < _width; x++) {
-                    file << finalImage.at(y)[x]._r << " " << finalImage.at(y)[x]._g << " " << finalImage.at(y)[x]._b << "\n";
+                    int r = colorRange.bound(finalImage.at(y)[x]._r);
+                    int g = colorRange.bound(finalImage.at(y)[x]._g);
+                    int b = colorRange.bound(finalImage.at(y)[x]._b);
+                    file << r << " " << g << " " << b << "\n";
                 }
             }
             file.close();

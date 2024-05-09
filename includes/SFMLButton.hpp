@@ -22,7 +22,7 @@ namespace Graphics
         class SFMLButton
         {
         public:
-            SFMLButton(sf::Vector2f percentPosition, sf::Vector2f percentSize, const std::string &text, sf::Color buttonColor, sf::Color hoverColor, sf::Color textColor)
+            SFMLButton(sf::Vector2f percentPosition, sf::Vector2f percentSize, const std::string &text, sf::Color buttonColor, sf::Color hoverColor, sf::Color textColor, bool avoidLocking = false)
             {
                 m_buttonColor = buttonColor;
                 m_hoverColor = hoverColor;
@@ -35,6 +35,8 @@ namespace Graphics
                 m_text.setCharacterSize(24);
                 m_text.setFont(m_font);
                 m_text.setString(text);
+
+                _avoidLocking = avoidLocking;
             }
 
             void setTriggerFunction(std::function<void(sf::RenderWindow &)> triggerFunction)
@@ -109,6 +111,9 @@ namespace Graphics
                 double posX = ((static_cast<double>(_percentPosition.x) / 100.0) * window.getSize().x);
                 double posY = ((static_cast<double>(_percentPosition.y) / 100.0) * window.getSize().y);
 
+                if (_avoidLocking)
+                    locked = false;
+
                 m_button.setSize(sf::Vector2f(sizeX, sizeY));
                 m_button.setPosition(sf::Vector2f(posX, posY));
 
@@ -151,6 +156,8 @@ namespace Graphics
             sf::Color m_textColor;
 
             std::function<void(sf::RenderWindow &)> m_triggerFunction;
+
+            bool _avoidLocking = false;
         };
 
     }
