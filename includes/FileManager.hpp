@@ -17,7 +17,7 @@ namespace RayTracer {
         public:
             class File {
                 public:
-                    File(const std::string &path) ;
+                    File(const std::string &path);
                     ~File() {};
 
                     time_t getLastModif();
