@@ -9,11 +9,12 @@ CXX = g++
 
 TARGET = raytracer
 
-SRC = 	src/main.cpp	\
-		src/Core.cpp	\
-		src/Loader.cpp	\
-		src/Parser.cpp	\
-		src/FileManager.cpp	\
+SRC = 	src/main.cpp				\
+		src/Core.cpp				\
+		src/Loader.cpp				\
+		src/Parser.cpp				\
+		src/FileManager.cpp			\
+		src/SFMLDisplay.cpp			\
 
 OBJ = $(SRC:.cpp=.o)
 
