@@ -63,10 +63,10 @@ namespace Graphics {
 
                 void setValue(int value, bool callback = false) {
                     _value = value;
-                    if (_value <= _range.x)
-                        _value = _range.x;
-                    if (_value >= _range.y)
+                    if (_value < _range.x)
                         _value = _range.y;
+                    if (_value > _range.y)
+                        _value = _range.x;
 
                     m_textValue.setString(std::to_string(_value) + "/" + std::to_string(_range.y));
                     if (callback && _callback)
@@ -108,34 +108,30 @@ namespace Graphics {
                     m_textName.setPosition(posX, posY - 5);
                     posX += m_textName.getLocalBounds().width + 15;
 
-                    static bool isDragging = false;
-                    static int prevValue = _value;
                     if (!locked) {
                         sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                         if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                             if (isHovered(window, posX, posY, sizeX, sizeY)) {
-                                isDragging = true;
+                                _isDragging = true;
                                 _value = ((mousePos.x - posX) * (_range.y - _range.x) / sizeX) + _range.x;
                             }
                             setValue(_value, _callbackEveryActions);
                         } else {
-                            if (isDragging) {
-                                isDragging = false;
-                                if (_value != prevValue) {
+                            if (_isDragging) {
+                                _isDragging = false;
+                                if (_value != _prevValue) {
                                     setValue(_value, true);
-                                    prevValue = _value;
+                                    _prevValue = _value;
                                 }
                             }
                         }
 
                         if (isHovered(window, posX, posY, sizeX, sizeY)) {
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
-                                _value -= 1;
-                                setValue(_value, true);
+                                setValue(_value - 1, true);
                             }
                             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
-                                _value += 1;
-                                setValue(_value, true);
+                                setValue(_value + 1, true);
                             }
                         }
                     }
@@ -174,6 +170,9 @@ namespace Graphics {
                 int _value;
                 std::function<void(void)> _callback;
                 bool _callbackEveryActions = false;
+
+                bool _isDragging = false;
+                int _prevValue = 0;
 
                 sf::Text m_textValue;
                 sf::Text m_textName;

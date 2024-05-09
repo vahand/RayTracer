@@ -21,7 +21,19 @@ namespace RayTracer
     public:
         Camera() = default;
         Camera(int width, int height) : _viewWidth(width), _viewHeight(height) {}
+        Camera(const Camera &camera) : _viewWidth(camera._viewWidth), _viewHeight(camera._viewHeight), _initialPosition(nullptr) {}
         ~Camera() = default;
+
+        Camera operator=(const Camera &camera)
+        {
+            if (this != &camera)
+            {
+                _viewWidth = camera._viewWidth;
+                _viewHeight = camera._viewHeight;
+                _initialPosition = nullptr;
+            }
+            return *this;
+        }
 
         double _aspectRatio = 1.0;
         int _viewWidth = 100;
@@ -73,10 +85,35 @@ namespace RayTracer
             _firstPixelOrigin = topLeftWin + (_pixelDeltaX + _pixelDeltaY) * 0.5;
         }
 
+        void setRotationAroundFocus(double angleDegrees) {
+            if (_initialPosition == nullptr)
+                _initialPosition = std::make_unique<Math::Point3D>(_position);
+
+            double angleRadians = angleDegrees * M_PI / 180.0;
+
+            double translateX = -_focusPoint.x();
+            double translateY = -_focusPoint.y();
+            double translateZ = -_focusPoint.z();
+
+            double cosAngle = cos(angleRadians);
+            double sinAngle = sin(angleRadians);
+
+            double newX = _initialPosition->x() * cosAngle + _initialPosition->z() * sinAngle;
+            double newY = _initialPosition->y();
+            double newZ = -_initialPosition->x() * sinAngle + _initialPosition->z() * cosAngle;
+
+            newX += _focusPoint.x();
+            newZ += _focusPoint.z();
+
+            _position = Math::Point3D(newX, newY, newZ);
+        }
+
     private:
         Math::Point3D _firstPixelOrigin;
         Math::Vector3D _pixelDeltaX;
         Math::Vector3D _pixelDeltaY;
+
+        std::unique_ptr<Math::Point3D> _initialPosition;
     };
 }
 
