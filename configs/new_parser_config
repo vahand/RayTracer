@@ -9,11 +9,12 @@ camera:
     position:
     {
         x = 0.0;
-        y = 0.0;
-        z = 0.0;
+        y = 6.0;
+        z = -30.0;
     }
-    fieldOfView = 45.0; # In degree
-    maxDepth = 50;
+    fieldOfView = 90.0; # In degree
+    maxDepth = 10;
+    samples = 200;
     focusPoint:
     {
         x = 0.0;

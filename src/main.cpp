@@ -74,17 +74,17 @@ int main(int ac, char **av)
         std::shared_ptr<Workers> workers = std::make_shared<Workers>(threadsCount, 400, 400);
         core->loadLibrairies();
 
+        RayTracer::FileManager fileManager(*core);
+        fileManager.addFileConfigPath("./configs/new_parser_config");
+        fileManager.addFileConfigPath("./configs/new_parser_config2");
+        fileManager.loadFileConfig();
+
         if (guiOption)
         {
             display = std::make_unique<Graphics::SFML::SFMLDisplay>();
             display->setup(core, workers);
             display->createWindow(1280, 720, "RayTracer");
         }
-
-        RayTracer::FileManager fileManager(*core);
-        fileManager.addFileConfigPath("./configs/new_parser_config");
-        fileManager.addFileConfigPath("./configs/new_parser_config2");
-        fileManager.loadFileConfig();
 
         // auto texture_chessboard = std::make_shared<RayTracer::Texture::ChessBoard>(5, RayTracer::Color(255, 255, 255), RayTracer::Color(0, 128, 255));
         // auto material_chessboard = std::make_shared<RayTracer::Material::Lambertian>(texture_chessboard);
