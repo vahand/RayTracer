@@ -65,6 +65,7 @@ namespace RayTracer {
                 Math::Point3D origin = center();
                 Math::Point3D rayOrigin = ray.origin();
                 Math::Vector3D rayDirection = ray.direction();
+                getNormalVectorRotate(rayDirection);
                 struct CylinderHitData hittingData = getCylinderHitData(origin, rayOrigin, rayDirection);
                 double a = hittingData.aDirection * hittingData.aDirection + hittingData.bDirection * hittingData.bDirection;
                 double b = 2.0 * (hittingData.aRayOrigin * hittingData.aDirection
@@ -103,8 +104,10 @@ namespace RayTracer {
             Math::Point3D center() const { return _origin; }
             double radius() const { return _radius; }
 
-            void rotate(const Math::Vector3D &rotation) override
-            { (void)rotation; return; }
+            void rotate(const Math::Vector3D &rotation) override {
+                _rotation = rotation;
+                degreeToRadian(_rotation);
+            }
 
         protected:
         private:

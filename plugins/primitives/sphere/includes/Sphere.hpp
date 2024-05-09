@@ -41,6 +41,8 @@ namespace RayTracer {
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
             {
                 Math::Vector3D oc = getVectorFromPoints(_origin, ray.origin());
+                Math::Vector3D ray_direction = ray.direction();
+                getNormalVectorRotate(ray_direction);
                 double a = ray.direction().lengthSquared();
                 double h = ray.direction().DotProduct(oc);
                 double c = oc.lengthSquared() - (_radius * _radius);
@@ -73,8 +75,11 @@ namespace RayTracer {
 
             Math::Point3D center() const { return _origin; }
             double radius() const { return _radius; }
-            void rotate(const Math::Vector3D &rotation) override
-            { (void)rotation; return; }
+            void rotate(const Math::Vector3D &rotation) override {
+                _rotation = rotation;
+                degreeToRadian(_rotation);
+            }
+
 
         private:
             // Math::Point3D _origin;

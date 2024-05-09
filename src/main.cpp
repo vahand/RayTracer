@@ -99,12 +99,12 @@ int main(int ac, char **av)
         Math::Point3D sphere_right_pos(10, 2, 0);
         RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_light);
 
-        // Math::Point3D plane_position(0, -10, 0);
-        // RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
+        Math::Point3D plane_position(0, -10, 0);
+        RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
         Math::Point3D sphere_light4_pos(-5, 2, -20);
         RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_light);
-        // Math::Point3D cylinder_position(-8, 0, 8);
-        // RayTracer::Cylinder cylinder(cylinder_position, 2, 5, material_ground, RayTracer::ShapeConfig::AXIS::Y);
+        Math::Point3D cylinder_position(-8, 0, 8);
+        RayTracer::Cylinder cylinder(cylinder_position, 2, 5, material_ground, RayTracer::ShapeConfig::AXIS::Y);
         Math::Point3D sky_pos(0, 60, 0);
         RayTracer::Sphere sky(sky_pos, 30, material_light);
 
@@ -118,10 +118,17 @@ int main(int ac, char **av)
         RayTracer::Cube box_wall_right(box_wall_right_pos, 1, 20, 20, material_cube);
         RayTracer::Cube box_wall_back(box_wall_back_pos, 20, 20, 1, material_cube);
 
+        Math::Point3D cone_position(5, 0, 5);
+        RayTracer::Cone cone(cone_position, 2, 5, material_center, RayTracer::ShapeConfig::AXIS::Y, 45);
+
         core->addShape(sphere_light4);
-        // core->addShape(plane);
         core->addShape(sky);
 
+        cylinder.rotate(Math::Vector3D(0, 0, -45));
+        plane.rotate(Math::Vector3D(0, 0, 0));
+        cone.rotate(Math::Vector3D(0, 0, 45));
+        core->addShape(cone);
+        core->addShape(plane);
         core->addShape(box_ground);
         core->addShape(box_wall_left);
         core->addShape(box_wall_right);
