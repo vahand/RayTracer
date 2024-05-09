@@ -41,9 +41,6 @@ namespace RayTracer {
             void parseConfig();
             void printConfig();
 
-            config_camere_s camera_settings;
-            Core &refCore;
-
             std::unordered_map<std::string, std::shared_ptr<RayTracer::Material::IMaterial>> _loadedMaterials;
 
             void addMaterial(const std::string &name, std::shared_ptr<RayTracer::Material::IMaterial> material) { _loadedMaterials[name] = material; }
@@ -69,6 +66,9 @@ namespace RayTracer {
                     _loadedMaterials[name]->setup(config);
                 }
             }
+
+            config_camere_s camera_settings;
+            Core &refCore;
 
         protected:
         private:
