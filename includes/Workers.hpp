@@ -70,7 +70,7 @@ class Workers {
 
             if (placeholderImage.size() > 0) {
                 for (int y = 0; y < core._screenHeight; y++) {
-                    placeholderImage[y].clear();
+                    placeholderImage[y]->clear();
                 }
                 placeholderImage.clear();
             }
@@ -78,8 +78,8 @@ class Workers {
             for (int y = 0; y < core._screenHeight; y++) {
                 finalImage[y] = std::vector<RayTracer::Color>();
                 finalImage[y].resize(core._screenWidth + 1);
-                placeholderImage[y] = std::vector<RayTracer::Color>();
-                placeholderImage[y].resize(core._screenWidth + 1);
+                placeholderImage[y] = std::make_unique<std::vector<RayTracer::Color>>();
+                placeholderImage[y]->resize(core._screenWidth + 1);
             }
 
             finalImageMutex.unlock();
@@ -184,15 +184,14 @@ class Workers {
 
         void copyToPlaceholder()
         {
-            finalImageMutex.lock();
-            placeholderMutex.lock();
+            std::lock_guard<std::mutex> lockFinalImage(finalImageMutex);
+            std::lock_guard<std::mutex> lockPlaceholderImage(placeholderMutex);
 
             for (int y = 0; y < _height; y++) {
-                placeholderImage[y] = finalImage[y];
+                for (int x = 0; x < _width; x++) {
+                    placeholderImage.at(y)->at(x) = finalImage.at(y).at(x);
+                }
             }
-
-            placeholderMutex.unlock();
-            finalImageMutex.unlock();
         }
 
         void renderUpdate(RayTracer::Core &core, bool fastRender = false)
@@ -274,7 +273,7 @@ class Workers {
         }
 
         std::unordered_map<int, std::vector<RayTracer::Color>> finalImage;
-        std::unordered_map<int, std::vector<RayTracer::Color>> placeholderImage;
+        std::unordered_map<int, std::unique_ptr<std::vector<RayTracer::Color>>> placeholderImage;
 
         std::mutex placeholderMutex;
         std::mutex finalImageMutex;
