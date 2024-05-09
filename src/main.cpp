@@ -81,8 +81,8 @@ int main(int ac, char **av)
         }
 
         // RayTracer::Parser parser(*core, "./configs/mathis_config3");
-        RayTracer::Parser parser(*core, "./configs/new_parser_config");
-        parser.printConfig();
+        // RayTracer::Parser parser(*core, "./configs/new_parser_config");
+        // parser.printConfig();
 
         double sphereRadius = 2.0;
 
@@ -127,13 +127,13 @@ int main(int ac, char **av)
         RayTracer::Cone cone(cone_position, 2, 5, material_center, RayTracer::ShapeConfig::AXIS::Y, 45);
 
         core->addShape(sphere_light4);
-        core->addShape(plane);
+        // core->addShape(plane);
         core->addShape(sky);
 
         cylinder.rotate(Math::Vector3D(0, 0, -45));
         plane.rotate(Math::Vector3D(0, 0, 0));
         cone.rotate(Math::Vector3D(0, 0, 45));
-        core->addShape(cone);
+        // core->addShape(cone);
         core->addShape(plane);
         core->addShape(sphere_left);
         core->addShape(sphere_right);
@@ -143,7 +143,7 @@ int main(int ac, char **av)
         // core->addShape(box_wall_right);
         // core->addShape(box_wall_back);
 
-        core->addShape(cylinder);
+        // core->addShape(cylinder);
 
         std::cerr << "Rendering settings: " << std::endl;
         std::cerr << " - Width: " << core->_camera._viewWidth << std::endl;

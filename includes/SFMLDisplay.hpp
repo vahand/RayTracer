@@ -233,6 +233,30 @@ namespace Graphics
                     true
                 ));
 
+                //? CAMERA ROTATION SLIDER (Y axis)
+                m_elements.push_back(std::make_unique<SFMLSlider>(
+                    sf::Vector2i(0, 360),
+                    0,
+                    sf::Color(0, 156, 227),
+                    sf::Color(0, 110, 162),
+                    sf::Vector2f(66 + 33/2 - 16/2, 15),
+                    sf::Vector2f(16, 2),
+                    "CAMERA",
+                    [this]() {
+                        if (_workers->isRendering())
+                            return;
+                        double angle = m_elements[5]->getValue();
+                        std::cerr << "Angle: " << angle << std::endl;
+                        if (angle < 0)
+                            angle = 360 + angle;
+                        _core->_camera.setRotationAroundFocus(angle);
+                        _core->_camera.initialize();
+                        _fastRendering = true;
+                        _workers->beginRender();
+                        _workers->setRendering(true);
+                    }
+                ));
+
                 std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);
                 renderButton->setTriggerFunction([this](sf::RenderWindow &window) {
                     std::cerr << "Render button clicked" << std::endl;
