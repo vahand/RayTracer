@@ -96,8 +96,51 @@ namespace RayTracer {
                 initFaces();
             }
 
+            bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
+            {
+                if (config._parameters.find("x") == config._parameters.end()) {
+                    std::clog << RED << "CUBE: Missing x parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("y") == config._parameters.end()) {
+                    std::clog << RED << "CUBE: Missing y parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("z") == config._parameters.end()) {
+                    std::clog << RED << "CUBE: Missing z parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("xDim") == config._parameters.end()) {
+                    std::clog << RED << "CUBE: Missing xDim parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("yDim") == config._parameters.end()) {
+                    std::clog << RED << "CUBE: Missing yDim parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("xDim") == config._parameters.end()) {
+                    std::clog << RED << "CUBE: Missing xDim parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("material") == config._parameters.end()) {
+                    std::clog << RED << "CUBE: Missing material parameter" << RESET << std::endl;
+                    return false;
+                }
+                return true;
+            }
+
             void setup(const RayTracer::ShapeConfig& config)
             {
+                if (!hasAllParameters(config))
+                    throw ShapeException("CUBE: Missing parameters in config file for cube" + config._parameters.at("name"));
+                setName(config._parameters.at("name"));
+                _origin = Math::Point3D(atof(config._parameters.at("x").c_str()), atof(config._parameters.at("y").c_str()), atof(config._parameters.at("z").c_str()));
+                _material = config._loadedMaterials.at(config._parameters.at("material"));
+                _xDim = atof(config._parameters.at("xDim").c_str());
+                _yDim = atof(config._parameters.at("yDim").c_str());
+                _zDim = atof(config._parameters.at("zDim").c_str());
+                initVertexes();
+                initFaces();
             }
 
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
