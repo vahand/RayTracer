@@ -99,35 +99,38 @@ int main(int ac, char **av)
         Math::Point3D sphere_right_pos(10, 2, 0);
         RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_light);
 
-        // Math::Point3D plane_position(0, -10, 0);
-        // RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
+        Math::Point3D plane_position(0, -10, 0);
+        RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
         Math::Point3D sphere_light4_pos(-5, 2, -20);
         RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_light);
-        // Math::Point3D cylinder_position(-8, 0, 8);
-        // RayTracer::Cylinder cylinder(cylinder_position, 2, 5, material_ground, RayTracer::ShapeConfig::AXIS::Y);
+        Math::Point3D cylinder_position(-8, 0, 8);
+        RayTracer::Cylinder cylinder(cylinder_position, 2, 5, material_ground, RayTracer::ShapeConfig::AXIS::Y);
         Math::Point3D sky_pos(0, 60, 0);
         RayTracer::Sphere sky(sky_pos, 30, material_light);
 
-        Math::Point3D box_ground_position(0, 0, -10);
-        Math::Point3D box_wall_left_pos(-10, 0, 0);
-        Math::Point3D box_wall_right_pos(10, 0, 0);
-        Math::Point3D box_wall_back_pos(0, 0, 0);
+        // Math::Point3D box_ground_position(0, 0, -10);
+        // Math::Point3D box_wall_left_pos(-10, 0, 0);
+        // Math::Point3D box_wall_right_pos(10, 0, 0);
+        // Math::Point3D box_wall_back_pos(0, 0, 0);
 
-        RayTracer::Cube box_ground(box_ground_position, 20, 1, 20, material_cube);
-        RayTracer::Cube box_wall_left(box_wall_left_pos, 1, 20, 20, material_cube);
-        RayTracer::Cube box_wall_right(box_wall_right_pos, 1, 20, 20, material_cube);
-        RayTracer::Cube box_wall_back(box_wall_back_pos, 20, 20, 1, material_cube);
+        // RayTracer::Cube box_ground(box_ground_position, 20, 1, 20, material_cube);
+        // RayTracer::Cube box_wall_left(box_wall_left_pos, 1, 20, 20, material_cube);
+        // RayTracer::Cube box_wall_right(box_wall_right_pos, 1, 20, 20, material_cube);
+        // RayTracer::Cube box_wall_back(box_wall_back_pos, 20, 20, 1, material_cube);
 
         core->addShape(sphere_light4);
-        // core->addShape(plane);
+        core->addShape(plane);
         core->addShape(sky);
 
-        core->addShape(box_ground);
-        core->addShape(box_wall_left);
-        core->addShape(box_wall_right);
-        core->addShape(box_wall_back);
+        core->addShape(sphere_left);
+        core->addShape(sphere_right);
 
-        // core->addShape(cylinder);
+        // core->addShape(box_ground);
+        // core->addShape(box_wall_left);
+        // core->addShape(box_wall_right);
+        // core->addShape(box_wall_back);
+
+        core->addShape(cylinder);
 
         std::cerr << "Rendering settings: " << std::endl;
         std::cerr << " - Width: " << core->_camera._viewWidth << std::endl;

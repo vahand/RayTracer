@@ -19,8 +19,7 @@ namespace RayTracer {
                 Lambertian(const RayTracer::Color reflectance)
                     : _texture(std::make_shared<RayTracer::Texture::Solid>(reflectance)) {}
 
-                void setup(MaterialConfig& config) override
-                {
+                void setup(MaterialConfig& config) override {
                     _texture = std::make_shared<RayTracer::Texture::Solid>(config._color);
                 }
 
@@ -30,12 +29,12 @@ namespace RayTracer {
                     RayTracer::Color& dissipation,
                     RayTracer::Ray& diffusedRay
                 ) override {
-                    auto diffuse_dir = Math::Vector3D::randomUnitVector() + data.normal;
+                    auto diffuse_dir = Math::Vector3D::randomUnit() + data.normal;
                     auto limit = 1e-8;
 
-                    if (std::fabs(diffuse_dir.x()) < limit
-                     && std::fabs(diffuse_dir.y()) < limit
-                     && std::fabs(diffuse_dir.z()) < limit)
+                    if (std::fabs(diffuse_dir.x()) <= limit
+                     && std::fabs(diffuse_dir.y()) <= limit
+                     && std::fabs(diffuse_dir.z()) <= limit)
                         diffuse_dir = data.normal;
                     diffusedRay = RayTracer::Ray(data.point, diffuse_dir);
                     dissipation = _texture->get();

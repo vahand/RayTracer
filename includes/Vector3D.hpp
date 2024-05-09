@@ -166,30 +166,25 @@ namespace Math {
                 return sqrt(lengthSquared());
             }
 
-            static Vector3D random(double scale = 0.005) {
+            static Vector3D randomScaled(double scale = 0.005) {
                 return Vector3D(Utils::randomScaledDouble(scale), Utils::randomScaledDouble(scale), Utils::randomScaledDouble(scale));
             }
 
-            static Vector3D randomUnitSphereVector(double scale = 0.005) {
+            static Vector3D randomRanged(double min, double max) {
+                return Vector3D(Utils::randomRangedDouble(min, max), Utils::randomRangedDouble(min, max), Utils::randomRangedDouble(min, max));
+            }
+
+            static Vector3D randomUnit() {
                 while (true) {
-                    Vector3D randomVector = Vector3D::random(scale);
+                    Vector3D randomVector = Vector3D::randomRanged(-1, 1);
                     if (randomVector.lengthSquared() < 1)
-                        return randomVector;
+                        return randomVector.normalize();
                 }
             }
 
-            static Vector3D randomUnitVector(double scale = 0.005) {
-                return randomUnitSphereVector(scale).normalize();
-            }
-
-            static Vector3D randomHemisphere(const Vector3D& normal) {
-                Vector3D onSphere = randomUnitVector();
-                return onSphere.DotProduct(normal) > 0.0 ? onSphere : -onSphere;
-            }
-
-            static Vector3D reflect(const Vector3D& v, const Vector3D& n) {
-                Vector3D tmp_v = v;
-                Vector3D tmp_n = n;
+            static Vector3D reflect(const Vector3D& direction, const Vector3D& normal) {
+                Vector3D tmp_v = direction;
+                Vector3D tmp_n = normal;
                 return tmp_v - (tmp_n * (tmp_v.DotProduct(tmp_n) * 2));
             }
 
