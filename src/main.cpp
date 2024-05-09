@@ -74,8 +74,8 @@ int main(int ac, char **av)
         core->loadLibrairies();
 
         RayTracer::FileManager fileManager(*core);
-        fileManager.addFileConfigPath("./configs/new_parser_config");
-        fileManager.addFileConfigPath("./configs/new_parser_config2");
+        fileManager.addFileConfigPath("./scenes/new_parser_config.scene");
+        fileManager.getFilesAllScenes();
         fileManager.loadFileConfig();
 
         if (guiOption)
