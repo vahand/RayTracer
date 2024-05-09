@@ -13,6 +13,7 @@ SRC = 	src/main.cpp	\
 		src/Core.cpp	\
 		src/Loader.cpp	\
 		src/Parser.cpp	\
+		src/FileManager.cpp	\
 
 OBJ = $(SRC:.cpp=.o)
 

@@ -76,15 +76,6 @@ namespace RayTracer
         Core(int screenWidth, int screenHeight);
         ~Core() = default;
 
-        std::vector<std::reference_wrapper<IShape>> _shapes;
-        std::vector<std::reference_wrapper<Light>> _lights;
-        std::unordered_map<LIBRARY_TYPE, std::shared_ptr<void>> _handles;
-        RayTracer::Color sceneBackground;
-        int _screenWidth;
-        int _screenHeight;
-        int _maxDepth = 10;
-        RayTracer::Camera _camera;
-
         void addShape(IShape &shape) { _shapes.push_back(shape); }
         void addLight(Light &light) { _lights.push_back(light); }
 
@@ -226,9 +217,17 @@ namespace RayTracer
             std::clog << " \t" << RESET;
             std::clog.flush();
         }
-
         void loadLibrairies();
         RayTracer::IShape &getNewShape(LIBRARY_TYPE type);
+
+        std::vector<std::reference_wrapper<IShape>> _shapes;
+        std::vector<std::reference_wrapper<Light>> _lights;
+        std::unordered_map<LIBRARY_TYPE, std::shared_ptr<void>> _handles;
+        RayTracer::Color sceneBackground;
+        int _screenWidth;
+        int _screenHeight;
+        int _maxDepth = 10;
+        RayTracer::Camera _camera;
 
     private:
         void loadLibrary(std::string path);
