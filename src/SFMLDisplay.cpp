@@ -167,10 +167,10 @@ void Graphics::SFML::SFMLDisplay::updateRenderedImage(const std::unordered_map<i
     }
 }
 
-void Graphics::SFML::SFMLDisplay::renderAll()
+void Graphics::SFML::SFMLDisplay::renderAll(RayTracer::FileManager &manager)
 {
+    // checkForSceneEdition();
     getEvents();
-
     clearWindow();
 
     for (auto &element : m_elements) {

@@ -79,7 +79,7 @@ namespace Graphics
             }
 
             void updateRenderedImage(const std::unordered_map<int, std::unique_ptr<std::vector<RayTracer::Color>>> &image);
-            void renderAll() override;
+            void renderAll(RayTracer::FileManager &manager) override;
 
         protected:
         private:
