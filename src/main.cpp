@@ -81,7 +81,8 @@ int main(int ac, char **av)
         }
 
         // RayTracer::Parser parser(*core, "./configs/mathis_config3");
-        // parser.printConfig();
+        RayTracer::Parser parser(*core, "./configs/new_parser_config");
+        parser.printConfig();
 
         double sphereRadius = 2.0;
 

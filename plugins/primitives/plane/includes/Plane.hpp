@@ -34,11 +34,39 @@ namespace RayTracer {
                 _rotation = Math::Vector3D(0, 0, 0);
             }
 
-            void setup(const RayTracer::ShapeConfig& config)
+            bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
             {
-                _origin = config._origin;
-                _axis = config._axis;
-                _material = config._material;
+                if (config._parameters.find("x") == config._parameters.end()) {
+                    std::clog << RED << "PLANE: Missing x parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("y") == config._parameters.end()) {
+                    std::clog << RED << "PLANE: Missing y parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("z") == config._parameters.end()) {
+                    std::clog << RED << "PLANE: Missing z parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("axis") == config._parameters.end()) {
+                    std::clog << RED << "PLANE: Missing axis parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("material") == config._parameters.end()) {
+                    std::clog << RED << "PLANE: Missing material parameter" << RESET << std::endl;
+                    return false;
+                }
+                return true;
+            }
+
+            void setup(const RayTracer::ShapeConfig& config) override
+            {
+                if (!hasAllParameters(config))
+                    throw ShapeException("PLANE: Missing parameters in config file");
+                setName(config._parameters.at("name"));
+                _origin = Math::Point3D(atof(config._parameters.at("x").c_str()), atof(config._parameters.at("y").c_str()), atof(config._parameters.at("z").c_str()));
+                _axis = getAxisFromString(config._parameters.at("axis"));
+                _material = config._loadedMaterials.at(config._parameters.at("material"));
                 if (_axis == RayTracer::ShapeConfig::AXIS::X) {
                     _normal = Math::Vector3D(1, 0, 0);
                 } else if (_axis == RayTracer::ShapeConfig::AXIS::Y) {

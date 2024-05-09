@@ -32,13 +32,47 @@ namespace RayTracer {
                 _origin = origin;
             }
 
-            void setup(const RayTracer::ShapeConfig& config)
+            bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
             {
-                _origin = config._origin;
-                _radius = config._radius;
-                _height = config._height;
-                _material = config._material;
-                _axis = config._axis;
+                if (config._parameters.find("x") == config._parameters.end()) {
+                    std::clog << RED << "CYLINDER: Missing x parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("y") == config._parameters.end()) {
+                    std::clog << RED << "CYLINDER: Missing y parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("z") == config._parameters.end()) {
+                    std::clog << RED << "CYLINDER: Missing z parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("axis") == config._parameters.end()) {
+                    std::clog << RED << "CYLINDER: Missing axis parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("material") == config._parameters.end()) {
+                    std::clog << RED << "CYLINDER: Missing material parameter" << RESET << std::endl;
+                    return false;
+                }
+                if (config._parameters.find("radius") == config._parameters.end()) {
+                    std::clog << RED << "CYLINDER: Missing radius parameter" << RESET << std::endl;
+                    return false;
+                }
+                // if (config._parameters.find("height") == config._parameters.end())
+                //     return false;
+                return true;
+            }
+
+            void setup(const RayTracer::ShapeConfig& config) override
+            {
+                if (hasAllParameters(config) == false)
+                    throw ShapeException("CYLINDER: Missing parameters in config file");
+                setName(config._parameters.at("name"));
+                _origin = Math::Point3D(atof(config._parameters.at("x").c_str()), atof(config._parameters.at("y").c_str()), atof(config._parameters.at("z").c_str()));
+                _axis = getAxisFromString(config._parameters.at("axis"));
+                _material = config._loadedMaterials.at(config._parameters.at("material"));
+                _radius = atof(config._parameters.at("radius").c_str());
+                // _height = atof(config._parameters.at("height").c_str());
             }
 
             Math::Vector3D getVectorFromPoints(const Math::Point3D& lhs, const Math::Point3D& rhs) const

@@ -57,6 +57,17 @@ namespace RayTracer {
                 }
             }
 
+            ShapeConfig::AXIS getAxisFromString(const std::string& axis)
+            {
+                if (axis == "X")
+                    return ShapeConfig::AXIS::X;
+                if (axis == "Y")
+                    return ShapeConfig::AXIS::Y;
+                if (axis == "Z")
+                    return ShapeConfig::AXIS::Z;
+                return ShapeConfig::AXIS::Y;
+            }
+
             Math::Point3D _origin;
             RayTracer::Color _color;
             RayTracer::ShapeType _type;

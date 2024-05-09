@@ -74,6 +74,9 @@ primitives:
         },
         {
             sphereLight6: { x = 0.0; y = -20.0; z = 0.0; r = 2.0; material = "material_right"; }
+        },
+        {
+            sphereLight7: { x = -13.0; y = 0.0; z = -5.0; r = 2.0; material = "material_right"; }
         }
     );
 
