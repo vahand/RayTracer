@@ -21,6 +21,7 @@ namespace RayTracer {
             void reload();
             void rmFileConfigPath(const std::string &path);
             // void saveFileConfig(const std::string &path);
+            void setCamera(RayTracer::Parser::config_camere_s camera);
 
         protected:
         private:

@@ -22,8 +22,12 @@ void RayTracer::FileManager::addFileConfigPath(const std::string &path)
 
 void RayTracer::FileManager::loadFileConfig()
 {
-    for (auto &path : _fileConfigPath)
-        Parser parser(_core, path);
+    if (_fileConfigPath.empty())
+        return;
+    Parser parser(_core, _fileConfigPath[0]);
+    setCamera(parser.camera_settings);
+    for (int i = 1; i < _fileConfigPath.size(); i++)
+        Parser parser(_core, _fileConfigPath[i]);
 }
 
 void RayTracer::FileManager::reload()
@@ -41,4 +45,15 @@ void RayTracer::FileManager::rmFileConfigPath(const std::string &path)
             return;
         }
     }
+}
+
+void RayTracer::FileManager::setCamera(RayTracer::Parser::config_camere_s camera)
+{
+    _core._camera._position = camera.position;
+    _core._camera._focusPoint = camera.focusPoint;
+    _core._camera._fovInDegrees = camera.fov;
+    _core._camera._samples = camera.samples;
+    _core.sceneBackground = camera.sceneBackGround;
+    _core._maxDepth = camera.maxDepth;
+    _core._camera.initialize();
 }

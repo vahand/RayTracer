@@ -74,6 +74,11 @@ int main(int ac, char **av)
         std::shared_ptr<Workers> workers = std::make_shared<Workers>(threadsCount, 400, 400);
         core->loadLibrairies();
 
+        RayTracer::FileManager fileManager(*core);
+        fileManager.addFileConfigPath("./configs/new_parser_config");
+        fileManager.addFileConfigPath("./configs/new_parser_config2");
+        fileManager.loadFileConfig();
+
         if (guiOption)
         {
             display = std::make_unique<Graphics::SFML::SFMLDisplay>();
@@ -84,10 +89,6 @@ int main(int ac, char **av)
         // RayTracer::Parser parser(*core, "./configs/mathis_config3");
         // RayTracer::Parser parser(*core, "./configs/new_parser_config");
         // parser.printConfig();
-        RayTracer::FileManager fileManager(*core);
-        fileManager.addFileConfigPath("./configs/new_parser_config");
-        fileManager.addFileConfigPath("./configs/new_parser_config2");
-        fileManager.loadFileConfig();
         // double sphereRadius = 2.0;
 
         // auto material_ground = std::make_shared<RayTracer::Material::Lambertian>(RayTracer::Color(255, 255, 0));
