@@ -79,10 +79,10 @@ bool RayTracer::FileManager::checkLastModifFile()
 
 RayTracer::FileManager::File::File(const std::string &path) : _path(path)
 {
-    _lastModif = getLastModif();
+    getLastModif();
 }
 
-time_t RayTracer::FileManager::File::getLastModif()
+void RayTracer::FileManager::File::getLastModif()
 {
     struct stat attrib;
     stat(_path.c_str(), &attrib);

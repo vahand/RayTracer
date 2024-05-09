@@ -20,7 +20,7 @@ namespace RayTracer {
                     File(const std::string &path);
                     ~File() {};
 
-                    time_t getLastModif();
+                    void getLastModif();
                     bool checkLastModif();
 
                     std::string _path;
