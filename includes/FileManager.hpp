@@ -33,9 +33,10 @@ namespace RayTracer {
             void loadFileConfig();
             void reload();
             void rmFileConfigPath(const std::string &path);
-            bool checkLastModif();
+            bool checkLastModifFile();
             // void saveFileConfig(const std::string &path);
             void setCamera(RayTracer::Parser::config_camere_s camera);
+            bool checkForSceneEdition();
 
         protected:
         private:

@@ -58,7 +58,16 @@ void RayTracer::FileManager::setCamera(RayTracer::Parser::config_camere_s camera
     _core._camera.initialize();
 }
 
-bool RayTracer::FileManager::checkLastModif()
+bool RayTracer::FileManager::checkForSceneEdition()
+{
+    if (checkLastModifFile()) {
+        reload();
+        return true;
+    }
+    return false;
+}
+
+bool RayTracer::FileManager::checkLastModifFile()
 {
     bool reload = false;
 
