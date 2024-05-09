@@ -191,7 +191,11 @@ void Graphics::SFML::SFMLDisplay::updateRenderedImage(const std::unordered_map<i
 
 void Graphics::SFML::SFMLDisplay::renderAll(RayTracer::FileManager &manager)
 {
-    manager.checkForSceneEdition();
+    if (manager.checkForSceneEdition()) {
+        _fastRendering = true;
+        _workers->beginRender();
+        _workers->setRendering(true);
+    }
     getEvents();
     clearWindow();
 

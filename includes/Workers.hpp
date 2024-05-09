@@ -227,11 +227,11 @@ class Workers {
         void writeImageToFile(const std::string &filename) const
         {
             static const RayTracer::Range colorRange(0.0, 255.0);
-            std::string rootPath = "./scenes/saved/";
+            std::string rootPath = "./screenshots/saved/";
             if (access(rootPath.c_str(), F_OK) == -1) {
                 try {
                     if (!std::filesystem::create_directory(rootPath)) {
-                        std::cerr << "Failed to create directory: ./scenes/saved/" << std::endl;
+                        std::cerr << "Failed to create directory: ./screenshots/saved/" << std::endl;
                     }
                 } catch (std::filesystem::filesystem_error& e) {
                     std::cerr << e.what() << '\n';
