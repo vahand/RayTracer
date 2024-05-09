@@ -133,15 +133,15 @@ primitives:
     //     axis = "Y";
     //     angle = 45.0;
     // }
-    cylinder1:
-    {
-        type = 3;
-        origin = { x = -6.0; y = 0.0; z = 10.0; };
-        radius = 3.0;
-        height = 5.0;
-        material = "material_center";
-        axis = "Y";
-    }
+    // cylinder1:
+    // {
+    //     type = 3;
+    //     origin = { x = -6.0; y = 0.0; z = 10.0; };
+    //     radius = 3.0;
+    //     height = 5.0;
+    //     material = "material_center";
+    //     axis = "Y";
+    // }
 }
 
 # Light configuration

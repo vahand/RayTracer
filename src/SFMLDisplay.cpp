@@ -169,7 +169,7 @@ void Graphics::SFML::SFMLDisplay::updateRenderedImage(const std::unordered_map<i
 
 void Graphics::SFML::SFMLDisplay::renderAll(RayTracer::FileManager &manager)
 {
-    // checkForSceneEdition();
+    manager.checkForSceneEdition();
     getEvents();
     clearWindow();
 
