@@ -26,7 +26,7 @@ namespace RayTracer {
                 }
 
                 RayTracer::Color emit() const override {
-                    return _texture->get();
+                    return _texture->get(0, 0, Math::Point3D(0, 0, 0)); // Ignore texture coordinates for light :)
                 }
 
             private:

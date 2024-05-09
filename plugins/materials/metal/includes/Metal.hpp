@@ -33,7 +33,7 @@ namespace RayTracer {
                     RayTracer::Ray& diffusedRay
                 ) override {
                     auto reflected = Math::Vector3D::reflect(r_in.direction(), data.normal);
-                    reflected = reflected.normalize() + (Math::Vector3D::randomUnitVector() * _fuzziness);
+                    reflected = reflected.normalize() + (Math::Vector3D::randomUnit() * _fuzziness);
                     diffusedRay = RayTracer::Ray(data.point, reflected);
                     dissipation = _reflectance;
                     return (diffusedRay.direction().DotProduct(data.normal)) > 0;
