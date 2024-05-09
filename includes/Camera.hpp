@@ -53,7 +53,7 @@ namespace RayTracer
 
         RayTracer::Ray rayAround(int x, int y)
         {
-            Math::Vector3D offset = getSampleOffset();
+            Math::Vector3D offset = getSampleOffset() * 2;
             Math::Vector3D appliedX = _pixelDeltaX * (offset.x() + x);
             Math::Vector3D appliedY = _pixelDeltaY * (y + offset.y());
             Math::Point3D pixel_sample = _firstPixelOrigin + appliedX + appliedY;

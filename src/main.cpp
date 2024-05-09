@@ -50,39 +50,57 @@ int main(int ac, char **av)
     try
     {
         std::unique_ptr<Graphics::AGraphicals> display;
+        std::string scenePath;
 
         if (hasOption(ac, av, "-h") || hasOption(ac, av, "--help"))
         {
             std::cerr << "Usage: ./raytracer [options] > [image_path]" << std::endl;
             std::cerr << "\nOptions:" << std::endl;
             std::cerr << "\t-h, --help:\t Display this help message" << std::endl;
+            std::cerr << "\t-s, --scene <scene_path>:\t Load a scene (required)" << std::endl;
             std::cerr << "\t-t, --threads:\t Set the numbers of threads used for rendering" << std::endl;
             std::cerr << "\t-g, --gui:\t Enable the GUI" << std::endl;
+            std::cerr << "\t-q, --quality <samples_count>:\t Override numbers of samples (quality)" << std::endl;
             return 0;
         }
 
         bool threadsOption = hasOption(ac, av, "-t") || hasOption(ac, av, "--threads");
-        int threadsCount = 1;
-        if (threadsOption) {
-            threadsCount = std::stoi(static_cast<const char *>(getOptionValue(ac, av, "--threads", "-t")));
-        }
-
         bool guiOption = hasOption(ac, av, "-g") || hasOption(ac, av, "--gui");
+        bool sceneOption = hasOption(ac, av, "-s") || hasOption(ac, av, "--scene");
+        bool qualityOption = hasOption(ac, av, "-q") || hasOption(ac, av, "--quality");
+
+        int threadsCount = 1;
+        if (threadsOption)
+            threadsCount = std::stoi(static_cast<const char *>(getOptionValue(ac, av, "--threads", "-t")));
+
+        if (!sceneOption) {
+            std::cerr << RED << BOLD << "Error: " << RESET << "No scene file provided, see --help for more informations" << std::endl;
+            return 84;
+        } else {
+            scenePath = static_cast<const char *>(getOptionValue(ac, av, "--scene", "-s"));
+        }
 
         std::shared_ptr<RayTracer::Core> core = std::make_shared<RayTracer::Core>(400, 400);
         std::shared_ptr<Workers> workers = std::make_shared<Workers>(threadsCount, 400, 400);
         core->loadLibrairies();
 
         RayTracer::FileManager fileManager(*core);
-        fileManager.addFileConfigPath("./configs/new_parser_config");
-        // fileManager.addFileConfigPath("./configs/new_parser_config2");
+        fileManager.addFileConfigPath(scenePath);
         fileManager.loadFileConfig();
 
-        if (guiOption)
-        {
+        if (guiOption) {
             display = std::make_unique<Graphics::SFML::SFMLDisplay>();
             display->setup(core, workers);
             display->createWindow(1280, 720, "RayTracer");
+        }
+
+        if (qualityOption) {
+            int quality = std::stoi(static_cast<const char *>(getOptionValue(ac, av, "--quality", "-q")));
+            if (quality < 1 || quality > 1000000) {
+                std::cerr << RED << BOLD << "Error: " << RESET << "Quality must be between 1 and 1M" << std::endl;
+                return 84;
+            }
+            core->_camera._samples = quality;
         }
 
         // auto texture_chessboard = std::make_shared<RayTracer::Texture::ChessBoard>(5, RayTracer::Color(255, 255, 255), RayTracer::Color(0, 128, 255));
@@ -97,16 +115,12 @@ int main(int ac, char **av)
 
         workers->initialize(*core);
 
-        if (guiOption)
-        {
-            std::cerr << "Rendering with GUI" << std::endl;
-            while (display->isWindowOpen())
-            {
+        if (guiOption) {
+            std::cerr << "[GUI] Successfully initialized" << std::endl;
+            while (display->isWindowOpen()) {
                 display->renderAll(fileManager);
             }
-        }
-        else
-        {
+        } else {
             workers->render(*core);
         }
     }

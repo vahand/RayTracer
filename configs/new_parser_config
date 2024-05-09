@@ -36,18 +36,18 @@ materials:
         type = "lambertian";
         color = { r = 255.0; g = 255.0; b = 0.0; }
     }
-    material_center:
+    material_cyan_mat:
     {
         type = "lambertian";
         color = { r = 0.0; g = 255.0; b = 255.0; }
     }
-    material_left:
+    material_red_metal:
     {
         type = "metal";
-        fuzziness = 0.0;
+        fuzziness = 0.2;
         color = { r = 255.0; g = 0.0; b = 0.0; }
     }
-    material_right:
+    material_light:
     {
         type = "lightDiffuse";
         color = { r = 255.0; g = 255.0; b = 255.0; }
@@ -67,54 +67,54 @@ primitives:
     # Cone = 2
     # Cylinder = 3
 
+    sphereMetal1:
+    {
+        type = 0;
+        origin = { x = 0.0; y = 2.0; z = 0.0; };
+        material = "material_red_metal";
+        radius = 2.0;
+    }
+    sphereCyan1:
+    {
+        type = 0;
+        origin = { x = 5.0; y = 2.0; z = 0.0; };
+        material = "material_cyan_mat";
+        radius = 2.0;
+    }
     sphereLight1:
     {
         type = 0;
         origin = { x = 20.0; y = 0.0; z = 0.0; };
-        material = "material_right";
+        material = "material_light";
         radius = 2.0;
     }
     sphereLight2:
     {
         type = 0;
         origin = { x = -20.0; y = 0.0; z = 0.0; };
-        material = "material_right";
+        material = "material_light";
         radius = 2.0;
     }
     sphereLight3:
     {
         type = 0;
         origin = { x = 0.0; y = 0.0; z = 20.0; };
-        material = "material_right";
+        material = "material_light";
         radius = 2.0;
     }
     sphereLight4:
     {
         type = 0;
         origin = { x = 0.0; y = 0.0; z = -20.0; };
-        material = "material_right";
+        material = "material_light";
         radius = 2.0;
     }
-    sphereLight5:
+    sphereLightSky:
     {
         type = 0;
-        origin = { x = 0.0; y = 20.0; z = 0.0; };
-        material = "material_right";
-        radius = 2.0;
-    }
-    sphereLight6:
-    {
-        type = 0;
-        origin = { x = 0.0; y = -20.0; z = 0.0; };
-        material = "material_right";
-        radius = 2.0;
-    }
-    sphereLight7:
-    {
-        type = 0;
-        origin = { x = -13.0; y = 0.0; z = -5.0; };
-        material = "material_right";
-        radius = 2.0;
+        origin = { x = 0.0; y = 100.0; z = 0.0; };
+        material = "material_light";
+        radius = 50.0;
     }
     plane:
     {
@@ -166,6 +166,5 @@ lights:
 
 transformations:
 {
-    qdheuxh: { type = "translate" ; vector: { x = 12.0 ; y = 67.0 ; z = 34.0 } } # a translation transfo. applied to sphere1
     // cylinder1: { type = "rotate" ; vector: { x = 0.0 ; y = 0.0 ; z = 45.0 } } # a rotation transfo. applied to sphere2
 }
