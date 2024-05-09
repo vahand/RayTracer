@@ -34,15 +34,7 @@ namespace Graphics
             }
             ~PixelImage() = default;
 
-            void setPixelColor(int x, int y, RayTracer::Color color, bool replace = false) {
-                if (!replace) {
-                    if (tmpImage.find(y) != tmpImage.end()) {
-                        if (tmpImage[y].size() > x) {
-                            return;
-                        }
-                    }
-                }
-
+            void setPixelColor(int x, int y, RayTracer::Color color) {
                 if (x >= 0 && x < m_width && y >= 0 && y < m_height) {
                     tmpImage[y][x] = sf::Color(color._r, color._g, color._b);
                     m_image.setPixel(x, y, tmpImage[y][x]);
@@ -267,7 +259,7 @@ namespace Graphics
                 m_buttons.push_back(std::move(fastRenderButton));
 
                 m_renderedImage = std::make_unique<PixelImage>(_core->_screenWidth, _core->_screenHeight, sf::Vector2f(0, 0));
-                for (int y = 1; y < _core->_screenHeight; y++)
+                for (int y = 0; y < _core->_screenHeight; y++)
                 {
                     for (int x = 0; x < _core->_screenWidth; x++)
                     {
@@ -338,7 +330,7 @@ namespace Graphics
                 m_window.setView(m_view);
             }
 
-            void updateRenderedImage(const std::unordered_map<int, std::vector<RayTracer::Color>> image, bool replace = false)
+            void updateRenderedImage(const std::unordered_map<int, std::vector<RayTracer::Color>> image)
             {
                 if (image.empty())
                     return;
@@ -347,7 +339,7 @@ namespace Graphics
                     for (int x = 0; x < line.second.size(); x++)
                     {
                         RayTracer::Color color = line.second[x];
-                        m_renderedImage->setPixelColor(x, line.first, color, replace);
+                        m_renderedImage->setPixelColor(x, line.first, color);
                     }
                 }
             }
@@ -374,7 +366,7 @@ namespace Graphics
                         _workers->renderUpdate(*_core, _fastRendering);
 
                         _workers->placeholderMutex.lock();
-                        updateRenderedImage(_workers->placeholderImage, !_workers->isRendering() || _locked);
+                        updateRenderedImage(_workers->placeholderImage);
                         _workers->placeholderMutex.unlock();
                         _startLockTime = std::chrono::high_resolution_clock::now();
                     } else {
@@ -384,7 +376,7 @@ namespace Graphics
                             if (duration > 1000) {
                                 _locked = false;
                                 _workers->placeholderMutex.lock();
-                                updateRenderedImage(_workers->placeholderImage, true);
+                                updateRenderedImage(_workers->placeholderImage);
                                 _workers->placeholderMutex.unlock();
                             }
                         }
