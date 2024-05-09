@@ -94,13 +94,17 @@ int main(int ac, char **av)
         auto material_light = std::make_shared<RayTracer::Material::LightDiffuse>(RayTracer::Color(255, 255, 255));
         auto material_gray_metal = std::make_shared<RayTracer::Material::Metal>(RayTracer::Color(128, 128, 128), 0.5);
 
+        auto texture_chessboard = std::make_shared<RayTracer::Texture::ChessBoard>(5, RayTracer::Color(255, 255, 255), RayTracer::Color(0, 128, 255));
+        auto material_chessboard = std::make_shared<RayTracer::Material::Lambertian>(texture_chessboard);
+
         Math::Point3D sphere_left_pos(0, 2, 0);
         RayTracer::Sphere sphere_left(sphere_left_pos, sphereRadius, material_red_metal);
         Math::Point3D sphere_right_pos(10, 2, 0);
         RayTracer::Sphere sphere_right(sphere_right_pos, sphereRadius, material_light);
 
-        Math::Point3D plane_position(0, -10, 0);
-        RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_ground);
+        Math::Point3D plane_position(0, 0, 0);
+        RayTracer::Plane plane(plane_position, RayTracer::ShapeConfig::AXIS::Y, material_chessboard);
+
         Math::Point3D sphere_light4_pos(-5, 2, -20);
         RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_light);
         Math::Point3D cylinder_position(-8, 0, 8);

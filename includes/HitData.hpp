@@ -24,10 +24,6 @@ class HitData {
         HitData() = default;
         ~HitData() = default;
 
-        Math::Point3D point;
-        Math::Vector3D normal;
-        double tValue;
-        bool isFront;
 
         void determineFace(const RayTracer::Ray &r, const Math::Vector3D &united_normal) {
             isFront = r.direction().DotProduct(united_normal) < 0;
@@ -37,6 +33,12 @@ class HitData {
                 normal = -united_normal;
         }
 
+        Math::Point3D point;
+        Math::Vector3D normal;
+        double tValue;
+        bool isFront;
+        double x;
+        double y;
         std::shared_ptr<RayTracer::Material::IMaterial> material;
 };
 
