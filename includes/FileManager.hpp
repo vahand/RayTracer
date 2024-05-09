@@ -9,10 +9,23 @@
 #define FILEMANAGER_HPP_
 
 #include "Parser.hpp"
+#include <time.h>
+#include <sys/stat.h>
 
 namespace RayTracer {
     class FileManager {
         public:
+            class File {
+                public:
+                    File(const std::string &path) ;
+                    ~File() {};
+
+                    time_t getLastModif();
+                    bool checkLastModif();
+
+                    std::string _path;
+                    time_t _lastModif;
+            };
             FileManager(Core &core);
             ~FileManager();
 
@@ -20,13 +33,14 @@ namespace RayTracer {
             void loadFileConfig();
             void reload();
             void rmFileConfigPath(const std::string &path);
+            bool checkLastModif();
             // void saveFileConfig(const std::string &path);
             void setCamera(RayTracer::Parser::config_camere_s camera);
 
         protected:
         private:
             Core &_core;
-            std::vector<std::string> _fileConfigPath;
+            std::vector<File> _files;
 
     };
 }

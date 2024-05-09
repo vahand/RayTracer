@@ -17,17 +17,18 @@ RayTracer::FileManager::~FileManager()
 
 void RayTracer::FileManager::addFileConfigPath(const std::string &path)
 {
-    _fileConfigPath.push_back(path);
+    File file(path);
+    _files.push_back(file);
 }
 
 void RayTracer::FileManager::loadFileConfig()
 {
-    if (_fileConfigPath.empty())
+    if (_files.empty())
         return;
-    Parser parser(_core, _fileConfigPath[0]);
+    Parser parser(_core, _files[0]._path);
     setCamera(parser.camera_settings);
-    for (int i = 1; i < _fileConfigPath.size(); i++)
-        Parser parser(_core, _fileConfigPath[i]);
+    for (int i = 1; i < _files.size(); i++)
+        Parser parser(_core, _files[i]._path);
 }
 
 void RayTracer::FileManager::reload()
@@ -39,12 +40,11 @@ void RayTracer::FileManager::reload()
 
 void RayTracer::FileManager::rmFileConfigPath(const std::string &path)
 {
-    for (auto it = _fileConfigPath.begin(); it != _fileConfigPath.end(); it++) {
-        if (*it == path) {
-            _fileConfigPath.erase(it);
+    for (int i = 0; i < _files.size(); i++)
+        if (_files[i]._path == path) {
+            _files.erase(_files.begin() + i);
             return;
         }
-    }
 }
 
 void RayTracer::FileManager::setCamera(RayTracer::Parser::config_camere_s camera)
@@ -56,4 +56,36 @@ void RayTracer::FileManager::setCamera(RayTracer::Parser::config_camere_s camera
     _core.sceneBackground = camera.sceneBackGround;
     _core._maxDepth = camera.maxDepth;
     _core._camera.initialize();
+}
+
+bool RayTracer::FileManager::checkLastModif()
+{
+    bool reload = false;
+
+    for (int i = 0; i < _files.size(); i++)
+        if (_files[i].checkLastModif())
+            reload = true;
+    return reload;
+}
+
+RayTracer::FileManager::File::File(const std::string &path) : _path(path)
+{
+    _lastModif = getLastModif();
+}
+
+time_t RayTracer::FileManager::File::getLastModif()
+{
+    struct stat attrib;
+    stat(_path.c_str(), &attrib);
+    _lastModif = attrib.st_mtime;
+}
+
+bool RayTracer::FileManager::File::checkLastModif()
+{
+    time_t lastModif = getLastModif();
+    if (lastModif != _lastModif) {
+        _lastModif = lastModif;
+        return true;
+    }
+    return false;
 }
