@@ -16,14 +16,17 @@
     #include "MaterialConfig.hpp"
 
 namespace RayTracer {
-    struct config_camere_s {
-        int resolution[2];
-        double position[3];
-        double rotation[3];
-        double fov;
-    };
     class Parser {
         public:
+            struct config_camere_s {
+                int resolution[2];
+                Math::Point3D position;
+                double fov = 45.0;                                              // optional = 45
+                int samples = 100;                                              // optional = 100
+                Math::Point3D focusPoint = Math::Point3D(0, 2, 0);              // optional = [0 ; 2 ; 0]
+                RayTracer::Color sceneBackGround = RayTracer::Color(0, 0, 0);   // optional = [0 ; 0 ; 0]
+                int maxDepth = 50;                                              // optional = 50
+            };
             class ParserException : public std::exception {
                 public:
                     ParserException(const std::string &message) : _message(message) {};
@@ -76,6 +79,7 @@ namespace RayTracer {
             libconfig::Setting *_cameraSection;
 
             void parseCameraSettings();
+            void parseCameraOptionalParameters();
 
             // MATERIALS
             libconfig::Setting *_materialsSection;

@@ -79,7 +79,8 @@ int main(int ac, char **av)
             display->createWindow(400, 400, "RayTracer");
         }
 
-        RayTracer::Parser parser(*core, "./configs/mathis_config3");
+        // RayTracer::Parser parser(*core, "./configs/mathis_config3");
+        RayTracer::Parser parser(*core, "./configs/new_parser_config");
         parser.printConfig();
 
         // double sphereRadius = 2.0;
@@ -111,9 +112,9 @@ int main(int ac, char **av)
         // Math::Point3D sphere_light3_pos(0, 0, 20);
         // Math::Point3D sphere_light4_pos(0, 0, -20);
         // Math::Point3D sphere_light5_pos(0, 20, 0);
-        // Math::Point3D sphere_light6_pos(0, -20, 0);
+        // Math::Point3D cube_position(-5, 3, -5);
 
-        // RayTracer::Sphere sphere_light1(sphere_light1_pos, sphereRadius, material_right);
+        // RayTracer::Cube cube(cube_position, 5, 5, 5, material_cube);
         // RayTracer::Sphere sphere_light2(sphere_light2_pos, sphereRadius, material_right);
         // RayTracer::Sphere sphere_light3(sphere_light3_pos, sphereRadius, material_right);
         // RayTracer::Sphere sphere_light4(sphere_light4_pos, sphereRadius, material_right);
@@ -131,7 +132,7 @@ int main(int ac, char **av)
         // Math::Point3D cylinder_position(-6, 0, 10);
         // RayTracer::Cylinder cylinder(cylinder_position, 3, 5, material_center, RayTracer::ShapeConfig::AXIS::Y);
 
-        // core->addShape(sphere_light1);
+        // core->addShape(cube);
         // core->addShape(sphere_light2);
         // core->addShape(sphere_light3);
         // core->addShape(sphere_light4);

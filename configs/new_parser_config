@@ -12,13 +12,20 @@ camera:
         y = 0.0;
         z = 0.0;
     }
-    rotation:
+    fieldOfView = 45.0; # In degree
+    maxDepth = 50;
+    focusPoint:
     {
         x = 0.0;
-        y = 0.0;
+        y = 2.0;
         z = 0.0;
     }
-    fieldOfView = 45.0; # In degree
+    sceneBackground:
+    {
+        r = 0.0;
+        g = 0.0;
+        b = 0.0;
+    }
 }
 
 materials:

@@ -17,7 +17,7 @@ RayTracer::Core::Core(int screenWidth, int screenHeight)
 
     this->_camera = RayTracer::Camera(screenWidth, screenHeight);
 
-    this->_camera._samples = 500;
+    this->_camera._samples = 100;
 
     this->_camera._fovInDegrees = 90;
     this->_camera._position = Math::Point3D(0, 6, -20);
@@ -26,7 +26,7 @@ RayTracer::Core::Core(int screenWidth, int screenHeight)
 
     this->_camera.initialize();
 
-    this->_maxDepth = 50;
+    this->_maxDepth = 10;
     this->sceneBackground = RayTracer::Color(0, 0, 0);
 }
 
@@ -73,22 +73,4 @@ RayTracer::IShape &RayTracer::Core::getNewShape(LIBRARY_TYPE type)
     RayTracer::IShape *(*func_ptr_casted)() = reinterpret_cast<RayTracer::IShape *(*)()>(func_ptr);
     std::cerr << "Shape of type " << type << " created successfully" << std::endl;
     return *func_ptr_casted();
-}
-
-void RayTracer::Core::loadNewMaterial(LIBRARY_TYPE type, MaterialConfig& config, const std::string& name)
-{
-    std::shared_ptr<void> handle = _handles[type];
-
-    if (type == LIBRARY_TYPE::LAMBERTIAN) {
-        _loadedMaterials[name] = std::make_shared<RayTracer::Material::Lambertian>();
-        _loadedMaterials[name]->setup(config);
-    }
-    else if (type == LIBRARY_TYPE::METAL) {
-        _loadedMaterials[name] = std::make_shared<RayTracer::Material::Metal>();
-        _loadedMaterials[name]->setup(config);
-    }
-    else if (type == LIBRARY_TYPE::LIGHT_DIFFUSE) {
-        _loadedMaterials[name] = std::make_shared<RayTracer::Material::LightDiffuse>();
-        _loadedMaterials[name]->setup(config);
-    }
 }

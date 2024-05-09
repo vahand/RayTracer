@@ -21,9 +21,12 @@ void RayTracer::Parser::printConfig()
     std::cerr << " ---- CONFIG ---- " << std::endl;
     std::cerr << "Camera settings:" << std::endl;
     std::cerr << "Resolution: " << camera_settings.resolution[0] << "x" << camera_settings.resolution[1] << std::endl;
-    std::cerr << "Position: [" << camera_settings.position[0] << ", " << camera_settings.position[1] << ", " << camera_settings.position[2] << "]" << std::endl;
-    std::cerr << "Rotation: [" << camera_settings.rotation[0] << ", " << camera_settings.rotation[1] << ", " << camera_settings.rotation[2] << "]" << std::endl;
+    std::cerr << "Position: [" << camera_settings.position.X  << " ; " << camera_settings.position.Y << " ; " << camera_settings.position.Z << "]" << std::endl;
     std::cerr << "FOV: " << camera_settings.fov << " degrees" << std::endl;
+    std::cerr << "Samples: " << camera_settings.samples << std::endl;
+    std::cerr << "Max depth: " << camera_settings.maxDepth << std::endl;
+    std::cerr << "Focus point: [" << camera_settings.focusPoint.X << " ; " << camera_settings.focusPoint.Y << " ; " << camera_settings.focusPoint.Z << "]" << std::endl;
+    std::cerr << "Scene background: [" << camera_settings.sceneBackGround.r() << " ; " << camera_settings.sceneBackGround.g() << " ; " << camera_settings.sceneBackGround.b() << "]" << std::endl;
     std::cerr << std::endl;
     std::cerr << "Materials:" << std::endl;
     std::cerr << _loadedMaterials.size() << " materials loaded" << std::endl;
@@ -40,20 +43,35 @@ void RayTracer::Parser::printConfig()
     std::cerr << " ---- END CONFIG ---- " << std::endl;
 }
 
+void RayTracer::Parser::parseCameraOptionalParameters()
+{
+    try {
+        camera_settings.fov = _cameraSection->lookup("fieldOfView");
+        camera_settings.samples = _cameraSection->lookup("samples");
+        camera_settings.maxDepth = _cameraSection->lookup("maxDepth");
+        libconfig::Setting &focusPoint = _cameraSection->lookup("focusPoint");
+        camera_settings.focusPoint = Math::Point3D(focusPoint[0], focusPoint[1], focusPoint[2]);
+        libconfig::Setting &sceneBackground = _cameraSection->lookup("sceneBackground");
+        camera_settings.sceneBackGround = RayTracer::Color(sceneBackground[0], sceneBackground[1], sceneBackground[2]);
+    } catch (const libconfig::SettingNotFoundException &e) {
+        std::cerr << BOLD << CYAN << "INFO: " << RESET << CYAN << "Some optional camera parameters are not defined in config file \"" << _path << "\"" << RESET << std::endl;
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are bad formatted for camera in config file \"" + _path + "\"");
+    }
+}
+
 void RayTracer::Parser::parseCameraSettings()
 {
     try {
         camera_settings.resolution[0] = _cameraSection->lookup("resolution")[0];
         camera_settings.resolution[1] = _cameraSection->lookup("resolution")[1];
-        camera_settings.position[0] = _cameraSection->lookup("position")[0];
-        camera_settings.position[1] = _cameraSection->lookup("position")[1];
-        camera_settings.position[2] = _cameraSection->lookup("position")[2];
-        camera_settings.rotation[0] = _cameraSection->lookup("rotation")[0];
-        camera_settings.rotation[1] = _cameraSection->lookup("rotation")[1];
-        camera_settings.rotation[2] = _cameraSection->lookup("rotation")[2];
-        camera_settings.fov = _cameraSection->lookup("fieldOfView");
+        libconfig::Setting &position = _cameraSection->lookup("position");
+        camera_settings.position = Math::Point3D(position[0], position[1], position[2]);
+        parseCameraOptionalParameters();
     } catch (const libconfig::SettingNotFoundException &e) {
-        throw RayTracer::Parser::ParserException("Some settings are missing or bad formatted for camera in config file \"" + _path + "\"");
+        throw RayTracer::Parser::ParserException("Some mandatory settings are missing for camera in config file \"" + _path + "\"");
+    } catch (const libconfig::SettingTypeException &e) {
+        throw RayTracer::Parser::ParserException("Some settings are bad formatted for camera in config file \"" + _path + "\"");
     }
 }
 
