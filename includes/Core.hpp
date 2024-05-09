@@ -66,6 +66,7 @@ namespace RayTracer
             PLANE = 1,
             CONE = 2,
             CYLINDER = 3,
+            CUBE = 4,
             AMBIANT_LIGHT = 100,
             LAMBERTIAN = 1000,
             METAL = 1001,
