@@ -354,6 +354,7 @@ void RayTracer::Parser::getPrimitiveConfig(libconfig::Setting &primitive, RayTra
     lookUpStringValue(primitive, "material", config);
     lookUpDoubleValue(primitive, "radius", config);
     lookUpDoubleValue(primitive, "height", config);
+    lookUpDoubleValue(primitive, "width", config);
     lookUpDoubleValue(primitive, "angle", config);
     lookUpStringValue(primitive, "axis", config);
     lookUpDoubleValue(primitive, "xDim", config);
@@ -411,12 +412,16 @@ void RayTracer::Parser::parseConfig()
             throw RayTracer::Parser::ParserException("Failed to find primitives settings in config file \"" + _path + "\"");
         }
 
-        _transformationsSection = &_cfg.lookup("transformations");
-        if (_transformationsSection != nullptr) {
-            std::cerr << ">> Transformations found in config file!" << std::endl;
-            parseTransformationsSection();
-        } else {
-            std::clog << RED << "WARNING: No transformations have been defined in config file" << RESET << std::endl;
+        try {
+            _transformationsSection = &_cfg.lookup("transformations");
+            if (_transformationsSection != nullptr) {
+                std::cerr << ">> Transformations found in config file!" << std::endl;
+                parseTransformationsSection();
+            } else {
+                std::clog << RED << "WARNING: No transformations have been defined in config file" << RESET << std::endl;
+            }
+        } catch (const libconfig::SettingNotFoundException &e) {
+            std::clog << BOLD <<  MAGENTA << "WARNING: " << RESET << MAGENTA << "No transformations have been defined in config file" << RESET << std::endl;
         }
 
         // _lightsSection = &_cfg.lookup("lights");

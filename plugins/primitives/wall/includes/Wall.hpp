@@ -2,28 +2,26 @@
 ** EPITECH PROJECT, 2024
 ** Raytracer
 ** File description:
-** Plane
+** Wall
 */
 
-#ifndef PLANE_HPP_
-#define PLANE_HPP_
+#ifndef WALL_HPP_
+    #define WALL_HPP_
 
-#include "../../../../includes/AShape.hpp"
-#include "../../../../includes/HitData.hpp"
-#include "../../../../includes/Range.hpp"
-#include "../../../../includes/Ray.hpp"
-#include "../../../../includes/AMaterial.hpp"
-#include <cmath>
+    #include "../../../../includes/AShape.hpp"
+    #include "../../../../includes/HitData.hpp"
+    #include "../../../../includes/Range.hpp"
+    #include "../../../../includes/Ray.hpp"
+    #include "../../../../includes/AMaterial.hpp"
+    #include <cmath>
 
 namespace RayTracer {
-    class Plane : public AShape {
+    class Wall : public AShape {
         public:
-            Plane() = default;
-            Plane(Math::Point3D origin, RayTracer::ShapeConfig::AXIS axis, std::shared_ptr<RayTracer::Material::IMaterial> material)
+            Wall() = default;
+            Wall(Math::Point3D origin, RayTracer::ShapeConfig::AXIS axis, std::shared_ptr<RayTracer::Material::IMaterial> material, double width, double height)
+             : _origin(origin), _axis(axis), _material(material), _width(width), _height(height)
             {
-                _origin = origin;
-                _axis = axis;
-                _material = material;
                 if (_axis == RayTracer::ShapeConfig::AXIS::X) {
                     _normal = Math::Vector3D(1, 0, 0);
                 } else if (_axis == RayTracer::ShapeConfig::AXIS::Y) {
@@ -36,15 +34,19 @@ namespace RayTracer {
 
             bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
             {
-                if (hasThisParameter(config, "x", "PLANE") == false)
+                if (hasThisParameter(config, "x", "WALL") == false)
                     return false;
-                if (hasThisParameter(config, "y", "PLANE") == false)
+                if (hasThisParameter(config, "y", "WALL") == false)
                     return false;
-                if (hasThisParameter(config, "z", "PLANE") == false)
+                if (hasThisParameter(config, "z", "WALL") == false)
                     return false;
-                if (hasThisParameter(config, "axis", "PLANE") == false)
+                if (hasThisParameter(config, "axis", "WALL") == false)
                     return false;
-                if (hasThisParameter(config, "material", "PLANE") == false)
+                if (hasThisParameter(config, "material", "WALL") == false)
+                    return false;
+                if (hasThisParameter(config, "width", "WALL") == false)
+                    return false;
+                if (hasThisParameter(config, "height", "WALL") == false)
                     return false;
                 return true;
             }
@@ -52,17 +54,30 @@ namespace RayTracer {
             void setup(const RayTracer::ShapeConfig& config) override
             {
                 if (!hasAllParameters(config))
-                    throw ShapeException("PLANE: Missing parameters in config file");
+                    throw ShapeException("WALL: Missing parameters in config file");
                 setName(config._parameters.at("name"));
                 _origin = Math::Point3D(atof(config._parameters.at("x").c_str()), atof(config._parameters.at("y").c_str()), atof(config._parameters.at("z").c_str()));
                 _axis = getAxisFromString(config._parameters.at("axis"));
                 _material = config._loadedMaterials.at(config._parameters.at("material"));
+                _width = atof(config._parameters.at("width").c_str());
+                _height = atof(config._parameters.at("height").c_str());
                 if (_axis == RayTracer::ShapeConfig::AXIS::X) {
                     _normal = Math::Vector3D(1, 0, 0);
                 } else if (_axis == RayTracer::ShapeConfig::AXIS::Y) {
                     _normal = Math::Vector3D(0, 1, 0);
                 } else {
                     _normal = Math::Vector3D(0, 0, 1);
+                }
+                _min_X = _origin.X - _width / 2;
+                _max_X = _origin.X + _width / 2;
+                _min_Y = _origin.Y - _height / 2;
+                _max_Y = _origin.Y + _height / 2;
+                if (_axis == RayTracer::ShapeConfig::AXIS::Y) {
+                    _min_Z = _origin.Z - _height / 2;
+                    _max_Z = _origin.Z + _height / 2;
+                } else {
+                    _min_Z = _origin.Z - _width / 2;
+                    _max_Z = _origin.Z + _width / 2;
                 }
             }
 
@@ -74,9 +89,8 @@ namespace RayTracer {
             double getDConstante() const
             {
                 Math::Vector3D n = getNormalVector();
-                Math::Point3D o = _origin;
+                Math::Point3D o = getOrigin();
                 double d = n.X * o.X + n.Y * o.Y + n.Z * o.Z;
-
                 return d;
             }
 
@@ -86,6 +100,13 @@ namespace RayTracer {
                 double t = (d - ray.origin().DotProduct(getNormalVector())) / getNormalVector().DotProduct(ray.direction());
                 if (t < ray_range.min || t > ray_range.max)
                     return false;
+                Math::Point3D ray_point = ray.at(t);
+                if (ray_point.X < _min_X || ray_point.X > _max_X)
+                    return false;
+                if (ray_point.Y < _min_Y || ray_point.Y > _max_Y)
+                    return false;
+                if (ray_point.Z < _min_Z || ray_point.Z > _max_Z)
+                    return false;
                 data.tValue = t;
                 data.point = ray.at(data.tValue);
                 data.normal = getNormalVector();
@@ -94,12 +115,14 @@ namespace RayTracer {
                 return true;
             }
 
-            Math::Vector3D getNormalVector() const {
+            Math::Vector3D getNormalVector() const
+            {
                 return _normal;
             }
 
-            bool isVectorParallel(const Math::Vector3D& vector) const {
-                return getNormalVector().DotProduct(vector) == 0.0;
+            Math::Point3D getOrigin() const
+            {
+                return _origin;
             }
 
             void rotate(const Math::Vector3D &rotation) override {
@@ -111,9 +134,19 @@ namespace RayTracer {
         protected:
         private:
             RayTracer::ShapeConfig::AXIS _axis;
+            Math::Point3D _origin;
             Math::Vector3D _normal;
             std::shared_ptr<RayTracer::Material::IMaterial> _material;
+            double _width;
+            double _height;
+
+            double _min_X;
+            double _max_X;
+            double _min_Y;
+            double _max_Y;
+            double _min_Z;
+            double _max_Z;
     };
 }
 
-#endif /* !PLANE_HPP_ */
+#endif /* !WALL_HPP_ */

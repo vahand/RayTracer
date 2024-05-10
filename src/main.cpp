@@ -103,6 +103,10 @@ int main(int ac, char **av)
             core->_camera._samples = quality;
         }
 
+        // RayTracer::Parser parser(*core, "./configs/mathis_config3");
+        RayTracer::Parser parser(*core, "./configs/room_config");
+        parser.printConfig();
+
         // auto texture_chessboard = std::make_shared<RayTracer::Texture::ChessBoard>(5, RayTracer::Color(255, 255, 255), RayTracer::Color(0, 128, 255));
         // auto material_chessboard = std::make_shared<RayTracer::Material::Lambertian>(texture_chessboard);
 

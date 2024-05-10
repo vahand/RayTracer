@@ -98,41 +98,27 @@ namespace RayTracer {
 
             bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
             {
-                if (config._parameters.find("x") == config._parameters.end()) {
-                    std::clog << RED << "CUBE: Missing x parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "x", "CUBE") == false)
                     return false;
-                }
-                if (config._parameters.find("y") == config._parameters.end()) {
-                    std::clog << RED << "CUBE: Missing y parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "y", "CUBE") == false)
                     return false;
-                }
-                if (config._parameters.find("z") == config._parameters.end()) {
-                    std::clog << RED << "CUBE: Missing z parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "z", "CUBE") == false)
                     return false;
-                }
-                if (config._parameters.find("xDim") == config._parameters.end()) {
-                    std::clog << RED << "CUBE: Missing xDim parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "xDim", "CUBE") == false)
                     return false;
-                }
-                if (config._parameters.find("yDim") == config._parameters.end()) {
-                    std::clog << RED << "CUBE: Missing yDim parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "yDim", "CUBE") == false)
                     return false;
-                }
-                if (config._parameters.find("xDim") == config._parameters.end()) {
-                    std::clog << RED << "CUBE: Missing xDim parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "zDim", "CUBE") == false)
                     return false;
-                }
-                if (config._parameters.find("material") == config._parameters.end()) {
-                    std::clog << RED << "CUBE: Missing material parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "material", "CUBE") == false)
                     return false;
-                }
                 return true;
             }
 
             void setup(const RayTracer::ShapeConfig& config)
             {
                 if (!hasAllParameters(config))
-                    throw ShapeException("CUBE: Missing parameters in config file for cube" + config._parameters.at("name"));
+                    throw ShapeException("CUBE: Missing parameters in config file for cube " + config._parameters.at("name"));
                 setName(config._parameters.at("name"));
                 _origin = Math::Point3D(atof(config._parameters.at("x").c_str()), atof(config._parameters.at("y").c_str()), atof(config._parameters.at("z").c_str()));
                 _material = config._loadedMaterials.at(config._parameters.at("material"));

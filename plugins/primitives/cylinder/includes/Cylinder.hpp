@@ -34,30 +34,18 @@ namespace RayTracer {
 
             bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
             {
-                if (config._parameters.find("x") == config._parameters.end()) {
-                    std::clog << RED << "CYLINDER: Missing x parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "x", "CYLINDER") == false)
                     return false;
-                }
-                if (config._parameters.find("y") == config._parameters.end()) {
-                    std::clog << RED << "CYLINDER: Missing y parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "y", "CYLINDER") == false)
                     return false;
-                }
-                if (config._parameters.find("z") == config._parameters.end()) {
-                    std::clog << RED << "CYLINDER: Missing z parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "z", "CYLINDER") == false)
                     return false;
-                }
-                if (config._parameters.find("axis") == config._parameters.end()) {
-                    std::clog << RED << "CYLINDER: Missing axis parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "axis", "CYLINDER") == false)
                     return false;
-                }
-                if (config._parameters.find("material") == config._parameters.end()) {
-                    std::clog << RED << "CYLINDER: Missing material parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "material", "CYLINDER") == false)
                     return false;
-                }
-                if (config._parameters.find("radius") == config._parameters.end()) {
-                    std::clog << RED << "CYLINDER: Missing radius parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "radius", "CYLINDER") == false)
                     return false;
-                }
                 // if (config._parameters.find("height") == config._parameters.end())
                 //     return false;
                 return true;
