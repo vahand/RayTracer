@@ -354,6 +354,7 @@ void RayTracer::Parser::getPrimitiveConfig(libconfig::Setting &primitive, RayTra
     lookUpStringValue(primitive, "material", config);
     lookUpDoubleValue(primitive, "radius", config);
     lookUpDoubleValue(primitive, "height", config);
+    lookUpDoubleValue(primitive, "width", config);
     lookUpDoubleValue(primitive, "angle", config);
     lookUpStringValue(primitive, "axis", config);
     lookUpDoubleValue(primitive, "xDim", config);
