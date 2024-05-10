@@ -28,33 +28,23 @@ namespace RayTracer {
 
             bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
             {
-                if (config._parameters.find("x") == config._parameters.end()) {
-                    std::clog << RED << "SPHERE: Missing x parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "x", "SPHERE") == false)
                     return false;
-                }
-                if (config._parameters.find("y") == config._parameters.end()) {
-                    std::clog << RED << "SPHERE: Missing y parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "y", "SPHERE") == false)
                     return false;
-                }
-                if (config._parameters.find("z") == config._parameters.end()) {
-                    std::clog << RED << "SPHERE: Missing z parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "z", "SPHERE") == false)
                     return false;
-                }
-                if (config._parameters.find("radius") == config._parameters.end()) {
-                    std::clog << RED << "SPHERE: Missing radius parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "radius", "SPHERE") == false)
                     return false;
-                }
-                if (config._parameters.find("material") == config._parameters.end()) {
-                    std::clog << RED << "SPHERE: Missing material parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "material", "SPHERE") == false)
                     return false;
-                }
                 return true;
             }
 
             void setup(const RayTracer::ShapeConfig& config)
             {
                 if (!hasAllParameters(config))
-                    throw ShapeException("SPHERE: Missing parameters in config file for sphere" + config._parameters.at("name"));
+                    throw ShapeException("SPHERE: Missing parameters in config file for sphere " + config._parameters.at("name"));
                 setName(config._parameters.at("name"));
                 _origin = Math::Point3D(atof(config._parameters.at("x").c_str()), atof(config._parameters.at("y").c_str()), atof(config._parameters.at("z").c_str()));
                 _material = config._loadedMaterials.at(config._parameters.at("material"));

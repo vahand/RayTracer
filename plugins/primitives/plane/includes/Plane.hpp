@@ -36,26 +36,16 @@ namespace RayTracer {
 
             bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
             {
-                if (config._parameters.find("x") == config._parameters.end()) {
-                    std::clog << RED << "PLANE: Missing x parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "x", "PLANE") == false)
                     return false;
-                }
-                if (config._parameters.find("y") == config._parameters.end()) {
-                    std::clog << RED << "PLANE: Missing y parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "y", "PLANE") == false)
                     return false;
-                }
-                if (config._parameters.find("z") == config._parameters.end()) {
-                    std::clog << RED << "PLANE: Missing z parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "z", "PLANE") == false)
                     return false;
-                }
-                if (config._parameters.find("axis") == config._parameters.end()) {
-                    std::clog << RED << "PLANE: Missing axis parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "axis", "PLANE") == false)
                     return false;
-                }
-                if (config._parameters.find("material") == config._parameters.end()) {
-                    std::clog << RED << "PLANE: Missing material parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "material", "PLANE") == false)
                     return false;
-                }
                 return true;
             }
 
