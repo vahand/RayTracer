@@ -117,35 +117,35 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
         }
     ));
 
-    //? SCENE LOADER SELECTOR
-    m_elements.push_back(std::make_unique<SFMLSelector>(
-        sf::Vector2f(66 + 33/2 - 14/2 - 3, 20),
-        sf::Vector2f(14, 3),
-        sf::Color(0, 156, 227),
-        sf::Color(0, 110, 162),
-        sf::Color::White,
-        // _manager->getScenes()
-    ));
+    // //? SCENE LOADER SELECTOR
+    // m_elements.push_back(std::make_unique<SFMLSelector>(
+    //     sf::Vector2f(66 + 33/2 - 14/2 - 3, 20),
+    //     sf::Vector2f(14, 3),
+    //     sf::Color(0, 156, 227),
+    //     sf::Color(0, 110, 162),
+    //     sf::Color::White,
+    //     _manager->getUnloadedScenes()
+    // ));
 
-    //* LOAD BUTTON
-    std::unique_ptr<SFMLButton> loadButton = std::make_unique<SFMLButton>(
-        sf::Vector2f(66 + 33/2 + 14/2 + 3, 20),
-        sf::Vector2f(4, 3),
-        "LOAD",
-        sf::Color(0, 156, 227),
-        sf::Color(0, 110, 162),
-        sf::Color::White
-    );
-    loadButton->setTriggerFunction([this](sf::RenderWindow &window) {
-        if (_workers->isRendering())
-            return;
-        // std::string scenePath = m_elements[6]->getValue();
-        // _core->loadScene(scenePath);
-        // _fastRendering = true;
-        // _workers->beginRender();
-        // _workers->setRendering(true);
-    });
-    m_buttons.push_back(std::move(loadButton));
+    // //* LOAD BUTTON
+    // std::unique_ptr<SFMLButton> loadButton = std::make_unique<SFMLButton>(
+    //     sf::Vector2f(66 + 33/2 + 14/2 + 3, 20),
+    //     sf::Vector2f(4, 3),
+    //     "LOAD",
+    //     sf::Color(0, 156, 227),
+    //     sf::Color(0, 110, 162),
+    //     sf::Color::White
+    // );
+    // loadButton->setTriggerFunction([this](sf::RenderWindow &window) {
+    //     if (_workers->isRendering())
+    //         return;
+    //     // std::string scenePath = m_elements[6]->getValue();
+    //     // _core->loadScene(scenePath);
+    //     // _fastRendering = true;
+    //     // _workers->beginRender();
+    //     // _workers->setRendering(true);
+    // });
+    // m_buttons.push_back(std::move(loadButton));
 
     //? Render Button
     std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);
