@@ -9,12 +9,11 @@ camera:
     position:
     {
         x = 0.0;
-        y = 6.0;
-        z = -30.0;
+        y = 0.0;
+        z = 0.0;
     }
-    fieldOfView = 90.0; # In degree
-    maxDepth = 10;
-    samples = 200;
+    fieldOfView = 45.0; # In degree
+    maxDepth = 50;
     focusPoint:
     {
         x = 0.0;
@@ -27,6 +26,7 @@ camera:
         g = 0.0;
         b = 0.0;
     }
+    samples = 1000;
 }
 
 materials:
@@ -66,54 +66,63 @@ primitives:
     # Plane = 1
     # Cone = 2
     # Cylinder = 3
+    # Cube = 4
+    # Wall = 5
 
     sphereLight1:
-    {
-        type = 0;
-        origin = { x = 20.0; y = 0.0; z = 0.0; };
-        material = "material_right";
-        radius = 2.0;
-    }
-    sphereLight2:
-    {
-        type = 0;
-        origin = { x = -20.0; y = 0.0; z = 0.0; };
-        material = "material_right";
-        radius = 2.0;
-    }
-    sphereLight3:
-    {
-        type = 0;
-        origin = { x = 0.0; y = 0.0; z = 20.0; };
-        material = "material_right";
-        radius = 2.0;
-    }
-    sphereLight4:
-    {
-        type = 0;
-        origin = { x = 0.0; y = 0.0; z = -20.0; };
-        material = "material_right";
-        radius = 2.0;
-    }
-    sphereLight5:
     {
         type = 0;
         origin = { x = 0.0; y = 20.0; z = 0.0; };
         material = "material_right";
         radius = 2.0;
     }
+    sphereLight2:
+    {
+        type = 0;
+        origin = { x = -20.0; y = 2.0; z = 50.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight3:
+    {
+        type = 0;
+        origin = { x = 20.0; y = 2.0; z = 50.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight4:
+    {
+        type = 0;
+        origin = { x = -20.0; y = 2.0; z = -35.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight5:
+    {
+        type = 0;
+        origin = { x = 20.0; y = 2.0; z = -35.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
     sphereLight6:
     {
         type = 0;
-        origin = { x = 0.0; y = -20.0; z = 0.0; };
+        origin = { x = 20.0; y = 2.0; z = -5.0; };
         material = "material_right";
         radius = 2.0;
     }
     sphereLight7:
     {
         type = 0;
-        origin = { x = -13.0; y = 0.0; z = -5.0; };
+        origin = { x = -20.0; y = 2.0; z = -5.0; };
         material = "material_right";
+        radius = 2.0;
+    }
+    middle_sphere:
+    {
+        type = 0;
+        origin = { x = 0.0; y = 2.0; z = -5.0; };
+        material = "material_left";
         radius = 2.0;
     }
     plane:
@@ -123,49 +132,44 @@ primitives:
         material = "material_ground";
         axis = "Y"
     }
-    // cone1:
-    // {
-    //     type = 2;
-    //     origin = { x = 0.0; y = 6.0; z = 20.0; };
-    //     material = "material_cube";
-    //     radius = 2.0;
-    //     height = 5.0;
-    //     axis = "Y";
-    //     angle = 45.0;
-    // }
-    // cylinder1:
-    // {
-    //     type = 3;
-    //     origin = { x = -6.0; y = 0.0; z = 10.0; };
-    //     radius = 3.0;
-    //     height = 5.0;
-    //     material = "material_center";
-    //     axis = "Y";
-    // }
-}
-
-# Light configuration
-lights:
-{
-    ambient = 0.4;
-    diffuse = 0.6;
-
-    # List of point lights
-    point = (
-        {
-            vahanLight: { x = 400.0; y = 100.0; z = 500.0; }
-        },
-        {
-            oop: { x = 400.0; y = 100.0; z = 500.0; }
-        }
-    ) ;
-
-    # List of directional lights
-    directional = () ;
-}
-
-transformations:
-{
-    qdheuxh: { type = "translate" ; vector: { x = 12.0 ; y = 67.0 ; z = 34.0 } } # a translation transfo. applied to sphere1
-    // cylinder1: { type = "rotate" ; vector: { x = 0.0 ; y = 0.0 ; z = 45.0 } } # a rotation transfo. applied to sphere2
+    right_wall:
+    {
+        type = 5;
+        origin = { x = 30.0; y = 0.0; z = 50.0; };
+        normal = { x = 1.0; y = 0.0; z = 0.0; };
+        material = "material_center";
+        axis = "X";
+        height = 100.0;
+        width = 150.0;
+    }
+    left_wall:
+    {
+        type = 5;
+        origin = { x = -30.0; y = 0.0; z = 50.0; };
+        normal = { x = 1.0; y = 0.0; z = 0.0; };
+        material = "material_center";
+        axis = "X";
+        height = 100.0;
+        width = 150.0;
+    }
+    back_wall:
+    {
+        type = 5;
+        origin = { x = 0.0; y = 0.0; z = 100.0; };
+        normal = { x = 0.0; y = 0.0; z = 1.0; };
+        material = "material_center";
+        axis = "Z";
+        height = 100.0;
+        width = 150.0;
+    }
+    ceiling:
+    {
+        type = 5;
+        origin = { x = 0.0; y = 80.0; z = 50.0; };
+        normal = { x = 0.0; y = 1.0; z = 0.0; };
+        material = "material_center";
+        axis = "Y";
+        height = 150.0;
+        width = 80.0;
+    }
 }

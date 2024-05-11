@@ -119,20 +119,21 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
 
     //? SCENE LOADER SELECTOR
     m_elements.push_back(std::make_unique<SFMLSelector>(
-        sf::Vector2f(66 + 33/2 - 14/2 - 3, 20),
-        sf::Vector2f(14, 3),
+        sf::Vector2f(66 + 33/2 - 15/2 - 3, 20),
+        sf::Vector2f(15, 3),
         sf::Color(0, 156, 227),
         sf::Color(0, 110, 162),
         sf::Color::White,
-        [this]() {
-            m_elements[6]->setContent(_manager->getUnloadedScenes());
+        [this]() -> std::vector<std::string> {
+            std::vector<std::string> scenes = _manager->getUnloadedScenes();
+            return scenes;
         }
     ));
 
     //* LOAD BUTTON
     std::unique_ptr<SFMLButton> loadButton = std::make_unique<SFMLButton>(
-        sf::Vector2f(66 + 33/2 + 14/2 + 3, 20),
-        sf::Vector2f(4, 3),
+        sf::Vector2f(66 + 33/2 + 15/2, 20),
+        sf::Vector2f(5, 3),
         "LOAD",
         sf::Color(0, 156, 227),
         sf::Color(0, 110, 162),
@@ -141,13 +142,61 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
     loadButton->setTriggerFunction([this](sf::RenderWindow &window) {
         if (_workers->isRendering())
             return;
-        // std::string scenePath = m_elements[6]->getValue();
-        // _core->loadScene(scenePath);
-        // _fastRendering = true;
-        // _workers->beginRender();
-        // _workers->setRendering(true);
+        std::string sceneName = m_elements[6]->getContentSelected();
+        if (sceneName == "")
+            return;
+        std::cerr << "[ACTION] Loading scene: " << sceneName << std::endl;
+        _manager->addFileConfigPath(sceneName);
+        _manager->reload();
+        m_elements[6]->rawUpdate();
+        m_elements[7]->rawUpdate();
+
+        _fastRendering = true;
+        _workers->beginRender();
+        _workers->setRendering(true);
     });
     m_buttons.push_back(std::move(loadButton));
+
+    //? SCENE REMOVER SELECTOR
+    m_elements.push_back(std::make_unique<SFMLSelector>(
+        sf::Vector2f(66 + 33/2 - 15/2 - 3, 25),
+        sf::Vector2f(15, 3),
+        sf::Color(0, 156, 227),
+        sf::Color(0, 110, 162),
+        sf::Color::White,
+        [this]() -> std::vector<std::string> {
+            std::vector<std::string> scenes = _manager->getLoadedScenes();
+            return scenes;
+        }
+    ));
+
+    //* REMOVE BUTTON
+    std::unique_ptr<SFMLButton> removeButton = std::make_unique<SFMLButton>(
+        sf::Vector2f(66 + 33/2 + 15/2, 25),
+        sf::Vector2f(5, 3),
+        "REMOVE",
+        sf::Color(0, 156, 227),
+        sf::Color(0, 110, 162),
+        sf::Color::White
+    );
+    removeButton->setTriggerFunction([this](sf::RenderWindow &window) {
+        if (_workers->isRendering())
+            return;
+        std::string sceneName = m_elements[7]->getContentSelected();
+        if (sceneName == "")
+            return;
+        std::cerr << "[ACTION] Removing scene: " << sceneName << std::endl;
+        _manager->rmFileConfigPath(sceneName);
+        _manager->reload();
+        m_elements[6]->rawUpdate();
+        m_elements[7]->rawUpdate();
+        std::cerr << " > (Scene) removed" << std::endl;
+
+        _fastRendering = true;
+        _workers->beginRender();
+        _workers->setRendering(true);
+    });
+    m_buttons.push_back(std::move(removeButton));
 
     //? Render Button
     std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);

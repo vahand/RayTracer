@@ -20,7 +20,7 @@ namespace Graphics {
     namespace SFML {
         class SFMLSelector : public ResponsiveElement {
             public:
-                SFMLSelector(sf::Vector2f percentPosition, sf::Vector2f percentSize, sf::Color backgroundColor, sf::Color hoverColor, sf::Color textColor, std::function<void()> contentGetterFunction, bool avoidLocking = false)
+                SFMLSelector(sf::Vector2f percentPosition, sf::Vector2f percentSize, sf::Color backgroundColor, sf::Color hoverColor, sf::Color textColor, std::function<std::vector<std::string>()> contentGetterFunction, bool avoidLocking = false)
                     :   _percentPosition(percentPosition), _percentSize(percentSize), _avoidLocking(avoidLocking)
                 {
                     m_rect.setFillColor(backgroundColor);
@@ -35,10 +35,13 @@ namespace Graphics {
                     m_text.setStyle(sf::Text::Bold);
 
                     _contentGetter = contentGetterFunction;
-                    _contentGetter();
+                    rawUpdate();
                 }
-
                 ~SFMLSelector() = default;
+
+                void rawUpdate() override {
+                    m_content = _contentGetter();
+                }
 
                 void setBackgroundColor(const sf::Color &color) override {
                     m_rect.setFillColor(color);
@@ -46,6 +49,10 @@ namespace Graphics {
 
                 int getValue() const override {
                     return m_selectedIndex;
+                }
+
+                std::string getContentSelected() const override {
+                    return m_content[m_selectedIndex];
                 }
 
                 void setContent(const std::vector<std::string> content) {
@@ -79,6 +86,17 @@ namespace Graphics {
                         window.draw(m_text);
                 }
 
+                std::string parseString(std::string str, std::string delimiter)
+                {
+                    size_t pos = 0;
+                    std::string token;
+                    while ((pos = str.find(delimiter)) != std::string::npos) {
+                        token = str.substr(0, pos);
+                        str.erase(0, pos + delimiter.length());
+                    }
+                    return str;
+                }
+
                 void update(sf::RenderWindow &window, bool locked = false) override
                 {
                     double sizeX = std::ceil((static_cast<double>(_percentSize.x) / 100.0) * window.getSize().x);
@@ -92,6 +110,22 @@ namespace Graphics {
                     if (_avoidLocking)
                         locked = false;
 
+                    if (m_content.size() > 1 && isHovered(window, sf::Vector2f(sf::Mouse::getPosition(window))) && !locked) {
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && !locked) {
+                            rawUpdate();
+                            m_selectedIndex--;
+                            if (m_selectedIndex < 0)
+                                m_selectedIndex = m_content.size() - 1;
+                            usleep(100000);
+                        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && !locked) {
+                            rawUpdate();
+                            m_selectedIndex++;
+                            if (m_selectedIndex >= m_content.size())
+                                m_selectedIndex = 0;
+                            usleep(100000);
+                        }
+                    }
+
                     if (isHovered(window, sf::Vector2f(sf::Mouse::getPosition(window)))) {
                         m_rect.setOutlineColor(sf::Color::White);
                     } else
@@ -102,16 +136,16 @@ namespace Graphics {
                     else
                         m_rect.setFillColor(sf::Color(50, 50, 50));
 
-                    if (m_content.size() > 0)
-                        m_text.setString(m_content[m_selectedIndex]);
-                    else
+                    if (m_content.size() > 0) {
+                        std::string filename = parseString(m_content[m_selectedIndex], "/");
+                        m_text.setString(filename);
+                    } else
                         m_text.setString("<Empty>");
 
                     m_text.setStyle(sf::Text::Bold);
-
                     m_text.setCharacterSize(sizeY / 2);
                     if (sizeX < m_text.getLocalBounds().width)
-                        m_text.setCharacterSize(sizeX / 5);
+                        m_text.setCharacterSize(sizeX / 6);
 
                     sf::FloatRect textRect = m_text.getLocalBounds();
                     m_text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
@@ -119,7 +153,6 @@ namespace Graphics {
 
                     render(window);
                 }
-
 
             private:
                 sf::Vector2f _percentPosition;
@@ -133,7 +166,7 @@ namespace Graphics {
                 sf::Font m_font;
 
                 bool _avoidLocking = false;
-                std::function<void()> _contentGetter;
+                std::function<std::vector<std::string>()> _contentGetter;
 
         };
     }
