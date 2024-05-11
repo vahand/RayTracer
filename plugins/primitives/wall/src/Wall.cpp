@@ -9,7 +9,7 @@
 
 extern "C" RayTracer::IShape * initShape()
 {
-    std::cerr << "Plane entryPoint" << std::endl;
+    std::cerr << "Wall entryPoint" << std::endl;
     return new RayTracer::Wall();
 }
 
