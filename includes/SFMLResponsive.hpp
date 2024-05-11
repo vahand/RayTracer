@@ -21,7 +21,10 @@ namespace Graphics {
                 virtual void render(sf::RenderWindow &window) const = 0;
                 virtual void setBackgroundColor(const sf::Color &color) = 0;
 
+                virtual void rawUpdate() {};
                 virtual int getValue() const { return -1; };
+                virtual void setContent(const std::vector<std::string> content) {};
+                virtual std::string getContentSelected() const { return ""; };
         };
     }
 }
