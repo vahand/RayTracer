@@ -9,10 +9,12 @@
     #define SFMLDisplay_HPP_
 
 #include "AGraphicals.hpp"
+#include "SFMLSelector.hpp"
 #include "SFMLButton.hpp"
 #include "SFMLSlider.hpp"
 #include "SFMLPixelImage.hpp"
 #include "SFMLPanel.hpp"
+#include "SFMLResponsive.hpp"
 
 namespace Graphics
 {
@@ -37,7 +39,7 @@ namespace Graphics
                 _workers = workers;
             }
 
-            void createWindow(int width, int height, const std::string &title) override;
+            void createWindow(int width, int height, const std::string &title, std::shared_ptr<RayTracer::FileManager> manager) override;
             void initRayTracerWindow();
 
             int getWindowWidth() const { return m_window.getSize().x; }
@@ -79,7 +81,7 @@ namespace Graphics
             }
 
             void updateRenderedImage(const std::unordered_map<int, std::unique_ptr<std::vector<RayTracer::Color>>> &image);
-            void renderAll(RayTracer::FileManager &manager) override;
+            void renderAll() override;
 
         protected:
         private:
@@ -100,6 +102,7 @@ namespace Graphics
 
             std::shared_ptr<RayTracer::Core> _core;
             std::shared_ptr<Workers> _workers;
+            std::shared_ptr<RayTracer::FileManager> _manager;
         };
 
     }

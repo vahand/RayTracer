@@ -91,7 +91,7 @@ int main(int ac, char **av)
         if (guiOption) {
             display = std::make_unique<Graphics::SFML::SFMLDisplay>();
             display->setup(core, workers);
-            display->createWindow(1280, 720, "RayTracer");
+            display->createWindow(1280, 720, "RayTracer", std::make_shared<RayTracer::FileManager>(fileManager));
         }
 
         if (qualityOption) {
@@ -118,7 +118,7 @@ int main(int ac, char **av)
         if (guiOption) {
             std::cerr << "[GUI] Successfully initialized" << std::endl;
             while (display->isWindowOpen()) {
-                display->renderAll(fileManager);
+                display->renderAll();
             }
         } else {
             workers->render(*core);

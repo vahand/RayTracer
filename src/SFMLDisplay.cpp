@@ -7,8 +7,10 @@
 
 #include "../includes/SFMLDisplay.hpp"
 
-void Graphics::SFML::SFMLDisplay::createWindow(int width, int height, const std::string &title)
+void Graphics::SFML::SFMLDisplay::createWindow(int width, int height, const std::string &title, std::shared_ptr<RayTracer::FileManager> manager)
 {
+    _manager = manager;
+
     std::cerr << "[SFMLDisplay] Creating window with width: " << width << " and height: " << height << " and title: " << title << std::endl;
     if (!m_window.isOpen()) {
         sf::VideoMode videoMode(width, height);
@@ -16,7 +18,7 @@ void Graphics::SFML::SFMLDisplay::createWindow(int width, int height, const std:
         displayWindow();
     } else {
         m_window.close();
-        createWindow(width, height, title);
+        createWindow(width, height, title, std::move(_manager));
     }
 
     m_window.setFramerateLimit(60);
@@ -115,6 +117,36 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
         }
     ));
 
+    //? SCENE LOADER SELECTOR
+    m_elements.push_back(std::make_unique<SFMLSelector>(
+        sf::Vector2f(66 + 33/2 - 14/2 - 3, 20),
+        sf::Vector2f(14, 3),
+        sf::Color(0, 156, 227),
+        sf::Color(0, 110, 162),
+        sf::Color::White,
+        // _manager->getScenes()
+    ));
+
+    //* LOAD BUTTON
+    std::unique_ptr<SFMLButton> loadButton = std::make_unique<SFMLButton>(
+        sf::Vector2f(66 + 33/2 + 14/2 + 3, 20),
+        sf::Vector2f(4, 3),
+        "LOAD",
+        sf::Color(0, 156, 227),
+        sf::Color(0, 110, 162),
+        sf::Color::White
+    );
+    loadButton->setTriggerFunction([this](sf::RenderWindow &window) {
+        if (_workers->isRendering())
+            return;
+        // std::string scenePath = m_elements[6]->getValue();
+        // _core->loadScene(scenePath);
+        // _fastRendering = true;
+        // _workers->beginRender();
+        // _workers->setRendering(true);
+    });
+    m_buttons.push_back(std::move(loadButton));
+
     //? Render Button
     std::unique_ptr<SFMLButton> renderButton = std::make_unique<SFMLButton>(sf::Vector2f(66 + 33 / 2 - 14 / 2, 90), sf::Vector2f(14, 6), "RENDER", sf::Color(0, 156, 227), sf::Color(0, 110, 162), sf::Color::White);
     renderButton->setTriggerFunction([this](sf::RenderWindow &window) {
@@ -189,10 +221,10 @@ void Graphics::SFML::SFMLDisplay::updateRenderedImage(const std::unordered_map<i
     }
 }
 
-void Graphics::SFML::SFMLDisplay::renderAll(RayTracer::FileManager &manager)
+void Graphics::SFML::SFMLDisplay::renderAll()
 {
     if (!_workers->isRendering()) {
-        if (manager.checkForSceneEdition()) {
+        if (_manager->checkForSceneEdition()) {
             _fastRendering = true;
             _workers->beginRender();
             _workers->setRendering(true);

@@ -91,14 +91,6 @@ namespace Graphics
 
             void render(sf::RenderWindow &window, bool locked = false)
             {
-                if (isHovered(window, sf::Vector2f(sf::Mouse::getPosition(window)))) {
-                    m_button.setFillColor(m_hoverColor);
-                } else {
-                    m_button.setFillColor(m_buttonColor);
-                }
-
-                if (locked)
-                    m_button.setFillColor(sf::Color(100, 100, 100));
                 window.draw(m_button);
                 if (m_font.getInfo().family != "")
                     window.draw(m_text);
@@ -114,18 +106,22 @@ namespace Graphics
                 if (_avoidLocking)
                     locked = false;
 
+                if (isHovered(window, sf::Vector2f(sf::Mouse::getPosition(window)))) {
+                    m_button.setFillColor(m_hoverColor);
+                } else
+                    m_button.setFillColor(m_buttonColor);
+
+                if (locked)
+                    m_button.setFillColor(sf::Color(100, 100, 100));
+
                 m_button.setSize(sf::Vector2f(sizeX, sizeY));
                 m_button.setPosition(sf::Vector2f(posX, posY));
 
-                // set the text to bold
                 m_text.setStyle(sf::Text::Bold);
-
-                // increase the text size according to the button size
                 m_text.setCharacterSize(sizeY / 2);
                 if (sizeX < m_text.getLocalBounds().width)
                     m_text.setCharacterSize(sizeX / 5);
 
-                // center the text on the button
                 sf::FloatRect textBounds = m_text.getLocalBounds();
                 m_text.setPosition(posX + (sizeX - textBounds.width) / 2, posY + (sizeY - textBounds.height) / 3);
 
@@ -133,12 +129,9 @@ namespace Graphics
 
                 if (locked)
                     return;
-                for (auto &event : events)
-                {
+                for (auto &event : events) {
                     if (isClicked(window, mousePosition, event))
-                    {
                         m_triggerFunction(window);
-                    }
                 }
             }
 
