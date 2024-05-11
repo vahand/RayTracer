@@ -20,7 +20,7 @@ namespace Graphics {
     namespace SFML {
         class SFMLSelector : public ResponsiveElement {
             public:
-                SFMLSelector(sf::Vector2f percentPosition, sf::Vector2f percentSize, sf::Color backgroundColor, sf::Color hoverColor, sf::Color textColor, std::function<std::vector<std::string>()> contentGetterFunction, bool avoidLocking = false)
+                SFMLSelector(sf::Vector2f percentPosition, sf::Vector2f percentSize, sf::Color backgroundColor, sf::Color hoverColor, sf::Color textColor, std::function<void()> contentGetterFunction, bool avoidLocking = false)
                     :   _percentPosition(percentPosition), _percentSize(percentSize), _avoidLocking(avoidLocking)
                 {
                     m_rect.setFillColor(backgroundColor);
@@ -35,7 +35,7 @@ namespace Graphics {
                     m_text.setStyle(sf::Text::Bold);
 
                     _contentGetter = contentGetterFunction;
-                    m_content = _contentGetter();
+                    _contentGetter();
                 }
 
                 ~SFMLSelector() = default;
@@ -46,6 +46,10 @@ namespace Graphics {
 
                 int getValue() const override {
                     return m_selectedIndex;
+                }
+
+                void setContent(const std::vector<std::string> content) {
+                    m_content = content;
                 }
 
                 void setHoverColor(const sf::Color &color) {
@@ -129,7 +133,7 @@ namespace Graphics {
                 sf::Font m_font;
 
                 bool _avoidLocking = false;
-                std::function<std::vector<std::string>()> _contentGetter;
+                std::function<void()> _contentGetter;
 
         };
     }

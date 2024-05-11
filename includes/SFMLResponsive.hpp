@@ -22,6 +22,7 @@ namespace Graphics {
                 virtual void setBackgroundColor(const sf::Color &color) = 0;
 
                 virtual int getValue() const { return -1; };
+                virtual void setContent(const std::vector<std::string> content) {};
         };
     }
 }
