@@ -11,6 +11,7 @@ all:
 	make -C cylinder
 	make -C cone
 	make -C cube
+	make -C wall
 
 clean:
 	make clean -C sphere
@@ -18,6 +19,7 @@ clean:
 	make clean -C cylinder
 	make clean -C cone
 	make clean -C cube
+	make clean -C wall
 
 fclean: clean
 	make fclean -C sphere
@@ -25,6 +27,7 @@ fclean: clean
 	make fclean -C cylinder
 	make fclean -C cone
 	make fclean -C cube
+	make fclean -C wall
 
 re:	fclean all
 

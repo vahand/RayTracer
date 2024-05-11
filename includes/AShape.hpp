@@ -73,6 +73,16 @@ namespace RayTracer {
             RayTracer::ShapeType _type;
             std::string _name;
             Math::Vector3D _rotation;
+
+        protected:
+            bool hasThisParameter(const RayTracer::ShapeConfig& config, const std::string& param, const std::string& shapeName) const
+            {
+                if (config._parameters.find(param) == config._parameters.end()) {
+                    std::clog << RED << shapeName << ": Missing " << param << " parameter" << RESET << std::endl;
+                    return false;
+                }
+                return true;
+            }
     };
 }
 

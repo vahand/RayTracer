@@ -45,12 +45,36 @@ static void *getOptionValue(int ac, char **av, const std::string &option, const 
     return nullptr;
 }
 
+static std::vector<std::string> getVecOptions(int ac, char **av, int index)
+{
+    std::vector<std::string> options;
+    while (index < ac && av[index][0] != '-') {
+        options.push_back(av[index]);
+        index++;
+    }
+    return options;
+}
+
+static std::vector<std::string> getOptionValues(int ac, char **av, const std::string &option, const std::string &shortOption = "")
+{
+    for (int i = 0; i < ac; i++)
+    {
+        if (std::string(av[i]) == option)
+            return getVecOptions(ac, av, i + 1);
+        if (shortOption != "" && std::string(av[i]) == shortOption)
+            return getVecOptions(ac, av, i + 1);
+    }
+    return std::vector<std::string>();
+}
+
+
 int main(int ac, char **av)
 {
     try
     {
         std::unique_ptr<Graphics::AGraphicals> display;
-        std::string scenePath;
+        std::vector<std::string> scenePath;
+        bool fileConfig = false;
 
         if (hasOption(ac, av, "-h") || hasOption(ac, av, "--help"))
         {
@@ -77,7 +101,7 @@ int main(int ac, char **av)
             std::cerr << RED << BOLD << "Error: " << RESET << "No scene file provided, see --help for more informations" << std::endl;
             return 84;
         } else {
-            scenePath = static_cast<const char *>(getOptionValue(ac, av, "--scene", "-s"));
+            scenePath = getOptionValues(ac, av, "--scene", "-s");
         }
 
         std::shared_ptr<RayTracer::Core> core = std::make_shared<RayTracer::Core>(400, 400);
@@ -85,7 +109,13 @@ int main(int ac, char **av)
         core->loadLibrairies();
 
         RayTracer::FileManager fileManager(*core);
-        fileManager.addFileConfigPath(scenePath);
+        for (const auto &path : scenePath)
+            if (fileManager.addFileConfigPath(path))
+                fileConfig = true;
+        if (!fileConfig) {
+            std::cerr << RED << BOLD << "Error: " << RESET << "No valid scene file provided" << std::endl;
+            return 84;
+        }
         fileManager.loadFileConfig();
 
         if (guiOption) {
@@ -102,6 +132,10 @@ int main(int ac, char **av)
             }
             core->_camera._samples = quality;
         }
+
+        // RayTracer::Parser parser(*core, "./configs/mathis_config3");
+        RayTracer::Parser parser(*core, "./configs/room_config");
+        parser.printConfig();
 
         // auto texture_chessboard = std::make_shared<RayTracer::Texture::ChessBoard>(5, RayTracer::Color(255, 255, 255), RayTracer::Color(0, 128, 255));
         // auto material_chessboard = std::make_shared<RayTracer::Material::Lambertian>(texture_chessboard);

@@ -15,10 +15,15 @@ RayTracer::FileManager::~FileManager()
 {
 }
 
-void RayTracer::FileManager::addFileConfigPath(const std::string &path)
+bool RayTracer::FileManager::addFileConfigPath(const std::string &path)
 {
+    if (path.find(".scene") == std::string::npos) {
+        std::cerr << "Error: " << path << " is not a valid file" << std::endl;
+        return false;
+    }
     File file(path);
     _files.push_back(file);
+    return true;
 }
 
 void RayTracer::FileManager::loadFileConfig()
@@ -77,6 +82,45 @@ bool RayTracer::FileManager::checkLastModifFile()
     return reload;
 }
 
+std::vector<std::string> RayTracer::FileManager::getLoadedScenes()
+{
+    std::vector<std::string> loadedScenes;
+    for (int i = 0; i < _files.size(); i++)
+        loadedScenes.push_back(_files[i]._path);
+    return loadedScenes;
+}
+
+std::vector<std::string> RayTracer::FileManager::getAllScenes()
+{
+    std::vector<std::string> allScenes;
+    struct dirent *entry;
+    DIR *dir = opendir("./scenes");
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_REG && std::string(entry->d_name).find(".scene") != std::string::npos)
+            allScenes.push_back("./scenes/" + std::string(entry->d_name));
+    }
+    closedir(dir);
+    return allScenes;
+}
+
+std::vector<std::string> RayTracer::FileManager::getUnloadedScenes()
+{
+    std::vector<std::string> unloadedScenes;
+    std::vector<std::string> allScenes = getAllScenes();
+    std::vector<std::string> loadedScenes = getLoadedScenes();
+    for (int i = 0; i < allScenes.size(); i++) {
+        bool found = false;
+        for (int j = 0; j < loadedScenes.size(); j++) {
+            if (allScenes[i] == loadedScenes[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            unloadedScenes.push_back(allScenes[i]);
+    }
+}
+
 RayTracer::FileManager::File::File(const std::string &path) : _path(path)
 {
     _lastModif = getLastModif();
@@ -98,3 +142,4 @@ bool RayTracer::FileManager::File::checkLastModif()
     }
     return false;
 }
+

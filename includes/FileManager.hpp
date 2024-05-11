@@ -29,7 +29,7 @@ namespace RayTracer {
             FileManager(Core &core);
             ~FileManager();
 
-            void addFileConfigPath(const std::string &path);
+            bool addFileConfigPath(const std::string &path);
             void loadFileConfig();
             void reload();
             void rmFileConfigPath(const std::string &path);
@@ -37,6 +37,9 @@ namespace RayTracer {
             // void saveFileConfig(const std::string &path);
             void setCamera(RayTracer::Parser::config_camere_s camera);
             bool checkForSceneEdition();
+            std::vector<std::string> getLoadedScenes();
+            std::vector<std::string> getUnloadedScenes();
+            std::vector<std::string> getAllScenes();
 
         protected:
         private:

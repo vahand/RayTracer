@@ -37,36 +37,22 @@ namespace RayTracer {
 
             bool hasAllParameters(const RayTracer::ShapeConfig& config) const override
             {
-                if (config._parameters.find("x") == config._parameters.end()) {
-                    std::clog << RED << "CONE: Missing x parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "x", "CONE") == false)
                     return false;
-                }
-                if (config._parameters.find("y") == config._parameters.end()) {
-                    std::clog << RED << "CONE: Missing y parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "y", "CONE") == false)
                     return false;
-                }
-                if (config._parameters.find("z") == config._parameters.end()) {
-                    std::clog << RED << "CONE: Missing z parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "z", "CONE") == false)
                     return false;
-                }
-                if (config._parameters.find("axis") == config._parameters.end()) {
-                    std::clog << RED << "CONE: Missing axis parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "axis", "CONE") == false)
                     return false;
-                }
-                if (config._parameters.find("material") == config._parameters.end()) {
-                    std::clog << RED << "CONE: Missing material parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "material", "CONE") == false)
                     return false;
-                }
-                if (config._parameters.find("radius") == config._parameters.end()) {
-                    std::clog << RED << "CONE: Missing radius parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "radius", "CONE") == false)
                     return false;
-                }
                 // if (config._parameters.find("height") == config._parameters.end())
                 //     return false;
-                if (config._parameters.find("angle") == config._parameters.end()) {
-                    std::clog << RED << "CONE: Missing angle parameter" << RESET << std::endl;
+                if (hasThisParameter(config, "angle", "CONE") == false)
                     return false;
-                }
                 return true;
             }
 
