@@ -29,7 +29,7 @@ namespace RayTracer {
             FileManager(Core &core);
             ~FileManager();
 
-            void addFileConfigPath(const std::string &path);
+            bool addFileConfigPath(const std::string &path);
             void loadFileConfig();
             void reload();
             void rmFileConfigPath(const std::string &path);

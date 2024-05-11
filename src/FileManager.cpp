@@ -15,14 +15,15 @@ RayTracer::FileManager::~FileManager()
 {
 }
 
-void RayTracer::FileManager::addFileConfigPath(const std::string &path)
+bool RayTracer::FileManager::addFileConfigPath(const std::string &path)
 {
     if (path.find(".scene") == std::string::npos) {
         std::cerr << "Error: " << path << " is not a valid file" << std::endl;
-        return;
+        return false;
     }
     File file(path);
     _files.push_back(file);
+    return true;
 }
 
 void RayTracer::FileManager::loadFileConfig()
