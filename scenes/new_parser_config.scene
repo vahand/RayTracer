@@ -1,0 +1,171 @@
+# Configuration of the camera
+camera:
+{
+    resolution:
+    {
+        width = 400;
+        height = 400;
+    }
+    position:
+    {
+        x = 0.0;
+        y = 6.0;
+        z = -30.0;
+    }
+    fieldOfView = 90.0; # In degree
+    maxDepth = 10;
+    samples = 200;
+    focusPoint:
+    {
+        x = 0.0;
+        y = 2.0;
+        z = 0.0;
+    }
+    sceneBackground:
+    {
+        r = 0.0;
+        g = 0.0;
+        b = 0.0;
+    }
+}
+
+materials:
+{
+    material_ground:
+    {
+        type = "lambertian";
+        color = { r = 255.0; g = 255.0; b = 0.0; }
+    }
+    material_center:
+    {
+        type = "lambertian";
+        color = { r = 0.0; g = 255.0; b = 255.0; }
+    }
+    material_left:
+    {
+        type = "metal";
+        fuzziness = 0.0;
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    material_right:
+    {
+        type = "lightDiffuse";
+        color = { r = 255.0; g = 255.0; b = 255.0; }
+    }
+    material_cube:
+    {
+        type = "lambertian";
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+}
+
+# Primitives in the scene
+primitives:
+{
+    # Sphere = 0
+    # Plane = 1
+    # Cone = 2
+    # Cylinder = 3
+
+    sphereLight1:
+    {
+        type = 0;
+        origin = { x = 20.0; y = 0.0; z = 0.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight2:
+    {
+        type = 0;
+        origin = { x = -20.0; y = 0.0; z = 0.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight3:
+    {
+        type = 0;
+        origin = { x = 0.0; y = 0.0; z = 20.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight4:
+    {
+        type = 0;
+        origin = { x = 0.0; y = 0.0; z = -20.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight5:
+    {
+        type = 0;
+        origin = { x = 0.0; y = 20.0; z = 0.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight6:
+    {
+        type = 0;
+        origin = { x = 0.0; y = -20.0; z = 0.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    sphereLight7:
+    {
+        type = 0;
+        origin = { x = -13.0; y = 0.0; z = -5.0; };
+        material = "material_right";
+        radius = 2.0;
+    }
+    plane:
+    {
+        type = 1;
+        origin = { x = 0.0; y = 0.0; z = 0.0; };
+        material = "material_ground";
+        axis = "Y"
+    }
+    // cone1:
+    // {
+    //     type = 2;
+    //     origin = { x = 0.0; y = 6.0; z = 20.0; };
+    //     material = "material_cube";
+    //     radius = 2.0;
+    //     height = 5.0;
+    //     axis = "Y";
+    //     angle = 45.0;
+    // }
+    // cylinder1:
+    // {
+    //     type = 3;
+    //     origin = { x = -6.0; y = 0.0; z = 10.0; };
+    //     radius = 3.0;
+    //     height = 5.0;
+    //     material = "material_center";
+    //     axis = "Y";
+    // }
+}
+
+# Light configuration
+lights:
+{
+    ambient = 0.4;
+    diffuse = 0.6;
+
+    # List of point lights
+    point = (
+        {
+            vahanLight: { x = 400.0; y = 100.0; z = 500.0; }
+        },
+        {
+            oop: { x = 400.0; y = 100.0; z = 500.0; }
+        }
+    ) ;
+
+    # List of directional lights
+    directional = () ;
+}
+
+transformations:
+{
+    qdheuxh: { type = "translate" ; vector: { x = 12.0 ; y = 67.0 ; z = 34.0 } } # a translation transfo. applied to sphere1
+    // cylinder1: { type = "rotate" ; vector: { x = 0.0 ; y = 0.0 ; z = 45.0 } } # a rotation transfo. applied to sphere2
+}

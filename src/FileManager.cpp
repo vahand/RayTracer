@@ -17,6 +17,10 @@ RayTracer::FileManager::~FileManager()
 
 void RayTracer::FileManager::addFileConfigPath(const std::string &path)
 {
+    if (path.find(".scene") == std::string::npos) {
+        std::cerr << "Error: " << path << " is not a valid file" << std::endl;
+        return;
+    }
     File file(path);
     _files.push_back(file);
 }
@@ -77,6 +81,27 @@ bool RayTracer::FileManager::checkLastModifFile()
     return reload;
 }
 
+std::vector<std::string> RayTracer::FileManager::getFiles()
+{
+    std::vector<std::string> files;
+    for (int i = 0; i < _files.size(); i++)
+        files.push_back(_files[i]._path);
+    return files;
+}
+
+std::vector<std::string> RayTracer::FileManager::getFilesAllScenes()
+{
+    std::vector<std::string> files;
+    struct dirent *entry;
+    DIR *dir = opendir("./scenes");
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type == DT_REG && std::string(entry->d_name).find(".scene") != std::string::npos)
+            files.push_back("./scenes/" + std::string(entry->d_name));
+    }
+    closedir(dir);
+    return files;
+}
+
 RayTracer::FileManager::File::File(const std::string &path) : _path(path)
 {
     _lastModif = getLastModif();
@@ -98,3 +123,4 @@ bool RayTracer::FileManager::File::checkLastModif()
     }
     return false;
 }
+
