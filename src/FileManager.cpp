@@ -119,6 +119,7 @@ std::vector<std::string> RayTracer::FileManager::getUnloadedScenes()
         if (!found)
             unloadedScenes.push_back(allScenes[i]);
     }
+    return unloadedScenes;
 }
 
 RayTracer::FileManager::File::File(const std::string &path) : _path(path)
