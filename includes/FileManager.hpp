@@ -37,8 +37,9 @@ namespace RayTracer {
             // void saveFileConfig(const std::string &path);
             void setCamera(RayTracer::Parser::config_camere_s camera);
             bool checkForSceneEdition();
-            std::vector<std::string> getFiles();
-            std::vector<std::string> getFilesAllScenes();
+            std::vector<std::string> getLoadedScenes();
+            std::vector<std::string> getUnloadedScenes();
+            std::vector<std::string> getAllScenes();
 
         protected:
         private:

@@ -82,25 +82,43 @@ bool RayTracer::FileManager::checkLastModifFile()
     return reload;
 }
 
-std::vector<std::string> RayTracer::FileManager::getFiles()
+std::vector<std::string> RayTracer::FileManager::getLoadedScenes()
 {
-    std::vector<std::string> files;
+    std::vector<std::string> loadedScenes;
     for (int i = 0; i < _files.size(); i++)
-        files.push_back(_files[i]._path);
-    return files;
+        loadedScenes.push_back(_files[i]._path);
+    return loadedScenes;
 }
 
-std::vector<std::string> RayTracer::FileManager::getFilesAllScenes()
+std::vector<std::string> RayTracer::FileManager::getAllScenes()
 {
-    std::vector<std::string> files;
+    std::vector<std::string> allScenes;
     struct dirent *entry;
     DIR *dir = opendir("./scenes");
     while ((entry = readdir(dir)) != NULL) {
         if (entry->d_type == DT_REG && std::string(entry->d_name).find(".scene") != std::string::npos)
-            files.push_back("./scenes/" + std::string(entry->d_name));
+            allScenes.push_back("./scenes/" + std::string(entry->d_name));
     }
     closedir(dir);
-    return files;
+    return allScenes;
+}
+
+std::vector<std::string> RayTracer::FileManager::getUnloadedScenes()
+{
+    std::vector<std::string> unloadedScenes;
+    std::vector<std::string> allScenes = getAllScenes();
+    std::vector<std::string> loadedScenes = getLoadedScenes();
+    for (int i = 0; i < allScenes.size(); i++) {
+        bool found = false;
+        for (int j = 0; j < loadedScenes.size(); j++) {
+            if (allScenes[i] == loadedScenes[j]) {
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            unloadedScenes.push_back(allScenes[i]);
+    }
 }
 
 RayTracer::FileManager::File::File(const std::string &path) : _path(path)
