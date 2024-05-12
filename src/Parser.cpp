@@ -225,6 +225,8 @@ RayTracer::Core::LIBRARY_TYPE getMaterialTypeFromString(std::string& typeStr)
         return RayTracer::Core::LIBRARY_TYPE::METAL;
     else if (typeStr == "lightDiffuse")
         return RayTracer::Core::LIBRARY_TYPE::LIGHT_DIFFUSE;
+    else if (typeStr == "chessBoard")
+        return RayTracer::Core::LIBRARY_TYPE::CHESS_BOARD;
     else
         throw RayTracer::Parser::ParserException("Unknown material \"" + typeStr + "\" type in config file");
 }
@@ -235,8 +237,22 @@ double getFuzzinessValue(libconfig::Setting &material)
         double fuzziness = material.lookup("fuzziness");
         return fuzziness;
     } catch (const libconfig::SettingNotFoundException &e) {
-        std::cerr << "No fuzziness defined for " << material.getName() << "material" << std::endl;
+        std::cerr << "No fuzziness defined for " << material.getName() << " material" << std::endl;
         return 0.0;
+    }
+}
+
+void parseColorPair(libconfig::Setting &material, RayTracer::MaterialConfig &config)
+{
+    try {
+        libconfig::Setting &color1 = material.lookup("color1");
+        config._color1 = RayTracer::Color(color1[0], color1[1], color1[2]);
+        libconfig::Setting &color2 = material.lookup("color2");
+        config._color2 = RayTracer::Color(color2[0], color2[1], color2[2]);
+    } catch (const libconfig::SettingNotFoundException &e) {
+        std::cerr << "No color pair defined for " << material.getName() << "material" << std::endl;
+        config._color1 = RayTracer::Color(255, 255, 255);
+        config._color2 = RayTracer::Color(0, 0, 0);
     }
 }
 
@@ -251,9 +267,13 @@ void RayTracer::Parser::parseMaterialsSection()
             RayTracer::Core::LIBRARY_TYPE type = getMaterialTypeFromString(typeStr);
             config._type = type;
             config._fuzziness = getFuzzinessValue(material);
-            libconfig::Setting &color = material.lookup("color");
-            RayTracer::Color materialColor(color[0], color[1], color[2]);
-            config._color = materialColor;
+            if (type == RayTracer::Core::LIBRARY_TYPE::CHESS_BOARD)
+                parseColorPair(material, config);
+            else {
+                libconfig::Setting &color = material.lookup("color");
+                RayTracer::Color materialColor(color[0], color[1], color[2]);
+                config._color = materialColor;
+            }
             loadNewMaterial(type, config, name);
         }
     } catch (const libconfig::SettingNotFoundException &e) {

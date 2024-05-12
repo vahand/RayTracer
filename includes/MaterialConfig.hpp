@@ -18,6 +18,8 @@ namespace RayTracer {
 
             double _fuzziness;
             RayTracer::Color _color;
+            RayTracer::Color _color1;
+            RayTracer::Color _color2;
             int _type;
 
         protected:

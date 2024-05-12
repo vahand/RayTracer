@@ -64,6 +64,9 @@ namespace RayTracer {
                 else if (type == Core::LIBRARY_TYPE::LIGHT_DIFFUSE) {
                     _loadedMaterials[name] = std::make_shared<RayTracer::Material::LightDiffuse>();
                     _loadedMaterials[name]->setup(config);
+                } else if (type == Core::LIBRARY_TYPE::CHESS_BOARD) {
+                    _loadedMaterials[name] = std::make_shared<RayTracer::Material::ChessBoard>();
+                    _loadedMaterials[name]->setup(config);
                 }
             }
 

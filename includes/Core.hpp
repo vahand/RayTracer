@@ -15,6 +15,7 @@
 #include "../plugins/materials/lambertian/includes/Lambertian.hpp"
 #include "../plugins/materials/metal/includes/Metal.hpp"
 #include "../plugins/materials/lightDiffuse/includes/LightDiffuse.hpp"
+#include "../plugins/materials/chessBoard/includes/ChessBoard.hpp"
 #include "Ray.hpp"
 #include "Color.hpp"
 #include "Camera.hpp"
@@ -71,7 +72,8 @@ namespace RayTracer
             AMBIANT_LIGHT = 100,
             LAMBERTIAN = 1000,
             METAL = 1001,
-            LIGHT_DIFFUSE = 1002
+            LIGHT_DIFFUSE = 1002,
+            CHESS_BOARD = 1003
         };
 
         Core(int screenWidth, int screenHeight);

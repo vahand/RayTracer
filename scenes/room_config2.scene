@@ -9,11 +9,12 @@ camera:
     position:
     {
         x = 0.0;
-        y = 0.0;
-        z = 0.0;
+        y = 6.0;
+        z = -30.0;
     }
-    fieldOfView = 45.0; # In degree
-    maxDepth = 50;
+    fieldOfView = 90.0; # In degree
+    maxDepth = 10;
+    samples = 200;
     focusPoint:
     {
         x = 0.0;
@@ -26,7 +27,6 @@ camera:
         g = 0.0;
         b = 0.0;
     }
-    samples = 1000;
 }
 
 materials:
@@ -56,6 +56,12 @@ materials:
     {
         type = "lambertian";
         color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    chess_board:
+    {
+        type = "chessBoard";
+        color1 = { r = 255.0; g = 255.0; b = 255.0; }
+        color2 = { r = 0.0; g = 0.0; b = 0.0; }
     }
 }
 
@@ -118,58 +124,11 @@ primitives:
         material = "material_right";
         radius = 2.0;
     }
-    middle_sphere:
-    {
-        type = 0;
-        origin = { x = 0.0; y = 2.0; z = -5.0; };
-        material = "material_left";
-        radius = 2.0;
-    }
     plane:
     {
         type = 1;
         origin = { x = 0.0; y = 0.0; z = 0.0; };
-        material = "material_ground";
+        material = "chess_board";
         axis = "Y"
-    }
-    right_wall:
-    {
-        type = 5;
-        origin = { x = 30.0; y = 0.0; z = 50.0; };
-        normal = { x = 1.0; y = 0.0; z = 0.0; };
-        material = "material_center";
-        axis = "X";
-        height = 100.0;
-        width = 150.0;
-    }
-    left_wall:
-    {
-        type = 5;
-        origin = { x = -30.0; y = 0.0; z = 50.0; };
-        normal = { x = 1.0; y = 0.0; z = 0.0; };
-        material = "material_center";
-        axis = "X";
-        height = 100.0;
-        width = 150.0;
-    }
-    back_wall:
-    {
-        type = 5;
-        origin = { x = 0.0; y = 0.0; z = 100.0; };
-        normal = { x = 0.0; y = 0.0; z = 1.0; };
-        material = "material_center";
-        axis = "Z";
-        height = 100.0;
-        width = 150.0;
-    }
-    ceiling:
-    {
-        type = 5;
-        origin = { x = 0.0; y = 80.0; z = 50.0; };
-        normal = { x = 0.0; y = 1.0; z = 0.0; };
-        material = "material_center";
-        axis = "Y";
-        height = 150.0;
-        width = 80.0;
     }
 }
