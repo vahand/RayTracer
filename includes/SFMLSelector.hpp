@@ -52,6 +52,8 @@ namespace Graphics {
                 }
 
                 std::string getContentSelected() const override {
+                    if (m_content.size() == 0)
+                        return "";
                     return m_content[m_selectedIndex];
                 }
 
