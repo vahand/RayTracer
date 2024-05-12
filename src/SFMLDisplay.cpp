@@ -150,6 +150,7 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
         _manager->reload();
         m_elements[6]->rawUpdate();
         m_elements[7]->rawUpdate();
+        std::cerr << " > (Scene) Added" << std::endl;
 
         _fastRendering = true;
         _workers->beginRender();

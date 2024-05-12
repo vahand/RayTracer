@@ -41,6 +41,7 @@ namespace Graphics {
 
                 void rawUpdate() override {
                     m_content = _contentGetter();
+                    m_selectedIndex = 0;
                 }
 
                 void setBackgroundColor(const sf::Color &color) override {
