@@ -1,0 +1,274 @@
+# Configuration of the camera
+camera:
+{
+    resolution:
+    {
+        width = 400;
+        height = 400;
+    }
+    position:
+    {
+        x = 20.0;
+        y = 6.0;
+        z = -55.0;
+    }
+    fieldOfView = 60.0;
+    maxDepth = 50;
+    focusPoint:
+    {
+        x = 0.0;
+        y = 5.0;
+        z = 0.0;
+    }
+    sceneBackground:
+    {
+        r = 255.0;
+        g = 255.0;
+        b = 255.0;
+    }
+    samples = 100;
+}
+
+materials:
+{
+    material_yellow_mat:
+    {
+        type = "lambertian";
+        color = { r = 255.0; g = 255.0; b = 0.0; }
+    }
+    material_green_mat:
+    {
+        type = "lambertian";
+        color = { r = 64.0; g = 255.0; b = 0.0; }
+    }
+    material_cyan_mat:
+    {
+        type = "lambertian";
+        color = { r = 0.0; g = 255.0; b = 255.0; }
+    }
+    material_red_metal:
+    {
+        type = "metal";
+        fuzziness = 0.0;
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    material_gray_metal:
+    {
+        type = "metal";
+        fuzziness = 0.8;
+        color = { r = 128.0; g = 128.0; b = 128.0; }
+    }
+    material_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 255.0; g = 255.0; b = 255.0; }
+    }
+    material_light_yellow:
+    {
+        type = "lightDiffuse";
+        color = { r = 255.0; g = 255.0; b = 0.0; }
+    }
+    material_cube:
+    {
+        type = "lambertian";
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    material_blackwhite_chessboard:
+    {
+        type = "chessBoard";
+        color1 = { r = 255.0; g = 255.0; b = 255.0; }
+        color2 = { r = 0.0; g = 0.0; b = 0.0; }
+    }
+    material_trunk_wood:
+    {
+        type = "lambertian";
+        color = { r = 80.0; g = 60.0; b = 0.0; }
+    }
+    material_dark_green:
+    {
+        type = "lambertian";
+        color = { r = 0.0; g = 255.0; b = 0.0; }
+    }
+}
+
+# Primitives in the scene
+primitives:
+{
+    # Sphere = 0
+    # Plane = 1
+    # Cone = 2
+    # Cylinder = 3
+    # Cube = 4
+    # Wall = 5
+
+    plane:
+    {
+        type = 1;
+        origin = { x = 0.0; y = 0.0; z = 0.0; };
+        material = "material_blackwhite_chessboard";
+        axis = "Y"
+    }
+    ceilingLight:
+    {
+        type = 5;
+        origin = { x = 0.0; y = 25.0; z = -80.0; };
+        normal = { x = 1.0; y = 0.0; z = 0.0; };
+        material = "material_light";
+        axis = "Z";
+        height = 50.0;
+        width = 100.0;
+    }
+    tree_trunk:
+    {
+        type = 3;
+        radius = 1.7;
+        material = "material_trunk_wood";
+        axis = "Y";
+        origin = { x = 0.0; y = 0.0; z = 0.0; };
+    }
+    tree_leave1:
+    {
+        type = 4;
+        material = "material_dark_green";
+        axis = "Y";
+        origin = { x = 0.0; y = 10.0; z = 0.0; };
+        xDim = 20.0;
+        yDim = 1.0;
+        zDim = 20.0;
+    }
+    tree_leave2:
+    {
+        type = 4;
+        material = "material_dark_green";
+        axis = "Y";
+        origin = { x = 0.0; y = 15.0; z = 0.0; };
+        xDim = 18.5;
+        yDim = 1.0;
+        zDim = 18.5;
+    }
+    red_ball_1:
+    {
+        type = 0;
+        origin = { x = -6.5; y = 13.0; z = 6.5; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_2:
+    {
+        type = 0;
+        origin = { x = 6.5; y = 13.0; z = -6.5; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_3:
+    {
+        type = 0;
+        origin = { x = 6.5; y = 13.0; z = 6.5; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_4:
+    {
+        type = 0;
+        origin = { x = -6.5; y = 13.0; z = -6.5; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    tree_leave3:
+    {
+        type = 4;
+        material = "material_dark_green";
+        axis = "Y";
+        origin = { x = 0.0; y = 20.0; z = 0.0; };
+        xDim = 15.0;
+        yDim = 1.0;
+        zDim = 15.0;
+    }
+    red_ball_5:
+    {
+        type = 0;
+        origin = { x = -4.5; y = 18.0; z = 4.5; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_6:
+    {
+        type = 0;
+        origin = { x = 4.5; y = 18.0; z = -4.5; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_7:
+    {
+        type = 0;
+        origin = { x = 4.5; y = 18.0; z = 4.5; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_8:
+    {
+        type = 0;
+        origin = { x = -4.5; y = 18.0; z = -4.5; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    tree_leave4:
+    {
+        type = 4;
+        material = "material_dark_green";
+        axis = "Y";
+        origin = { x = 0.0; y = 25.0; z = 0.0; };
+        xDim = 12.5;
+        yDim = 1.0;
+        zDim = 12.5;
+    }
+    red_ball_9:
+    {
+        type = 0;
+        origin = { x = -3.0; y = 23.0; z = 3.0; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_10:
+    {
+        type = 0;
+        origin = { x = 3.0; y = 23.0; z = -3.0; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_11:
+    {
+        type = 0;
+        origin = { x = 3.0; y = 23.0; z = 3.0; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    red_ball_12:
+    {
+        type = 0;
+        origin = { x = -3.0; y = 23.0; z = -3.0; };
+        material = "material_red_metal";
+        radius = 1.5;
+    }
+    tree_leave5:
+    {
+        type = 4;
+        material = "material_dark_green";
+        axis = "Y";
+        origin = { x = 0.0; y = 30.0; z = 0.0; };
+        xDim = 8.5;
+        yDim = 1.0;
+        zDim = 8.5;
+    }
+    top_ball:
+    {
+        type = 0;
+        origin = { x = 0.0; y = 35.0; z = 0.0; };
+        material = "material_yellow_mat";
+        radius = 3.5;
+    }
+}
+
+transformations:
+{
+}

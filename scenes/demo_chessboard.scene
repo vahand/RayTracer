@@ -9,15 +9,15 @@ camera:
     position:
     {
         x = 0.0;
-        y = 5.0;
-        z = -20.0;
+        y = 6.0;
+        z = -40.0;
     }
-    fieldOfView = 45.0; # In degree
+    fieldOfView = 60.0;
     maxDepth = 50;
     focusPoint:
     {
         x = 0.0;
-        y = 2.0;
+        y = 5.0;
         z = 0.0;
     }
     sceneBackground:
@@ -26,7 +26,7 @@ camera:
         g = 0.0;
         b = 0.0;
     }
-    samples = 1000;
+    samples = 100;
 }
 
 materials:
@@ -35,6 +35,11 @@ materials:
     {
         type = "lambertian";
         color = { r = 255.0; g = 255.0; b = 0.0; }
+    }
+    material_green_mat:
+    {
+        type = "lambertian";
+        color = { r = 64.0; g = 255.0; b = 0.0; }
     }
     material_cyan_mat:
     {
@@ -46,6 +51,12 @@ materials:
         type = "metal";
         fuzziness = 0.0;
         color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    material_gray_metal:
+    {
+        type = "metal";
+        fuzziness = 0.8;
+        color = { r = 128.0; g = 128.0; b = 128.0; }
     }
     material_light:
     {
@@ -75,54 +86,15 @@ primitives:
     # Cube = 4
     # Wall = 5
 
-    sphereLight1:
+    ceilingLight:
     {
-        type = 0;
-        origin = { x = 0.0; y = 20.0; z = 0.0; };
+        type = 5;
+        origin = { x = 0.0; y = 24.99; z = 0.0; };
+        normal = { x = 1.0; y = 0.0; z = 0.0; };
         material = "material_light";
-        radius = 2.0;
-    }
-    sphereLight2:
-    {
-        type = 0;
-        origin = { x = -20.0; y = 2.0; z = 50.0; };
-        material = "material_light";
-        radius = 2.0;
-    }
-    sphereLight3:
-    {
-        type = 0;
-        origin = { x = 20.0; y = 2.0; z = 50.0; };
-        material = "material_light";
-        radius = 2.0;
-    }
-    sphereLight4:
-    {
-        type = 0;
-        origin = { x = -20.0; y = 2.0; z = -35.0; };
-        material = "material_light";
-        radius = 2.0;
-    }
-    sphereLight5:
-    {
-        type = 0;
-        origin = { x = 20.0; y = 2.0; z = -35.0; };
-        material = "material_light";
-        radius = 2.0;
-    }
-    sphereLight6:
-    {
-        type = 0;
-        origin = { x = 20.0; y = 2.0; z = -5.0; };
-        material = "material_light";
-        radius = 2.0;
-    }
-    sphereLight7:
-    {
-        type = 0;
-        origin = { x = -20.0; y = 2.0; z = -5.0; };
-        material = "material_light";
-        radius = 2.0;
+        axis = "Y";
+        height = 15.0;
+        width = 15.0;
     }
     middle_sphere:
     {
@@ -141,41 +113,69 @@ primitives:
     right_wall:
     {
         type = 5;
-        origin = { x = 30.0; y = 0.0; z = 50.0; };
+        origin = { x = 25.0; y = 0.0; z = 0.0; };
         normal = { x = 1.0; y = 0.0; z = 0.0; };
-        material = "material_cyan_mat";
+        material = "material_green_mat";
         axis = "X";
-        height = 100.0;
-        width = 150.0;
+        height = 50.0;
+        width = 50.0;
     }
     left_wall:
     {
         type = 5;
-        origin = { x = -30.0; y = 0.0; z = 50.0; };
+        origin = { x = -25.0; y = 0.0; z = 0.0; };
         normal = { x = 1.0; y = 0.0; z = 0.0; };
-        material = "material_cyan_mat";
+        material = "material_green_mat";
         axis = "X";
-        height = 100.0;
-        width = 150.0;
+        height = 50.0;
+        width = 50.0;
     }
     back_wall:
     {
         type = 5;
-        origin = { x = 0.0; y = 0.0; z = 100.0; };
+        origin = { x = 0.0; y = 0.0; z = 25.0; };
         normal = { x = 0.0; y = 0.0; z = 1.0; };
         material = "material_cyan_mat";
         axis = "Z";
-        height = 100.0;
-        width = 150.0;
+        height = 50.0;
+        width = 50.0;
     }
     ceiling:
     {
         type = 5;
-        origin = { x = 0.0; y = 80.0; z = 50.0; };
+        origin = { x = 0.0; y = 25.0; z = 0.0; };
         normal = { x = 0.0; y = 1.0; z = 0.0; };
-        material = "material_cyan_mat";
+        material = "material_yellow_mat";
         axis = "Y";
-        height = 150.0;
-        width = 80.0;
+        height = 50.0;
+        width = 50.0;
+    }
+    cube1:
+    {
+        type = 4;
+        origin = { x = -7.5; y = 0.0; z = 2.5; };
+        material = "material_yellow_mat";
+        xDim = 5.0;
+        yDim = 20.0;
+        zDim = 5.0;
+    }
+    cube2:
+    {
+        type = 4;
+        origin = { x = 7.5; y = 0.0; z = -17.5; };
+        material = "material_gray_metal";
+        xDim = 5.0;
+        yDim = 20.0;
+        zDim = 5.0;
+    }
+}
+
+transformations:
+{
+    cube1:
+    {
+        type = "rotate";
+        material = "material_yellow_mat";
+        vector: { x = 0.0; y = 60.0; z = 0.0 }
     }
 }
