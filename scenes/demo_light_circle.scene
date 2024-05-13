@@ -1,0 +1,140 @@
+# Configuration of the camera
+camera:
+{
+    resolution:
+    {
+        width = 400;
+        height = 400;
+    }
+    position:
+    {
+        x = 0.0;
+        y = 18.0;
+        z = -20.0;
+    }
+    fieldOfView = 61.0; # In degree
+    maxDepth = 50;
+    focusPoint:
+    {
+        x = 0.0;
+        y = 2.0;
+        z = 0.0;
+    }
+    sceneBackground:
+    {
+        r = 0.0;
+        g = 0.0;
+        b = 0.0;
+    }
+    samples = 1000;
+}
+
+materials:
+{
+    material_white_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 255.0; g = 255.0; b = 255.0; }
+    }
+    material_red_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    material_blue_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 0.0; g = 0.0; b = 255.0; }
+    }
+    material_green_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 0.0; g = 255.0; b = 0.0; }
+    }
+    material_purple_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 238.0; g = 130.0; b = 238.0; }
+    }
+    material_blackwhite_chessboard:
+    {
+        type = "chessBoard";
+        color1 = { r = 255.0; g = 255.0; b = 255.0; }
+        color2 = { r = 0.0; g = 0.0; b = 0.0; }
+    }
+}
+
+# Primitives in the scene
+primitives:
+{
+    # Sphere = 0
+    # Plane = 1
+    # Cone = 2
+    # Cylinder = 3
+    # Cube = 4
+    # Wall = 5
+
+    blueLight1:
+    {
+        type = 0;
+        origin = { x = -5.0; y = 3.0; z = 0.0; };
+        material = "material_blue_light";
+        radius = 2.0;
+    }
+    blueLight2:
+    {
+        type = 0;
+        origin = { x = -8.0; y = 3.0; z = -5.0; };
+        material = "material_blue_light";
+        radius = 2.0;
+    }
+    whiteLight1:
+    {
+        type = 0;
+        origin = { x = 0.0; y = 3.0; z = 3.0; };
+        material = "material_white_light";
+        radius = 2.0;
+    }
+    whiteLight2:
+    {
+        type = 0;
+        origin = { x = 0.0; y = 3.0; z = -5.0; };
+        material = "material_white_light";
+        radius = 2.0;
+    }
+    redLight1:
+    {
+        type = 0;
+        origin = { x = 5.0; y = 3.0; z = 0.0; };
+        material = "material_red_light";
+        radius = 2.0;
+    }
+    redLight2:
+    {
+        type = 0;
+        origin = { x = 8.0; y = 3.0; z = -5.0; };
+        material = "material_red_light";
+        radius = 2.0;
+    }
+    purpleLight1:
+    {
+        type = 0;
+        origin = { x = 3.0; y = 3.0; z = -10.0; };
+        material = "material_purple_light";
+        radius = 2.0;
+    }
+    greenLight1:
+    {
+        type = 0;
+        origin = { x = -3.0; y = 3.0; z = -10.0; };
+        material = "material_green_light";
+        radius = 2.0;
+    }
+    plane:
+    {
+        type = 1;
+        origin = { x = 0.0; y = 0.0; z = 0.0; };
+        material = "material_blackwhite_chessboard";
+        axis = "Y"
+    }
+}
