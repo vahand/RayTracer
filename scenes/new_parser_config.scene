@@ -123,6 +123,15 @@ primitives:
         material = "material_ground";
         axis = "Y"
     }
+    cube1:
+    {
+        type = 4;
+        origin = {x = 0.0; y = 5.0; z = 0.0}
+        material = "material_cube";
+        xDim = 1.0;
+        yDim = 1.0;
+        zDim = 1.0;
+    }
     // cone1:
     // {
     //     type = 2;

@@ -132,11 +132,16 @@ namespace RayTracer {
             bool hit(const RayTracer::Ray& ray, RayTracer::Range ray_range, HitData& data) const override
             {
                 bool isTouched = false;
+                Math::Vector3D rayDirection = ray.direction();
+                RayTracer::Ray rayCopy;
+                rayCopy.origin() = ray.origin();
+                getNormalVectorRotate(rayDirection);
+                rayCopy.direction() = rayDirection;
                 for (auto& face : _faces) {
-                    if (face.second.hit(ray, ray_range, data)) {
-                        data.point = ray.at(data.tValue);
+                    if (face.second.hit(rayCopy, ray_range, data)) {
+                        data.point = rayCopy.at(data.tValue);
                         data.normal = face.second.getNormalVector();
-                        data.determineFace(ray, data.normal);
+                        data.determineFace(rayCopy, data.normal);
                         data.material = _material;
                         isTouched = true;
                     }
@@ -149,8 +154,12 @@ namespace RayTracer {
             double yDim() const { return _yDim; }
             double zDim() const { return _zDim; }
 
+
             void rotate(const Math::Vector3D &rotation) override
-            { (void)rotation; return; }
+            {
+                _rotation = rotation;
+                degreeToRadian(_rotation);
+            }
 
         protected:
         private:
