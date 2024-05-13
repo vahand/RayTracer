@@ -107,6 +107,8 @@ class Workers {
             }
 
             for (int x = 0; x < core._screenWidth; x++) {
+                if (core._stopOrder)
+                    break;
                 RayTracer::Color finalColor(0, 0, 0);
                 if (fastRender) {
                     RayTracer::Ray ray = core._camera.rayAround(x, y);

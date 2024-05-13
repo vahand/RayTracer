@@ -231,6 +231,7 @@ namespace RayTracer
         int _screenHeight;
         int _maxDepth = 10;
         RayTracer::Camera _camera;
+        bool _stopOrder = false;
 
     private:
         void loadLibrary(std::string path);

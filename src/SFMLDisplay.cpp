@@ -69,6 +69,7 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
                 return;
             _core->_camera._fovInDegrees = m_elements[3]->getValue();
             _core->_camera.initialize();
+            _core->_stopOrder = false;
             _fastRendering = true;
             _workers->beginRender();
             _workers->setRendering(true);
@@ -111,6 +112,7 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
                 angle = 360 + angle;
             _core->_camera.setRotationAroundFocus(angle);
             _core->_camera.initialize();
+            _core->_stopOrder = false;
             _fastRendering = true;
             _workers->beginRender();
             _workers->setRendering(true);
@@ -152,6 +154,7 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
         m_elements[7]->rawUpdate();
         std::cerr << " > (Scene) Added" << std::endl;
 
+        _core->_stopOrder = false;
         _fastRendering = true;
         _workers->beginRender();
         _workers->setRendering(true);
@@ -193,6 +196,7 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
         m_elements[7]->rawUpdate();
         std::cerr << " > (Scene) removed" << std::endl;
 
+        _core->_stopOrder = false;
         _fastRendering = true;
         _workers->beginRender();
         _workers->setRendering(true);
@@ -205,6 +209,7 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
         std::cerr << "Render button clicked" << std::endl;
         if (_workers->isRendering() && !_locked)
             return;
+        _core->_stopOrder = false;
         _locked = true;
         _fastRendering = false;
         _workers->beginRender();
@@ -218,6 +223,7 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
         std::cerr << "FastRender button clicked" << std::endl;
         if (_workers->isRendering() && !_locked)
             return;
+        _core->_stopOrder = false;
         _locked = true;
         _fastRendering = true;
         _workers->beginRender();
@@ -242,6 +248,7 @@ void Graphics::SFML::SFMLDisplay::initRayTracerWindow()
     stopButton->setTriggerFunction([this](sf::RenderWindow &window) {
         if (_workers->isRendering()) {
             _workers->setRendering(false);
+            _core->_stopOrder = true;
             _workers->waitForWorkersEnd();
         }
     });
