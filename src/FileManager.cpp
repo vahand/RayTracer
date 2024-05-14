@@ -60,6 +60,10 @@ void RayTracer::FileManager::setCamera(RayTracer::Parser::config_camere_s camera
     _core._camera._samples = camera.samples;
     _core.sceneBackground = camera.sceneBackGround;
     _core._maxDepth = camera.maxDepth;
+    _core._camera._viewWidth = camera.resolution[0];
+    _core._camera._viewHeight = camera.resolution[1];
+    _core._screenWidth = camera.resolution[0];
+    _core._screenHeight = camera.resolution[1];
     _core._camera.initialize();
 }
 

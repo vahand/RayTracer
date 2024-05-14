@@ -163,7 +163,7 @@ primitives:
     {
         type = 4;
         origin = { x = 7.5; y = 0.0; z = -17.5; };
-        material = "material_gray_metal";
+        material = "material_cube";
         xDim = 5.0;
         yDim = 20.0;
         zDim = 5.0;
