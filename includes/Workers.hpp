@@ -61,6 +61,9 @@ class Workers {
             finalImageMutex.lock();
             placeholderMutex.lock();
 
+            this->_width = core._screenWidth;
+            this->_height = core._screenHeight;
+
             if (finalImage.size() > 0) {
                 for (int y = 0; y < core._screenHeight; y++) {
                     finalImage[y].clear();
@@ -130,6 +133,8 @@ class Workers {
         void render(RayTracer::Core &core, bool fastRender = false)
         {
             auto startTime = std::chrono::high_resolution_clock::now();
+            this->_width = core._screenWidth;
+            this->_height = core._screenHeight;
 
             for (int y = 0; y < core._screenHeight; y++) {
                 int threadIndex = getFreeThreadIndex();
