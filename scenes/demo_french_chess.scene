@@ -1,0 +1,182 @@
+# Configuration of the camera
+camera:
+{
+    resolution:
+    {
+        width = 1920;
+        height = 1080;
+    }
+    position:
+    {
+        x = 0.0;
+        y = 9.0;
+        z = -40.0;
+    }
+    fieldOfView = 50.0;
+    maxDepth = 50;
+    focusPoint:
+    {
+        x = 0.0;
+        y = 5.0;
+        z = 0.0;
+    }
+    sceneBackground:
+    {
+        r = 0.0;
+        g = 0.0;
+        b = 0.0;
+    }
+    samples = 2500;
+}
+
+materials:
+{
+    material_yellow_mat:
+    {
+        type = "lambertian";
+        color = { r = 255.0; g = 255.0; b = 0.0; }
+    }
+    material_green_mat:
+    {
+        type = "lambertian";
+        color = { r = 64.0; g = 255.0; b = 0.0; }
+    }
+    material_cyan_mat:
+    {
+        type = "lambertian";
+        color = { r = 0.0; g = 255.0; b = 255.0; }
+    }
+    material_white_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 255.0; g = 255.0; b = 255.0; }
+    }
+    material_white_metal:
+    {
+        type = "metal";
+        fuzziness = 0.0;
+        color = { r = 255.0; g = 255.0; b = 255.0; }
+    }
+    material_red_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    material_red_metal:
+    {
+        type = "metal";
+        fuzziness = 0.0;
+        color = { r = 255.0; g = 0.0; b = 0.0; }
+    }
+    material_blue_light:
+    {
+        type = "lightDiffuse";
+        color = { r = 0.0; g = 0.0; b = 255.0; }
+    }
+    material_blue_metal:
+    {
+        type = "metal";
+        fuzziness = 0.0;
+        color = { r = 0.0; g = 0.0; b = 255.0; }
+    }
+    material_blackwhite_chessboard:
+    {
+        type = "chessBoard";
+        color1 = { r = 255.0; g = 255.0; b = 255.0; }
+        color2 = { r = 0.0; g = 0.0; b = 0.0; }
+    }
+}
+
+# Primitives in the scene
+primitives:
+{
+    # Sphere = 0
+    # Plane = 1
+    # Cone = 2
+    # Cylinder = 3
+    # Cube = 4
+    # Wall = 5
+
+    ceilingLight:
+    {
+        type = 5;
+        origin = { x = 0.0; y = 24.99; z = 0.0; };
+        material = "material_white_light";
+        axis = "Y";
+        height = 5.0;
+        width = 5.0;
+    }
+    right_sphere1:
+    {
+        type = 0;
+        origin = { x = 8.0; y = 2.0; z = 2.0; };
+        material = "material_red_metal";
+        radius = 2.0;
+    }
+    right_sphere2:
+    {
+        type = 0;
+        origin = { x = 8.0; y = 2.0; z = -8.0; };
+        material = "material_white_metal";
+        radius = 2.0;
+    }
+    right_sphere3:
+    {
+        type = 0;
+        origin = { x = 8.0; y = 2.0; z = -18.0; };
+        material = "material_blue_metal";
+        radius = 2.0;
+    }
+    plane:
+    {
+        type = 1;
+        origin = { x = 0.0; y = 0.0; z = 0.0; };
+        material = "material_blackwhite_chessboard";
+        axis = "Y"
+    }
+    left_sphere1:
+    {
+        type = 0;
+        origin = { x = -8.0; y = 2.0; z = 2.0; };
+        material = "material_red_light";
+        radius = 2.0
+    }
+    left_sphere2:
+    {
+        type = 0;
+        origin = { x = -8.0; y = 2.0; z = -8.0; };
+        material = "material_white_light";
+        radius = 2.0
+    }
+    left_sphere3:
+    {
+        type = 0;
+        origin = { x = -8.0; y = 2.0; z = -18.0; };
+        material = "material_blue_light";
+        radius = 2.0
+    }
+    cone1:
+    {
+        type = 2;
+        origin = { x = 0.0; y = 33.0; z = 150.0; };
+        material = "material_yellow_mat";
+        angle = 45.0;
+        height = 5.0;
+        axis = "Y";
+        radius = 2.0;
+    }
+    cone_lighting1:
+    {
+        type = 0;
+        origin = { x = -14.0; y = 4.0; z = 90.0; };
+        material = "material_white_light";
+        radius = 6.0
+    }
+    cone_lighting2:
+    {
+        type = 0;
+        origin = { x = 14.0; y = 4.0; z = 90.0; };
+        material = "material_white_light";
+        radius = 6.0
+    }
+}
