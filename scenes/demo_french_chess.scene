@@ -26,7 +26,7 @@ camera:
         g = 0.0;
         b = 0.0;
     }
-    samples = 2500;
+    samples = 3000;
 }
 
 materials:
