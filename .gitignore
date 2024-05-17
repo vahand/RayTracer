@@ -2,6 +2,5 @@
 raytracer
 *.so
 tmp
-*.ppm
 .vscode*
 a.out
